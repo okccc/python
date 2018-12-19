@@ -12,6 +12,7 @@ git config --global user.email "1573976179@qq.com"
 - 将工作区文件(夹)添加到暂存区：git add aaa.txt 或者 git add . 
 - 查看工作区状态：git status(多使用可根据提示操作)
 - 将暂存区文件提交到版本库：git commit -m '...'  
+- 已经在track的文件可以不用添加直接提交：git commit -a -m '...'
 - 查看版本记录：git log 或者 git log --graph --pretty=oneline
 - 查看操作记录：git reflog
 - 版本回退(慎用!)：git reset 38fd442 或者 git reset HEAD^/HEAD~1/HEAD~10(HEAD是指向当前版本的指针默认指向master分支)
