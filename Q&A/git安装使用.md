@@ -9,7 +9,7 @@ git config --global user.email "1573976179@qq.com"
 解决中文乱码：git config --global core.quotepath false
 - 选中某个目录作为仓库：cd mygit
 - 初始化仓库：git init
-- 将工作区文件添加到暂存区：git add aaa.txt bbb.txt 
+- 将工作区文件(夹)添加到暂存区：git add aaa.txt 或者 git add . 
 - 查看工作区状态：git status(多使用可根据提示操作)
 - 将暂存区文件提交到版本库：git commit -m '...'  
 - 查看版本记录：git log 或者 git log --graph --pretty=oneline
