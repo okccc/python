@@ -1,4 +1,4 @@
-## 基本操作
+## git基本命令
 - 安装：yum install git
 - 安装完配置用户和邮箱：  
 git config --global user.name "okccc"  
@@ -10,7 +10,7 @@ git config --global user.email "1573976179@qq.com"
 - 选中某个目录作为仓库：cd mygit
 - 初始化仓库：git init
 - 将工作区文件添加到暂存区：git add aaa.txt bbb.txt 
-- 查看工作区状态：git status
+- 查看工作区状态：git status(多使用可根据提示操作)
 - 将暂存区文件提交到版本库：git commit -m '...'  
 - 查看版本记录：git log 或者 git log --graph --pretty=oneline
 - 查看操作记录：git reflog
@@ -23,7 +23,7 @@ git config --global user.email "1573976179@qq.com"
 对比工作区和HEAD版本：git diff HEAD -- aaa.txt  
 对比不同HEAD版本：git diff HEAD HEAD^ -- aaa.txt
 - 删除文件：git rm aaa.txt & git commit -m 'delete...'
-## 分支管理
+## git分支管理
 - 查看分支：git branch
 - 创建分支：git branch dev
 - 切换分支：git checkout dev
@@ -38,15 +38,7 @@ git config --global user.email "1573976179@qq.com"
 - 删除已合并的分支：git branch -d bug001(只能删除已经merge过的分支)
 - 开发新功能时一般创建feature分支：git branch -b feature & ...
 - 强制删除未合并的分支：git branch -D feature
-## 多人协作流程
-- 甲创建远程origin的dev分支到本地：git branch -b dev origin/dev
-- 推送到远程：git add aaa.txt & git commit -m 'add aaa' & git push origin dev
-- 如果此时乙也编辑了aaa.txt那么直接push会冲突,需要先git pull把最新的提交从origin/dev上抓下来在本地合并解决冲突后再推送
-- git pull居然也失败了？报错no tracking information：是因为本地的dev分支没有和远程的origin/dev分支建立连接
-- git branch --set-upstream-to=origin/dev dev
-- 再次pull：git pull & git status & ... & git commit -m 'fix conflict' & git push origin dev
-- 将分叉的提交历史整理成一条直线：git rebase
-## 标签管理
+## git标签管理
 - 查看所有标签：git tag
 - 新建标签,默认打在最新提交的commit上：git tag v0.1
 - 新建标签,指定打在某次提交的commit上：git tag v0.1 f52c633
@@ -57,27 +49,29 @@ git config --global user.email "1573976179@qq.com"
 - 删除本地标签：git tag -d v0.1
 - 删除远程标签：git tag -d v0.1 & git push origin :refs/tags/v0.1
 ## github远程仓库
-#### SSH方式
 - 在本地生成ssh秘钥: ssh-keygen -t rsa -C "1573976179@qq.com"  
-![](images/git/ssh生成秘钥.png)
+![](images/git/01_ssh生成秘钥.png)
 - 私钥保留,将公钥复制到gitlab账号  
-![](images/git/将本地秘钥copy到gitlab账号.png)  
+![](images/git/02_复制公钥到github.png)  
 - github创建新工程
-![](images/git/github创建新工程.png)
+![](images/git/03_github创建新工程.png)
 - 从远程库克隆到本地：git clone git@github.com:okccc/python.git
 - 如果是先有本地仓库,可以在远程github创建一个新仓库(空的,不包含readme.md和.gitignore)
 - 关联远程库：git remote add origin git@github.com:okccc/python.git
 - 查看远程库详细信息：git remote -v
 - 第一次推送本地master分支到远程：git push -u origin master(-u指定origin为默认主机后面就不用加参数直接git push)
 - 以后再推送本地master分支到远程：git push origin master
-#### HTTP方式
-- 从远程库克隆到本地(因为没有秘钥要经常输密码所以推荐使用ssh)：git clone https://github.com/okccc/python.git 
-- git clone或者pycharm checkout报错：HTTP Basic: Access denied fatal: Authentication failed  
-解决：git config --system --unset credential.helper 重新输入账号密码就可以  
-或者：git config --global http.emptyAuth true
+## github/gitlab多人协作流程
+- 甲创建远程origin的dev分支到本地：git checkout -b dev origin/dev
+- 推送到远程：git add aaa.txt & git commit -m 'add aaa' & git push origin dev
+- 如果此时乙也编辑了aaa.txt那么直接push会冲突,需要先git pull把最新的提交从origin/dev上抓下来在本地合并解决冲突后再推送
+- git pull居然也失败了？报错no tracking information：是因为本地的dev分支没有和远程的origin/dev分支建立连接
+- git branch --set-upstream-to=origin/dev dev
+- 再次pull：git pull & git status & ... & git commit -m 'fix conflict' & git push origin dev
+- 将分叉的提交历史整理成一条直线：git rebase
 #### pycharm拉代码
-![](images/git/pycharm从gitlab拉代码(ssh).png)
-![](images/git/pycharm从gitlab拉代码(http).png)
+![](images/git/04_pycharm从gitlab拉代码(ssh).png)
+![](images/git/05_pycharm从gitlab拉代码(http).png)
 
 
 
