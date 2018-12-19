@@ -56,18 +56,18 @@ git config --global user.email "1573976179@qq.com"
 - github创建新工程
 ![](images/git/03_github创建新工程.png)
 - 从远程库克隆到本地：git clone git@github.com:okccc/python.git
-- 如果是先有本地仓库,可以在远程github创建一个新仓库(空的,不包含readme.md和.gitignore)
-- 关联远程库：git remote add origin git@github.com:okccc/python.git
-- 查看远程库详细信息：git remote -v
-- 第一次推送本地master分支到远程：git push -u origin master(-u指定origin为默认主机后面就不用加参数直接git push)
-- 以后再推送本地master分支到远程：git push origin master
+- 如果是先有本地仓库,可以在远程github创建一个新仓库(空的,不包含readme.md和.gitignore)  
+关联远程库：git remote add origin git@github.com:okccc/python.git  
+查看远程库详细信息：git remote -v  
+第一次推送本地master分支到远程：git push -u origin master(-u指定origin为默认主机后面就不用加参数直接git push)  
+以后再推送本地master分支到远程：git push
 ## github/gitlab多人协作流程
 - 甲创建远程origin的dev分支到本地：git checkout -b dev origin/dev
 - 推送到远程：git add aaa.txt & git commit -m 'add aaa' & git push origin dev
-- 如果此时乙也编辑了aaa.txt那么直接push会冲突,需要先git pull把最新的提交从origin/dev上抓下来在本地合并解决冲突后再推送
-- git pull居然也失败了？报错no tracking information：是因为本地的dev分支没有和远程的origin/dev分支建立连接
-- git branch --set-upstream-to=origin/dev dev
-- 再次pull：git pull & git status & ... & git commit -m 'fix conflict' & git push origin dev
+- 如果此时乙也编辑了aaa.txt那么直接push会冲突,需要先git pull把最新的提交从origin/dev上抓下来在本地合并解决冲突后再推送  
+git pull居然也失败了？报错no tracking information：是因为本地的dev分支没有和远程的origin/dev分支建立连接  
+建立连接：git branch --set-upstream-to=origin/dev dev  
+再次pull：git pull & git status & ... & git commit -m 'fix conflict' & git push origin dev  
 - 将分叉的提交历史整理成一条直线：git rebase
 #### pycharm拉代码
 ![](images/git/04_pycharm从gitlab拉代码(ssh).png)
