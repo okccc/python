@@ -6,6 +6,7 @@ git config --global user.email "1573976179@qq.com"
 查看配置列表：git config --global --list  
 优先级：--system(系统) < --global(用户) < --local(当前仓库,可单独指定用户邮箱)       
 打开配置文件：git config -e --system(/etc/gitconfig ) --global(~/.gitconfig) --local(/project/.git/config)  
+解决中文乱码：git config --global core.quotepath false
 - 选中某个目录作为仓库：cd mygit
 - 初始化仓库：git init
 - 将工作区文件添加到暂存区：git add aaa.txt bbb.txt 
