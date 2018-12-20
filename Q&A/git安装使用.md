@@ -1,8 +1,8 @@
 ## git基本命令
 - 安装：yum install git
 - 安装完配置用户和邮箱：  
-git config --global user.name "okccc"  
-git config --global user.email "1573976179@qq.com"  
+git config --global user.name "okccc"(这样就不用每次同步到github都输密码)  
+git config --global user.email "1573976179@qq.com"(此处email要和github保持一致,不然没有小绿块)    
 查看配置列表：git config --global --list  
 优先级：--system(系统) < --global(用户) < --local(当前仓库,可单独指定用户邮箱)       
 打开配置文件：git config -e --system(/etc/gitconfig ) --global(~/.gitconfig) --local(/project/.git/config)  
@@ -13,8 +13,9 @@ git config --global user.email "1573976179@qq.com"
 - 查看工作区状态：git status(多使用可根据提示操作)
 - 将暂存区文件提交到版本库：git commit -m '...'  
 - 已经在track的文件可以不用添加直接提交：git commit -a -m '...'
-- 查看版本记录：git log 或者 git log --graph --pretty=oneline
+- 查看版本记录：git log 或者 git log --pretty=oneline aaa.txt
 - 配置别名：git config --global alias.lg 'log --graph --pretty=oneline --abbrev-commit'
+- 删除别名：git config --global --unset alias.lg
 - 查看操作记录：git reflog
 - 版本回退(慎用!)：git reset 38fd442 或者 git reset HEAD^/HEAD~1/HEAD~10(HEAD是指向当前版本的指针默认指向master分支)
 - 撤销修改/删除  
@@ -51,19 +52,20 @@ git config --global user.email "1573976179@qq.com"
 - 删除本地标签：git tag -d v0.1
 - 删除远程标签：git tag -d v0.1 & git push origin :refs/tags/v0.1
 ## github远程仓库
-- 在本地生成ssh秘钥: ssh-keygen -t rsa -C "1573976179@qq.com"  
+- 在本地生成ssh秘钥: ssh-keygen -t rsa -C "company/personal"  
 ![](images/git/01_ssh生成秘钥.png)
 - 私钥保留,将公钥复制到gitlab账号  
-![](images/git/02_复制公钥到github.png)  
+![](images/git/02_复制公钥到github.png) 
+- 测试是否成功连接：ssh -T git@github.com 
 - github创建新工程
 ![](images/git/03_github创建新工程.png)
-- 从远程库克隆到本地：git clone git@github.com:okccc/python.git
-- 如果是先有本地仓库,可以在远程github创建一个新仓库(空的,不包含readme.md和.gitignore)  
+- 场景一：从远程库克隆到本地：git clone git@github.com:okccc/python.git
+- 场景二：如果是先有本地仓库,可以在远程github创建一个新仓库(空的,不包含readme.md和.gitignore)  
 关联远程库：git remote add origin git@github.com:okccc/python.git  
 查看远程库详细信息：git remote -v  
 第一次推送本地master分支到远程：git push -u origin master(-u指定origin为默认主机后面就不用加参数直接git push)  
 以后再推送本地master分支到远程：git push
-## github/gitlab多人协作流程
+## github多人协作流程
 - 甲创建远程origin的dev分支到本地：git checkout -b dev origin/dev
 - 推送到远程：git add aaa.txt & git commit -m 'add aaa' & git push origin dev
 - 如果此时乙也编辑了aaa.txt那么直接push会冲突,需要先git pull把最新的提交从origin/dev上抓下来在本地合并解决冲突后再推送  

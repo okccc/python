@@ -1,2 +1,1 @@
 # python
-python基础
