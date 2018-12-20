@@ -30,13 +30,13 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - 查看分支：git branch
 - 创建分支：git branch dev
 - 切换分支：git checkout dev
-- 创建并切换分支：git checkout -b dev(开发成员平常一般往dev分支做合并,然后定期合并到master分支发布上线)
-- 快速合并某分支到当前分支：git merge dev(当不同branch编辑<font color=red>同一个文件</font>并且都commit后做merge会冲突,可查看该文件根据提示恢复改动并重新commit)
+- 创建并切换分支：git checkout -b dev(开发人员平时往dev分支做合并,然后定期合并到master分支发布上线)
+- 快速合并某分支到当前分支：git merge dev(当不同分支编辑<font color=red>同一个文件</font>并且都提交后做合并操作会冲突,先解决冲突再重新提交合并)
 - 禁用快速合并：git merge --no-ff -m 'no fast-forward' dev  
 应用场景：当代码写到一半时突然发现前面有个紧急bug要处理,这时候先保护工作现场此时工作区是干净的,然后创建一个临时的bug分支处理完bug后merge到dev分支,此时最好禁用快速合并,不然删掉临时bug分支后看不到merge修复bug的版本记录,最后再回到工作现场继续工作  
 - 保护工作现场：git stash  
 - 查看保护工作现场列表：git stash list  
-- 创建bug分支：git branch -b bug001 & ... & git checkout dev & git merge bug001 
+- 创建bug分支：git checkout -b bug001 & ... & git checkout dev & git merge bug001 
 - 恢复工作现场：git stash pop  
 - 删除已合并的分支：git branch -d bug001(只能删除已经merge过的分支)
 - 开发新功能时一般创建feature分支：git branch -b feature & ...
@@ -66,6 +66,7 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 第一次推送本地master分支到远程：git push -u origin master(-u指定origin为默认主机后面就不用加参数直接git push)  
 以后再推送本地master分支到远程：git push
 ## github多人协作流程
+- 多台电脑操作同一个github账号时,要在各自电脑ssh-keygen,user.name和user.email可以设置成同样的也可以另外设置
 - 甲创建远程origin的dev分支到本地：git checkout -b dev origin/dev
 - 推送到远程：git add aaa.txt & git commit -m 'add aaa' & git push origin dev
 - 如果此时乙也编辑了aaa.txt那么直接push会冲突,需要先git pull把最新的提交从origin/dev上抓下来在本地合并解决冲突后再推送  
