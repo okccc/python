@@ -31,6 +31,7 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - 创建分支：git branch dev
 - 切换分支：git checkout dev
 - 创建并切换分支：git checkout -b dev(开发人员平时往dev分支做合并,然后定期合并到master分支发布上线)
+- 在dev分支上修改提交：git add ... & git commit -m '...' & git checkout master
 - 快速合并某分支到当前分支：git merge dev(当不同分支编辑<font color=red>同一个文件</font>并且都提交后做合并操作会冲突,先解决冲突再重新提交合并)
 - 禁用快速合并：git merge --no-ff -m 'no fast-forward' dev  
 应用场景：当代码写到一半时突然发现前面有个紧急bug要处理,这时候先保护工作现场此时工作区是干净的,然后创建一个临时的bug分支处理完bug后merge到dev分支,此时最好禁用快速合并,不然删掉临时bug分支后看不到merge修复bug的版本记录,最后再回到工作现场继续工作  
@@ -63,7 +64,7 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - 场景二：如果是先有本地仓库,可以在远程github创建一个新仓库(空的,不包含readme.md和.gitignore)  
 关联远程库：git remote add origin git@github.com:okccc/python.git  
 查看远程库详细信息：git remote -v  
-第一次推送本地master分支到远程：git push -u origin master(-u指定origin为默认主机后面就不用加参数直接git push)  
+第一次推送本地master分支到远程：git push -u origin master(-u指定origin为默认主机后面再推送就直接git push)  
 以后再推送本地master分支到远程：git push
 ## github多人协作流程
 - 多台电脑操作同一个github账号时,要在各自电脑ssh-keygen,user.name和user.email可以相同也可以不同
