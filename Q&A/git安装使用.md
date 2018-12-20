@@ -66,6 +66,7 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 第一次推送本地master分支到远程：git push -u origin master(-u指定origin为默认主机后面就不用加参数直接git push)  
 以后再推送本地master分支到远程：git push
 ## github多人协作流程
+- 多台电脑操作同一个github账号时,要在各自电脑ssh-keygen,user.name和user.email可以设置成同样的也可以另外设置
 - 甲创建远程origin的dev分支到本地：git checkout -b dev origin/dev
 - 推送到远程：git add aaa.txt & git commit -m 'add aaa' & git push origin dev
 - 如果此时乙也编辑了aaa.txt那么直接push会冲突,需要先git pull把最新的提交从origin/dev上抓下来在本地合并解决冲突后再推送  
