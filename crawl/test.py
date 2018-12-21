@@ -1,6 +1,5 @@
 # coding=utf-8
 import requests
-import random
 from lxml import etree
 from w3lib.html import remove_tags
 import time
@@ -22,6 +21,7 @@ def baidu_mhfq():
             link = each.xpath("./@href")[0]
             data = {"title": title, "link": link}
             datas.append(data)
+        time.sleep(2)
     return datas
 
 
