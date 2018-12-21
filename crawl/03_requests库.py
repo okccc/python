@@ -177,9 +177,9 @@ def session():
 
 
 if __name__ == "__main__":
-    # get()
+    get()
     # post()
-    ajax()
+    # ajax()
     # proxy01()
     # proxy02()
     # web()

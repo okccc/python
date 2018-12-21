@@ -38,12 +38,12 @@ def transform(list_data):
             # 判断字段值类型, 有些值是list类型要转换成字符串
             if type(data.get(field)) is list:
                 # 往value添加字段值
-                value.append(json.dumps(data.get(field),  ensure_ascii=False))
+                value.append(json.dumps(data.get(field), ensure_ascii=False))
             else:
                 # 其他正常数据类型直接添加
                 value.append(data.get(field))
         # 添加系统时间
-        value.append(time.strftime("%Y-%m-%d %H:%M:%S",  time.localtime()))
+        value.append(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 
         # 将单条value添加到values集合
         values.append(value)
@@ -53,7 +53,7 @@ def transform(list_data):
 
 if __name__ == "__main__":
     # 加载中间件结果
-    data_list = json.load(open("data_list.txt",  encoding="utf-8"))
+    data_list = json.load(open("data_list.txt", encoding="utf-8"))
     res = transform(data_list)
     # 将结果缓存到中间件
-    json.dump(res,  open("value_list.txt",  "w",  encoding="utf-8"),  ensure_ascii=False)
+    json.dump(res, open("value_list.txt", "w", encoding="utf-8"), ensure_ascii=False)

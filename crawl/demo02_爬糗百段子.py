@@ -24,13 +24,6 @@ class Qiu(object):
     """
 
     def getUrl(self, begin, end):
-        """
-        获取完整URL
-        :param begin:起始页面
-        :param end:结束页面
-        :return:
-        """
-
         # 糗事百科URL前面部分
         url = "https://www.qiushibaike.com/8hr/page/"
         # 循环爬取页面
@@ -43,12 +36,6 @@ class Qiu(object):
 
     @staticmethod
     def loadPage(url):
-        """
-        加载页面
-        :param url:
-        :return:
-        """
-
         # 请求头
         headers = {"User-Agent": "Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11"}
         # 发送get请求

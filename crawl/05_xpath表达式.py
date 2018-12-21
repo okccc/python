@@ -54,7 +54,8 @@ lxml库: 是一款高性能的HTML/XML解析器 ---> 用xpath表达式来解析�
 lxml库的etree模块
 etree.HTML(str): 从字符串常量解析HTML文档,返回节点树(Parses an HTML document from a string constant.Returns the root node)
 etree.parse(file): 解析源文件返回一个节点树(Return an ElementTree object loaded with source elements)
-etree.tostring(element_or_tree): 将元素序列化成其xml树编码的字符串(Serialize an element to an encoded string representation of its XML tree)
+etree.tostring(element_or_tree, encoding="utf8").decode("utf8"):  # 此处encoding参数不能省,不然中文乱码
+将元素序列化成其xml树编码的字符串(Serialize an element to an encoded string representation of its XML tree)
 备注: python的3引号可用于表示多行字符串或者函数下方的注释
 """
 
@@ -82,7 +83,7 @@ def test():
     print(type(data))  # <class 'lxml.etree._ElementTree'>
 
     # 将HTML文档序列化成字符串(etree可以自动修正html代码)
-    data_new = etree.tostring(data).decode("utf-8")
+    data_new = etree.tostring(data, encoding="utf8").decode("utf-8")
     print(type(data_new))  # <class 'str'>
 
     # xpath表达式解析
@@ -92,7 +93,7 @@ def test():
     for res in res_list:
         print(type(res))  # <class 'lxml.etree._Element'>
         # 将元素序列化成字符串
-        res = etree.tostring(res).decode("utf-8")
+        res = etree.tostring(res, encoding="utf8").decode("utf-8")
         print(res)  # <li class="item-0"><a href="link1.html">first item</a></li>
 
 """
@@ -100,7 +101,7 @@ def test():
 """
 html = etree.parse("hello.html")
 # print(type(html))  # <class 'lxml.etree._ElementTree'>
-result = etree.tostring(html).decode("utf-8")
+result = etree.tostring(html, encoding="utf8").decode("utf-8")
 # print(type(result))  # <class 'str'>
 
 def test01():
@@ -114,7 +115,7 @@ def test01():
         print(res.text)
         print(res.tag)  # li
         # 将元素序列化成字符串
-        res1 = etree.tostring(res).decode("utf-8")
+        res1 = etree.tostring(res, encoding="utf8").decode("utf-8")
         print(type(res1))  # <class 'str'>
         print(res1)  # <li class="item-0"><a href="link1.html">first item</a></li>
 
