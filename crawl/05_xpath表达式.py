@@ -59,7 +59,9 @@ etree.tostring(element_or_tree, encoding="utf8").decode("utf8"):  # 此处encodi
 备注: python的3引号可用于表示多行字符串或者函数下方的注释
 """
 
+import requests
 from lxml import etree
+from w3lib.html import remove_tags
 
 """
 1、etree读取字符串
@@ -196,8 +198,24 @@ def test08():
         print(res)  # link5.html
 
 
+def w3lib_example():
+    datas = []
+    url = "https://www.baidu.com/s?"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.1; rv2.0.1) Gecko/20100101 Firefox/4.0.1"}
+    params = {"wd": "美好分期", "pn": 30}
+    response = requests.get(url, params=params, headers=headers)
+    html = etree.HTML(response.text)
+    results = html.xpath("//div[@id='content_left']/div[contains(@class, 'result')]/h3/a")
+    for each in results:
+        title = remove_tags(etree.tostring(each, encoding="utf8").decode("utf8"))
+        link = each.xpath("./@href")[0]
+        data = {"title": title, "link": link}
+        datas.append(data)
+    print(datas)
+
+
 if __name__ == "__main__":
-    test()
+    # test()
     # test01()
     # test02()
     # test03()
@@ -206,3 +224,4 @@ if __name__ == "__main__":
     # test06()
     # test07()
     # test08()
+    w3lib_example()
