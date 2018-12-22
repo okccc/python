@@ -61,7 +61,7 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - 测试是否成功连接：ssh -T git@github.com 
 - github创建新工程
 ![](images/git/03_github创建新工程.png)
-- 场景一：从远程库克隆到本地：git clone git@github.com:okccc/python.git
+- 场景一：将已有远程库克隆到本地：git clone git@github.com:okccc/python.git
 - 场景二：如果是先有本地仓库,可以在远程github创建一个新仓库(空的,不包含readme.md和.gitignore)  
 关联远程库：git remote add origin git@github.com:okccc/python.git  
 查看远程库详细信息：git remote -v  
