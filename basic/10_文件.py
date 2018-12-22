@@ -56,7 +56,8 @@ def test01():
 
 
 def test02():
-    # 合并小文件
+    # TODO
+    # 合并小文件: 如果是视频文件合并后会出错,要用moviepy
     dir = "D://test/"
     files = os.listdir(dir)
     with open("D://test/test.mp4", "wb") as f:
