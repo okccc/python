@@ -59,14 +59,13 @@ def test02():
     # 合并小文件
     dir = "D://test/"
     files = os.listdir(dir)
-    with open("D://test.mp4", "wb") as f:
+    with open("D://test/test.mp4", "wb") as f:
         for file in files:
-            for data in open(dir+file, 'rb'):
-                f.write(data)
+            f.write(open(dir+file, 'rb').read())
 
 
 def test03():
-    # 去除换行符,将所有内容放到同一行
+    # 去除换行符,将多行内容放到一行
     with open("D://PycharmProjects/python/analysis/csv/city.txt", encoding="utf8") as f1:
         with open("D://PycharmProjects/python/analysis/csv/city1.txt", "w", encoding="utf8") as f2:
             for line in f1.readlines():
@@ -76,5 +75,5 @@ def test03():
 if __name__ == "__main__":
     # digui("D://学习资料/python数据分析与机器学习实战/python数据分析与机器学习实战/", ".flv")
     # test01()
-    # test02()
-    test03()
+    test02()
+    # test03()
