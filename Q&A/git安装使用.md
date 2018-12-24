@@ -68,7 +68,7 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - 场景二：如果是先有本地仓库,可以在远程github创建一个新仓库(空的,不包含readme.md和.gitignore)  
 关联远程库：git remote add origin git@github.com:okccc/python.git  
 查看远程库详细信息：git remote -v  
-第一次推送本地master分支到远程：git push -u origin master(-u指定origin为默认主机后面再推送就直接git push)  
+第一次推送本地master分支到远程：git push -u origin master(-u指定推送到origin对应的master分支,以后再推送就直接git push)  
 以后再推送本地master分支到远程：git push
 ## github多人协作流程
 - 多台电脑操作同一个github账号时,要在各自电脑ssh-keygen,user.name和user.email可以相同也可以不同
@@ -82,6 +82,7 @@ git pull居然也失败了？报错no tracking information：是因为本地的d
 - git fetch origin master：将远程比本地新的代码拉下来    
 git log -p master..origin/master：比较本地master分支和origin/master分支差别  
 git merge origin/master：合并  
+相当于：git fetch origin master:tmp(将远程master分支弄到本地tmp分支) & git diff tmp & git merge tmp & git branch -d tmp
 - git pull origin/master：从远程获取最新代码并直接merge到本地(不安全因为看不到更新情况)
 - 将分叉的提交历史整理成一条直线：git rebase
 #### pycharm拉代码
