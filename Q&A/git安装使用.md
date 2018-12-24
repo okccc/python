@@ -28,7 +28,8 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 对比不同HEAD版本：git diff HEAD HEAD^ -- aaa.txt
 - 删除文件：git rm aaa.txt & git commit -m 'delete...'
 ## git分支管理
-- 查看分支：git branch
+- 查看当前分支：git branch 
+- 查看远程/所有分支：git branch -r/-a
 - 创建分支：git branch dev
 - 切换分支：git checkout dev
 - 创建并切换分支：git checkout -b dev(开发人员平时往dev分支做合并,然后定期合并到master分支发布上线)
@@ -43,6 +44,8 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - 删除已合并的分支：git branch -d bug001(只能删除已经merge过的分支)
 - 开发新功能时一般创建feature分支：git branch -b feature & ...
 - 强制删除未合并的分支：git branch -D feature
+- 将本地分支推送到远程：git push origin dev
+- 删除远程分支：git push origin :dev
 ## git标签管理
 - 查看所有标签：git tag
 - 新建标签,默认打在最新提交的commit上：git tag v0.1
@@ -75,6 +78,11 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 git pull居然也失败了？报错no tracking information：是因为本地的dev分支没有和远程的origin/dev分支建立连接  
 建立连接：git branch --set-upstream-to=origin/dev dev  
 再次pull：git pull & git status & ... & git commit -m 'fix conflict' & git push origin dev  
+- 本地和远程代码不一致时要先将远程代码同步到本地  
+- git fetch origin master：将远程比本地新的代码拉下来    
+git log -p master..origin/master：比较本地master分支和origin/master分支差别  
+git merge origin/master：合并  
+- git pull origin/master：从远程获取最新代码并直接merge到本地(不安全因为看不到更新情况)
 - 将分叉的提交历史整理成一条直线：git rebase
 #### pycharm拉代码
 ![](images/git/04_pycharm从gitlab拉代码(ssh).png)
