@@ -1,4 +1,3 @@
-## git
 - 安装：yum install git
 - 安装完配置用户和邮箱：  
 git config --global user.name "okccc"(这样就不用每次同步到github都输密码)  
@@ -73,8 +72,8 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - git merge origin/master：将origin/master分支合并到当前分支
 - git fetch origin master:tmp(将远程master分支下载到本地tmp分支) & git diff tmp & git merge tmp & git branch -d tmp
 - git status对比的是本地master分支(refs/heads/master)和origin/master分支的本地分支(refs/remotes/origin/master)  
-refs/heads/master会随着本地commit更新,而refs/remotes/origin/master只有在git fetch/pull时才会更新
-所以当本地master快于origin/master时会显示ahead而本地master慢于origin/master时要fetch之后才会显示behind
+本地分支commit时refs/heads/master就会随着更新,而refs/remotes/origin/master只有在fetch/pull/push时才会更新,所以本地master分支commit后会提示ahead  
+而当别人更新了远程origin/master后由于本地origin/master还未同步所以显示的是up to date,必须先fetch/pull之后本地origin/master更新了才会提示behind
 #### git pull
 - git pull <远程主机名> <远程分支名>:<本地分支名>  取回远程主机某个分支的更新并与本地指定分支合并
 - git pull origin master:master  取回origin主机的master分支并与本地master分支合并  

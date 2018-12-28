@@ -17,7 +17,7 @@ def get():
     # 参数
     params = {"wd": "知乎"}
     # 发送get请求(params接收字典/字符串的查询参数,字典类型自动转换为url编码,不需要urlencode())
-    response = requests.get(url, params=params, headers=headers)
+    response = requests.get(url, params=params, headers=headers, allow_redirects=False)
     # 查看响应数据类型
     print(response)  # <Response [200]>
     print(type(response))  # <class 'requests.models.Response'>
@@ -37,7 +37,7 @@ def get():
     # 使用response.content时,返回的是服务器响应数据的原始二进制字节流,可以用来保存图片等二进制文件
     print(type(response.content))  # <class 'bytes'>
     # 注意：如果response.text乱码可以改成response.content.decode('charset')  # charset是该网站编码
-    print(response.content.decode("utf-8"))
+    # print(response.content.decode("utf-8"))
 
 
 def post():
