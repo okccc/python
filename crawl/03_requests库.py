@@ -17,27 +17,30 @@ def get():
     # 参数
     params = {"wd": "知乎"}
     # 发送get请求(params接收字典/字符串的查询参数,字典类型自动转换为url编码,不需要urlencode())
-    response = requests.get(url, params=params, headers=headers)
+    response = requests.get(url, params=params, headers=headers, allow_redirects=False)
     # 查看响应数据类型
-    print(response)  # <Response [200]>
     print(type(response))  # <class 'requests.models.Response'>
-    # 查看响应吗
-    print(response.status_code)  # 200
+    print(response)  # <Response [200]>
     # 查看请求方式
     print(response.request)  # <PreparedRequest [GET]>
-    # 查看完整url地址
-    print(response.url)  # https://www.baidu.com/s?wd=%E7%9F%A5%E4%B9%8E
     # 查看响应头部字符编码
     print(response.encoding)  # utf-8
-    # 查看请求头
+    # 查看响应url
+    print(response.url)  # https://www.baidu.com/s?wd=%E7%9F%A5%E4%B9%8E
+    # 查看响应吗
+    print(response.status_code)  # 200
+    # 查看响应头
     print(response.headers)
+    # 追踪重定向：是一个Response对象的列表,为了完成请求而创建了这些对象,对象列表按照从远到近的请求排序
+    print(type(response.history))  # <class 'list'>
+    print(response.history)  # []  -- 如果是重定向会显示[<Response [302]>, <Response [302]>...]
 
     # 使用response.text时,Requests会基于HTTP响应的文本编码自动解码响应内容,大多数Unicode字符集都能被无缝解码
-    print(type(response.text))  # <class 'str'>
+    # print(type(response.text))  # <class 'str'>
     # 使用response.content时,返回的是服务器响应数据的原始二进制字节流,可以用来保存图片等二进制文件
-    print(type(response.content))  # <class 'bytes'>
+    # print(type(response.content))  # <class 'bytes'>
     # 注意：如果response.text乱码可以改成response.content.decode('charset')  # charset是该网站编码
-    # print(response.content.decode("utf-8"))
+    # print(response.content.decode("gb2312"))
 
 
 def post():

@@ -362,9 +362,9 @@ def ProxyHandler02():
 
 
 if __name__ == "__main__":
-    # urllib01()
+    urllib01()
     # get()
-    post()
+    # post()
     # ajax()
     # cookie01()
     # cookie02()

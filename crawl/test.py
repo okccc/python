@@ -3,7 +3,6 @@
 解决问题：
 1.某些标签里的text被内部某个标签割开成了好几段导致xpath无法直接获取,可以用remove_tags适当去除标签方便获取文本
 2.requests.exceptions.TooManyRedirects: Exceeded 30 redirects
-get请求添加allow_redirects=False禁用重定向,然后从response.headers['Location']获取重定向后的真实地址
 """
 import requests
 from lxml import etree
@@ -12,11 +11,11 @@ import jieba
 import time
 import logging
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    datefmt="%m/%d/%Y %H:%M:%S %p"
-)
+# logging.basicConfig(
+#     level=logging.DEBUG,
+#     format="%(asctime)s - %(levelname)s - %(message)s",
+#     datefmt="%m/%d/%Y %H:%M:%S %p"
+# )
 
 
 def baidu(flag=False):
@@ -35,25 +34,31 @@ def baidu(flag=False):
         else:
             for page in range(1, 3):
                 pn = (page - 1) * 10
+                # 设置搜索时间范围：通过fiddler抓包获取WebForms表单参数name/value
                 params = {"wd": wd, "pn": pn, "gpc": "stf=1545357558.176,1545962358.175|stftype=1"}
                 parse(datas, negative_words, params)
+    # 对列表中的字典去重
     return [dict(t) for t in {tuple(d.items()) for d in datas}]
 
 
 def parse(datas, negative_words, params):
     url = "https://www.baidu.com/s?"
     headers = {
-        "User-Agent": "Chrome Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"}
+        "User-Agent": "Chrome Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+    }
     response = requests.get(url, params=params, headers=headers)
     html = etree.HTML(response.text)
     results = html.xpath("//div[@id='content_left']/div[contains(@class, 'result')]/h3/a")
     for each in results:
         link = each.xpath("./@href")[0]
-        # 百度搜索的条目都是www.baidu.com域名的地址,点击后会重定向到真实地址,所以需要再次发送请求获取搜索结果的真实url
+        # 百度反爬虫：搜索的结果都是www.baidu.com域名的重定向跳转链接,需要继续访问跳转链接获取重定向后的url
         real_link = ""
         if link.startswith("http"):
+            # requests默认自动处理302跳转,经过跳转的请求返回的url/status_code/headers都是跳转后的信息,可用response.history追踪跳转情况
+            # 如果请求跳转过多可能会报错：TooManyRedirects: Exceeded 30 redirects 禁用重定向还可以减少网络消耗提高访问速度
             response = requests.get(link, headers=headers, allow_redirects=False)
             if response.status_code < 400:
+                # 禁用后status_code是302,通过response.headers["Location"]获取重定向的url
                 real_link = response.headers["Location"]
                 if "www.zhihu.com" in real_link:
                     real_link = real_link.replace("https", "http")
@@ -76,11 +81,23 @@ def test():
     # # print(new_l)
     # print({tuple(d.items()) for d in l})
     headers = {
-        "User-Agent": "Chrome Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"}
-    url="http://www.rbbnews.com/html/103/2018/12/24/2018-12-24_6290210_103.shtml"
-    print(requests.get(url, headers=headers, allow_redirects=False).status_code)
+        "User-Agent": "Chrome Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+    }
+    url = "https://www.baidu.com/link?url=0xKhTSzNJI_G7_jq0Td2If3R4csvpMEXvg_A0IZ7cuB3UuY8TH1uL-yAGSP7Gpm4JIZE-NQdySTvvcq3U3dRb_&amp;wd=&amp;eqid=cd3c51c00004a1c2000000045c270b1c"
+
+    response01 = requests.get(url, headers=headers)
+    response02 = requests.get(url, headers=headers, allow_redirects=False)
+    print(response01.url)  # http://www.110.com/ask/question-11975553.html
+    print(response01.status_code)  # 200
+    print(response01.headers)  # {'Transfer-Encoding': 'chunked', 'Server': 'nginx/1.6.2', 'Connection': 'close', 'Vary': 'Accept-Encoding', 'Content-Encoding': 'gzip', 'Date': 'Sat, 29 Dec 2018 08:47:04 GMT', 'Content-Type': 'text/html; charset=utf-8'}
+    print(response01.history)  # [<Response [302]>]
+
+    print(response02.url)  # https://www.baidu.com/link?url=0xKhTSzNJI_G7_jq0Td2If3R4csvpMEXvg_A0IZ7cuB3UuY8TH1uL-yAGSP7Gpm4JIZE-NQdySTvvcq3U3dRb_&amp;wd=&amp;eqid=cd3c51c00004a1c2000000045c270b1c
+    print(response02.status_code)  # 302
+    print(response02.headers)  # {'X-Xss-Protection': '1;mode=block', 'Set-Cookie': 'BDSVRTM=0; path=/', 'Content-Length': '225', 'Date': 'Sat, 29 Dec 2018 08:47:04 GMT', 'Content-Type': 'text/html;charset=utf8', 'Location': 'http://www.110.com/ask/question-11975553.html', 'Pragma': 'no-cache', 'Server': 'BWS/1.1', 'Connection': 'Keep-Alive', 'Expires': 'Fri, 01 Jan 1990 00:00:00 GMT', 'X-Ua-Compatible': 'IE=Edge,chrome=1', 'Cache-Control': 'no-cache, must-revalidate', 'Bdpagetype': '3'}
+    print(response02.history)  # []
 
 
 if __name__ == '__main__':
-    print(baidu(flag=True))
-    # test()
+    # print(baidu(flag=True))
+    test()

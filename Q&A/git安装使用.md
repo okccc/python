@@ -96,7 +96,7 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - b、如果是先有本地仓库,可以在远程github创建一个新仓库(空的,不包含readme.md和.gitignore)  
 关联远程库：git remote add origin git@github.com:okccc/python.git  
 查看远程主机地址：git remote -v  
-查看远程主机详细信息：git remote show <主机名>
+查看远程主机详细信息：git remote show <主机名>  
 第一次推送本地master分支到远程：git push -u origin master(-u指定origin为默认主机,以后再推送就直接git push)  
 - 切换远程库：git remote rm <主机名> (删除关联的远程主机) & git remote add <主机名> <url地址> (添加新的远程主机)
 #### 多人协作流程
