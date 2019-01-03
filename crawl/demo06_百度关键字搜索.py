@@ -76,10 +76,7 @@ def parse(datas, negative_words, params):
 
 
 def test():
-    # l = [{"title": "aaa", "link": "111"},{"title": "bbb", "link": "111"},{"title": "aaa", "link": "111"}]
-    # # new_l = [dict(t) for t in {tuple(d.items()) for d in l}]
-    # # print(new_l)
-    # print({tuple(d.items()) for d in l})
+
     headers = {
         "User-Agent": "Chrome Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
     }
