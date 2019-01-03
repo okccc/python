@@ -99,6 +99,7 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 查看远程主机详细信息：git remote show <主机名>  
 第一次推送本地master分支到远程：git push -u origin master(-u指定origin为默认主机,以后再推送就直接git push)  
 - 切换远程库：git remote rm <主机名> (删除关联的远程主机) & git remote add <主机名> <url地址> (添加新的远程主机)
+![](images/git/04_git操作流程.png)
 #### 多人协作流程
 - 多台电脑操作同一个github账号时,要在各自电脑ssh-keygen,user.name和user.email可以相同也可以不同
 - 甲创建远程origin的dev分支到本地：git checkout -b dev origin/dev
