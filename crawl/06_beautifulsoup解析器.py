@@ -55,6 +55,7 @@ def find_all():
         print(tag)  # <p class="title" name="dromouse"><b>The Dormouse's story</b></p>
         print(type(tag))  # <class 'bs4.element.Tag'>
         print(tag.name)  # p
+        print(tag.text)  # The Dormouse's story
         print(tag.attrs)  # {'class': ['title'], 'name': 'dromouse'}
         print(tag.attrs['class'])  # ['title']
 
@@ -180,7 +181,7 @@ def tencent():
     # csv文件的表头
     header = ['name', 'link', 'sort', 'num', 'site', 'publishtime']
 
-    # 解决excel打开csv文件乱码问题
+    # 解决excel打开csv文件中文乱码问题
     with open("D://tencent.csv", "wb") as file:
         # 写入windows需要确认编码的字符
         file.write(codecs.BOM_UTF8)
@@ -189,13 +190,13 @@ def tencent():
     with open("D://tencent01.csv", "a", encoding="utf-8", newline="") as file:
         # 创建writer对象
         writer = csv.DictWriter(file, fieldnames=header)
-        # 先写入表头
+        # 第一行写入表头
         writer.writeheader()
-        # 然后一次写入所有行
+        # 然后写入多行数据
         writer.writerows(items)
 
 
 if __name__ == '__main__':
-    # find_all()
+    find_all()
     # css()
-    tencent()
+    # tencent()
