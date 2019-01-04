@@ -47,6 +47,7 @@ def dumps():
 
     print(json.dumps(dict))  # {"city": "\u4e0a\u6d77", "name": "grubby"}
     print(type(json.dumps(dict)))  # <class 'str'>
+
     # 将str编码成bytes
     res = json.dumps(dict).encode('utf-8')
     print(type(res))  # <class 'bytes'>

@@ -1,7 +1,7 @@
 # coding: utf-8
 """
 61/75行报错：AttributeError: 'str' object has no attribute 'strftime'
-注意：mysql表字段不能用到python里的关键字，比如time既是字段又是模块，会冲突
+注意：不能将python里的关键字命名为模块/方法/变量名,比如time既是字段又是模块，会冲突
 """
 
 import pdfplumber

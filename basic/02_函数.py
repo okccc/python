@@ -100,3 +100,11 @@ func_new = eval(input("请输入匿名函数:"))
 result = compute(11, 22, func_new)
 print(result)
 
+
+def test():
+    # 高阶函数：一个函数接收另一个函数作为参数
+    pass
+
+
+if __name__ == '__main__':
+    pass
