@@ -18,7 +18,7 @@ hive>unlock table tablename;  -->  解锁
 
 - hive分区表某天数据算下来有重复值,可能是因为上游表或者关联表没有加时间分区导致
 
-- hive分区表不能使用current_date作为时间关联字段,不然回滚历史分区会没数据  
+- <font color=red>hive分区表尽量避免使用current_date作为时间字段,不然回滚历史分区会没数据,可用select from_unixtime(unix_timestamp(dt, 'yyyymmdd'),'yyyy-mm-dd')代替</font>  
 
 - 订单表数据抽取：  
 http://blog.csdn.net/yangtongli2012/article/details/51725408
