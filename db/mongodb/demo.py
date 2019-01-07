@@ -18,7 +18,7 @@ def test():
         print(document)
         documents.append(document)
     print(documents)
-    # 按照生成的字段顺序生成表头
+    # 按照生成的字段顺序生成csv文件表头
     header = list(documents[0].keys())
     # with open("C://Users/chenqian/Desktop/result.csv", "wb") as file:
     #     file.write(codecs.BOM_UTF8)
