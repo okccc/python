@@ -11,15 +11,18 @@ def test():
     db = conn.stat_dev
     # 集合
     collection = db.debitLoanV2
+    # print(collection.find().count())  -- 统计记录数
+
     # 文档查询
     documents = []
     # 将不需要的字段设为0
     for document in collection.find({}, {"_id": 0, "_class": 0}):
         print(document)
         documents.append(document)
-    print(documents)
+
     # 按照生成的字段顺序生成csv文件表头
     header = list(documents[0].keys())
+
     # with open("C://Users/chenqian/Desktop/result.csv", "wb") as file:
     #     file.write(codecs.BOM_UTF8)
 

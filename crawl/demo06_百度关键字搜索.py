@@ -60,7 +60,7 @@ def parse(datas, negative_words, params):
     #         # 如果请求跳转过多可能会报错：TooManyRedirects: Exceeded 30 redirects 禁用重定向还可以减少网络消耗提高访问速度
     #         response = requests.get(link, headers=headers, allow_redirects=False)
     #         if response.status_code < 400:
-    #             # 禁用后status_code是302,通过response.headers["Location"]获取重定向的url
+    #             # 禁用重定向后status_code是302,通过response.headers["Location"]获取重定向的url
     #             real_link = response.headers["Location"]
     #             if "www.zhihu.com" in real_link:
     #                 real_link = real_link.replace("https", "http")
@@ -82,11 +82,9 @@ def parse(datas, negative_words, params):
         link = tag.attrs["href"]
         real_link = ""
         if link.startswith("http"):
-            # requests默认自动处理302跳转,经过跳转的请求返回的url/status_code/headers都是跳转后的信息,可用response.history追踪跳转情况
-            # 如果请求跳转过多可能会报错：TooManyRedirects: Exceeded 30 redirects 禁用重定向还可以减少网络消耗提高访问速度
             response = requests.get(link, headers=headers, allow_redirects=False)
             if response.status_code < 400:
-                # 禁用后status_code是302,通过response.headers["Location"]获取重定向的url
+                # 禁用重定向后status_code是302,通过response.headers["Location"]获取重定向的url
                 real_link = response.headers["Location"]
                 if "www.zhihu.com" in real_link:
                     real_link = real_link.replace("https", "http")

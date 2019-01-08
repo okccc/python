@@ -12,7 +12,6 @@ xpath 	     快 	     简单(scrapy框架支持)
 from bs4 import BeautifulSoup
 import re
 import requests
-import json
 import csv
 import codecs
 import logging
@@ -46,10 +45,11 @@ soup = BeautifulSoup(text1, 'lxml')  # lxml/html5lib
 # print(soup.prettify())
 
 
-'''
-搜索文档树: find_all(arg)返回列表 --> tag有两个属性name(标签名称)和attrs(属性字典)
-'''
 def find_all():
+    """
+    搜索文档树: soup.find_all() --> tag有两个属性name(标签名称)和attrs(属性字典)
+    """
+
     # 1.标签名查找(字符串、正则、列表)
     for tag in soup.find_all('p'):
         print(tag)  # <p class="title" name="dromouse"><b>The Dormouse's story</b></p>
@@ -87,10 +87,11 @@ def find_all():
         print(text)  # Lacie Tillie
 
 
-'''
-CSS选择器: soup.select(arg)返回列表 --> 标签名不加修饰/类名前加./id名前加#
-'''
 def css():
+    """
+    CSS选择器: soup.select() --> 标签名不加修饰/类名前加./id名前加#
+    """
+
     # 1.标签名查找
     for tag in soup.select('title'):
         print(tag)  # <title>The Dormouse's story</title>
@@ -175,9 +176,6 @@ def tencent():
             print(item)
             items.append(item)
 
-            # with open("D://tencent.json", "a", encoding="utf8") as file:
-            #     file.write(json.dumps(item, ensure_ascii=False) + "\n")
-
     # csv文件的表头
     header = ['name', 'link', 'sort', 'num', 'site', 'publishtime']
 
@@ -196,7 +194,7 @@ def tencent():
         writer.writerows(items)
 
 
-if __name__ == '__main__':
-    find_all()
-    # css()
-    # tencent()
+# if __name__ == '__main__':
+#     find_all()
+#     # css()
+#     # tencent()
