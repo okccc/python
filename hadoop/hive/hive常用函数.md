@@ -59,8 +59,7 @@ hive> select str_to_map('-','&','=');
 - nvl  
 说明：如果value1值为空,默认返回value2(注意：value1和value2必须是同一种数据类型)  
 举例：  
-hive> select nvl(null,'--') from test;  
---  
+hive> select nvl('-','') from test;  
 - instr  
 hive> select instr('abcde','c') from test;  
 3  

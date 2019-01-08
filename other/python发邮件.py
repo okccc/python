@@ -11,6 +11,7 @@ IMAP则会反馈到邮箱服务器会做相应的操作
 import yagmail
 import pymysql
 
+
 def send_mail(table_name):
     """
     参考文档：https://www.cnblogs.com/fnng/p/7967213.html
@@ -28,11 +29,11 @@ def send_mail(table_name):
     # 正文
     contents = "%s表新增字段!" % table_name
     # 附件
-    # files = "C://Users/chenqian/Desktop/高铁线路图.pdf"
+    files = "C://Users/chenqian/Desktop/高铁线路图.pdf"
 
     # 发送
-    # yag.send(to=to, subject=subject, contents=contents, attachments=files, cc=cc)
-    yag.send(to=to, subject=subject, contents=contents)
+    yag.send(to=to, subject=subject, contents=contents, attachments=files, cc=cc)
+
 
 def monitor_mysql():
     # 数据库配置信息

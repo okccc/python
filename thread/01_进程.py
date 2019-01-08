@@ -93,6 +93,7 @@ def read(q):
         else:
             break
 
+
 if __name__ == "__main__":
     # # 创建一个消息队列,指定最大消息数
     # q = Queue(3)
