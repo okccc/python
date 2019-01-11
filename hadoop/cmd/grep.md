@@ -34,6 +34,7 @@ find . -name filename                              --> 在当前目录及其子�
 find . -name "*.c"                                 --> 在当前目录及其子目录下查找扩展名为“c”的文件  
 - perm  
 find . -perm 755 –print                           --> 在当前目录下查找文件权限为755的文件  
+<font color=red>find / -type f -perm 755 -name 'cloudera*'         --> 查找根目录下cloudera相关可执行命令</font>
 - prune  
 find /apps -path "/apps/bin" -prune -o –print     --> 在/apps目录下查找文件且忽略/apps/bin目录  
 - user  
