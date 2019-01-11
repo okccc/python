@@ -5,7 +5,7 @@
 """
 
 
-def test01(name, gender=True):  # gender默认值True,调用函数时可以不写
+def test01(name, gender=True):
     """
     缺省参数: 当某个参数多数情况下都是固定值时就可以设置成缺省参数,比如列表的sort方法(默认升序,指定reverse=Ture才是降序)
     注意: 缺省参数要放在参数列表的末尾
@@ -13,15 +13,15 @@ def test01(name, gender=True):  # gender默认值True,调用函数时可以不�
     gender_value = "男生"
     if not gender:
         gender_value = "女生"
-    print("%s 是 %s" % (name, gender_value))
+    print("%s是%s" % (name, gender_value))
 
-test01("grubby")
-test01("moon", gender=False)
+test01("grubby")  # grubby是男生
+test01("moon", gender=False)  # moon是女生
 
 
 def test02(num, *args, **kwargs):
     """
-    多值参数: 函数要接受的参数个数或类型不确定时使用,*args表示接受元组,**kwargs表示接受字典
+    多值参数: 函数要接受的参数个数或类型不确定时使用,*args接收元组,**kwargs接收字典
     """
     print(num)  # 1
     print(args)  # (2, 3, 4)
@@ -48,6 +48,7 @@ def sum_num(n):
         return sum_num(n - 1) + n
 
 print(sum_num(100))  # 5050
+
 
 # 菲波那切数列
 def fibonacci(n):
@@ -103,8 +104,4 @@ print(result)
 
 def test():
     # 高阶函数：一个函数接收另一个函数作为参数
-    pass
-
-
-if __name__ == '__main__':
     pass
