@@ -60,48 +60,77 @@ def fibonacci(n):
 print(fibonacci(10))  # 55
 
 
-# 案例一: 列表中的字典排序
-def lambda01():
+def input01():
+    # input(): 键盘录入只能输入字符串,数字类型要用int,float等函数转换
+    price = float(input("请输入单价:"))
+    weight = int(input("请输入重量:"))
+    money = price * weight
+    print(money)
+
+
+def eval01():
+    # eval(): 可以将input输入的字符串当成有效表达式(取字符串里的内容)并返回计算结果
+    result = eval(input("输入算术题:"))
+    print(result)
+
+
+def id01():
+    # id(): 可以查看变量在内存中的地址值
+    num = 10
+    print("%d" % id(num))  # 1537823824 (%d以十进制输出结果)
+    print("%x" % id(num))  # 5ba95450 (%x以十六进制输出结果)
+
+
+def print01():
     """
-    匿名函数: 默认返回冒号后面的表达式运算结果,只能完成简单功能,复杂功能还是得def
-    参数: 表达式
-    格式: func = lambda x, y: x + y
-         func(x,y)
+    print(): 默认换行,在结尾添加end=""可以不换行接着输出
+    %表示格式化输出符: 当print函数输出的内容包含多种不同类型的变量,就要对变量进行格式化
+    %s:字符串  %d:整数  %f:小数  %%:输出%
     """
-    stu_list = [
-        {"name": "grubby", "age": 18},
-        {"name": "moon", "age": 19},
-        {"name": "fly", "age": 20}
-    ]
-    print(stu_list)
-    # stu_list.sort()  # TypeError: unorderable types: dict() < dict()因为列表里存的是字典数据,无法直接排序,可以指定key排序
-    stu_list.sort(key=lambda x: x["name"])
-    print(stu_list)  # [{'name': 'fly', 'age': 20}, {'name': 'grubby', 'age': 18}, {'name': 'moon', 'age': 19}]
-    stu_list.sort(key=lambda x: x["age"])
-    print(stu_list)  # [{'name': 'grubby', 'age': 18}, {'name': 'moon', 'age': 19}, {'name': 'fly', 'age': 20}]
 
-lambda01()
+    # 格式化输出字符串
+    name = "小花"
+    print("大家好我叫 %s" % name)  # 大家好我叫 小花
 
+    # 格式化输出整数(06控制长度,不满6位以0补全)
+    num = 19
+    print("我的学号是 %06d" % num)  # 我的学号是 000019
 
-# 案例二: 将匿名函数作为函数的参数传入
-def compute(a, b, func):
-    return func(a, b)
+    # 格式化输出小数(.2控制长度,小数点后面保留2位)
+    price = 4.5
+    weight = 5
+    money = price * weight
+    print("苹果单价 %.2f 元/斤,重量 %d 斤,总价 %.2f 元" % (price, weight, money))  # 多个变量放()用逗号隔开
 
-result = compute(11, 22, lambda x, y: x + y)
-print(result)  # 33
-result = compute(11, 22, lambda x, y: x - y)
-print(result)  # -11
-result = compute(11, 22, lambda x, y: x * y)
-print(result)  # 242
-result = compute(11, 22, lambda x, y: x / y)
-print(result)  # 0.5
-
-# 改进版(上述代码中lambda表达式仍然是写死的,python是动态语言,可以直到运行时才确定要干啥)
-func_new = eval(input("请输入匿名函数:"))
-result = compute(11, 22, func_new)
-print(result)
+    # 格式化输出百分比
+    scale = 0.25
+    print("数据比例是 %.2f%%" % (scale * 100))
 
 
-def test():
-    # 高阶函数：一个函数接收另一个函数作为参数
-    pass
+def high_order():
+    """
+    高阶函数：一个函数接收另一个函数作为参数
+    map(function, sequence)：对sequence中的item依次执行function后将结果组成迭代器返回
+    reduce(function, sequence[, initial])：先对sequence中前两个item执行function得到的结果再与下一个item执行function如此迭代,如果有initial则作为初始值调用
+    filter(function, sequence)：对sequence中的item依次执行function后将结果值返回True的组成迭代器返回
+    """
+    from functools import reduce
+
+    res1 = list(map(lambda x: x * x, [1, 2, 3]))  # [1, 4, 9]
+    print(res1)
+    res2 = reduce(lambda x, y: x + y, [1, 2, 3, 4])
+    print(res2)  # 10
+    res3 = reduce(lambda x, y: x * y, [1, 2, 3], 5)
+    print(res3)  # 30
+    res4 = reduce(lambda a, b: a if (a > b) else b, [23, 11, 59, 42, 100])
+    print(res4)  # 100
+    res5 = list(filter(lambda x: x % 2 == 0, [1, 2, 3, 4]))
+    print(res5)  # [2, 4]
+
+
+if __name__ == '__main__':
+    # input01()
+    # eval01()
+    # id01()
+    # print01()
+    high_order()
