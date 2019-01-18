@@ -164,8 +164,7 @@ set hive.enforce.bucketing = true;可以自动控制上一轮reduce的数量从�
 create table t2 like t1;  
 insert overwrite table t2 select distinct * from t1;
 ## hive表join操作 
-![](../images/join.png)   
-
+![](images/join.png)  
 - 内连接：基于on语句,返回表1和表2符合链接条件的数据  
 select * from a join b on(a.id = b.id);  
 3   c   1   1   xxx 2  

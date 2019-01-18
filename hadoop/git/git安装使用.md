@@ -10,13 +10,16 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - 初始化仓库：git init
 - 将工作区文件(夹)添加到暂存区：git add aaa.txt 或者 git add . 
 - 查看工作区/暂存区/仓储区文件的状态：git status  
-![](images/git/00_工作区和版本库.png)  
+![](images/00_工作区和版本库.png)  
 - 将暂存区文件提交到版本库形成版本记录：git commit -m '...'(注意：git只会提交暂存区的修改来创建版本,工作区的修改必须先添加到暂存区)  
 - 如果是已经在track的文件可以不用添加直接提交：git commit -am 'all message ...'
 - 查看版本记录：git log 或者 git log --pretty=oneline aaa.txt
 - 配置别名：git config --global alias.lg 'log --graph --pretty=oneline --abbrev-commit'
 - 删除别名：git config --global --unset alias.lg
 - 查看操作记录：git reflog
+- 查看最新提交的更新：git show  
+查看指定提交的更新：git show commitid  
+查看指定提交指定文件的更新：git show commitid filename
 - 版本回退(慎用!)：git reset 38fd442 或者 git reset HEAD^/HEAD~1/HEAD~10(HEAD是指向当前版本的指针默认指向master分支)
 - 撤销修改/删除  
 场景1：只修改/删除了工作区文件,直接丢弃改动：git checkout -- aaa.txt  (git checkout本质上是用版本库的版本替换工作区的版本)  
@@ -59,12 +62,12 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - 删除远程标签：git tag -d v0.1 & git push origin :refs/tags/v0.1
 ## github
 - 在本地生成ssh秘钥: ssh-keygen -t rsa -C "company/personal"  
-![](images/git/01_ssh生成秘钥.png)
+![](images/01_ssh生成秘钥.png)
 - 私钥保留,将公钥复制到gitlab账号  
-![](images/git/02_复制公钥到github.png) 
+![](images/02_复制公钥到github.png) 
 - 测试是否成功连接：ssh -T git@github.com 
 - github创建新工程
-![](images/git/03_github创建新工程.png)
+![](images/03_github创建新工程.png)
 #### git fetch
 - git fetch <远程主机名> <远程分支名>:<本地分支名>  取回远程主机指定分支的更新到本地,不加分支名表示取回所有分支的更新
 - git fetch origin master：取回origin主机的master分支的更新到本地
@@ -80,8 +83,7 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 如果当前就是master分支可以省略本地分支名：git pull origin master  
 如果当前分支与远程分支已经存在追踪关系可以省略分支名：git pull origin  
 如果当前分支只有一个追踪分支主机名都可以省略：git pull
-- git branch --set-upstream master origin/master：建立本地分支和远程分支的追踪关系
-- git pull == git fetch & git merge --no-ff origin/master 
+- git pull 相当于 git fetch & git merge --no-ff origin/master 
 #### git push
 - git push <远程主机名> <本地分支名>:<远程分支名>  将本地分支的更新推送到远程主机  
 注意：分支推拉顺序是<来源地>:<目的地>,所以git pull是远程分支在前而git push是本地分支在前
@@ -98,8 +100,9 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 查看远程主机地址：git remote -v  
 查看远程主机详细信息：git remote show <主机名>  
 第一次推送本地master分支到远程：git push -u origin master(-u指定origin为默认主机,以后再推送就直接git push)  
-- 切换远程库：git remote rm <主机名> (删除关联的远程主机) & git remote add <主机名> <url地址> (添加新的远程主机)
-![](images/git/04_git操作流程.png)
+- 切换远程库：git remote rm <主机名> (删除关联的远程主机) & git remote add <主机名> <url地址> (添加新的远程主机)  
+建立远程/本地分支的追踪关系：git branch --set-upstream-to=origin/master master
+![](images/04_git操作流程.png)
 #### 多人协作流程
 - 多台电脑操作同一个github账号时,要在各自电脑ssh-keygen,user.name和user.email可以相同也可以不同
 - 甲创建远程origin的dev分支到本地：git checkout -b dev origin/dev
@@ -115,8 +118,8 @@ git merge origin/master：在本地分支合并远程分支 所取回的更新�
 - git pull origin/master：从远程获取最新代码并直接merge到本地(不安全因为看不到更新情况)
 - 将分叉的提交历史整理成一条直线：git rebase
 #### pycharm拉代码
-![](images/git/04_pycharm从gitlab拉代码(ssh).png)
-![](images/git/05_pycharm从gitlab拉代码(http).png)
+![](images/05_pycharm从gitlab拉代码(ssh).png)
+![](images/06_pycharm从gitlab拉代码(http).png)
 
 
 

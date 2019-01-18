@@ -15,49 +15,21 @@ def test01(name, gender=True):
         gender_value = "女生"
     print("%s是%s" % (name, gender_value))
 
-test01("grubby")  # grubby是男生
-test01("moon", gender=False)  # moon是女生
 
-
-def test02(num, *args, **kwargs):
-    """
-    多值参数: 函数要接受的参数个数或类型不确定时使用,*args接收元组,**kwargs接收字典
-    """
-    print(num)  # 1
-    print(args)  # (2, 3, 4)
-    print(kwargs)  # {'age': 18, 'name': 'grubby'}
-
-test02(1, 2, 3, 4, name="grubby", age=18)
-
-
-def test03(*args, **kwargs):
-    print(args)  # (1, 2, 3)
-    print(kwargs)  # {'age': 19, 'name': 'grubby'}
-
-# 元组和字典的拆包(简化变量传递)
-gl_tuple = (1, 2, 3)
-gl_dict = {"name": "grubby", "age": 19}
-test03(*gl_tuple, **gl_dict)  # 要在元组和字典前面加上*/**标识,不然都会当成第一个参数传入(注意看参数高亮提示)
-
-
-# 累加案例
-def sum_num(n):
+def cumulate(n):
+    # 累加案例
     if n == 1:
         return 1
     else:
-        return sum_num(n - 1) + n
-
-print(sum_num(100))  # 5050
+        return cumulate(n - 1) + n
 
 
-# 菲波那切数列
 def fibonacci(n):
+    # 菲波那切数列
     if n == 1 or n == 2:
         return 1
     else:
         return fibonacci(n-1) + fibonacci(n-2)
-
-print(fibonacci(10))  # 55
 
 
 def input01():
