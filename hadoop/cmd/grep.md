@@ -1,23 +1,23 @@
 ## grep
 grep(global search re print)：基于行的文本搜索工具  
-格式: grep <font color=red>[-cinvABC]</font> 'keyword' file  
-grep error mysql.log --color   高亮显示关键字  
-grep error mysql.log --color -A 10 -B 10  高亮显示关键字所在行的前10行和后10行  
--c ：打印符合要求的行数  
+格式: grep -option 'keyword' file  
+-c ：统计符合要求的行数  
 -i ：忽略大小写  
--n ：在输出符合要求的行的同时连同行号一起输出  
--v ：排除不符合要求的行  
--A ：后跟一个数字,例如 –A2 则表示打印符合要求的行及下面两行
--B ：后跟一个数字,例如 –B2 则表示打印符合要求的行及上面两行
--C ：后跟一个数字,例如 –C2 则表示打印符合要求的行及上下各两行
-过滤出包含数字的行：grep [0-9] test.txt  
-过滤出包含数字和字符的行：grep [0-9a-zA-Z] test.txt  
-过滤出不包含数字的行：grep -v [0-9] test.txt  
-过滤出不包含某个字符的行：grep '[^r]' test.txt  
-过滤出以export开头的行：grep '^export' test.txt  
-过滤出以bin结尾的行：grep 'bin$' test.txt  
-过滤出非空行：grep -v '^$' test.txt    ('^$'表示空行)  
-grep 'mysql' ./*.sh：查看当前目录下包含mysql的脚本
+-n ：输出时带上行号  
+-v ：选取不符合要求的行  
+-A ：后跟一个数字,例如 –A2 则表示打印符合要求的行及下面两行  
+-B ：后跟一个数字,例如 –B2 则表示打印符合要求的行及上面两行  
+-C ：后跟一个数字,例如 –C2 则表示打印符合要求的行及上下各两行  
+选取包含数字的行：grep -n [0-9] test.txt  
+选取不包含数字的行：grep -nv [0-9] test.txt  
+选取包含数字和字符的行：grep [0-9a-zA-Z] test.txt  
+选取不包含某个字符的行：grep '[^r]' test.txt  
+选取以import开头的行：grep '^import' test.txt  
+选取以bin结尾的行：grep 'bin$' test.txt  
+选取非空行：grep -v '^$' test.txt    
+grep 'mysql' ./*.sh：查看当前目录下包含mysql的脚本选取
+grep error mysql.log --color：高亮显示关键字  
+grep error mysql.log --color -A 10 -B 10：高亮显示关键字所在行的前10行和后10行  
 
 ## find 
 find：在指定目录下按匹配规则查找文件(夹)  
