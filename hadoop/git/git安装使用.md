@@ -17,7 +17,7 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - 配置别名：git config --global alias.lg 'log --graph --pretty=oneline --abbrev-commit'
 - 删除别名：git config --global --unset alias.lg
 - 查看操作记录：git reflog
-- 查看最新提交的更新：git show  
+- 查看最新提交的更新：git show/git last  
 查看指定提交的更新：git show commitid  
 查看指定提交指定文件的更新：git show commitid filename
 - 版本回退(慎用!)：git reset 38fd442 或者 git reset HEAD^/HEAD~1/HEAD~10(HEAD是指向当前版本的指针默认指向master分支)

@@ -56,4 +56,4 @@ echo this is a test line|sed 's/\w\\+/{&}/g'：将选中的单词两边加上大
 sed 's/(.)line$/\1/g' file：匹配以line结尾的行line前面的部分  
 sed 's/(.)is(.)line/\1\2/g' file：匹配is前面和line前面的部分  
 echo this is digit 7 in a number|sed 's/digit\([0-9]\)/\1/'：this is 7 in a number  
-echo aaa BBB|sed 's/\([a-z]\+\) \([A-Z]\+\)/\2\1/'：BBB aaa  
+echo aaa BBB|sed 's/\([a-z]\+\) \([A-Z]\+\)/\2\1/'：交换子串顺序  // BBB aaa  

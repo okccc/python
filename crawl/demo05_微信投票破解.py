@@ -31,7 +31,7 @@ def vote():
 
 def like():
     """
-    需求：给微信公众号评论点赞(暂时没搞定)
+    需求：给微信公众号评论点赞(暂未搞定)
     分析：手机fiddler抓包获取url、User-Agent、Cookie信息
     报错：No connection adapters were found for '%s'" % url --> 是因为url被二次编码了,注意那些带有%的字符
     常用url编码表

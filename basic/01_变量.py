@@ -13,7 +13,7 @@ builtins: python内置的,与之对应的是像os、random这些要导入的模�
 """
 
 
-def hash():
+def hash01():
     # 判断对象是否可哈希
     print(int.__hash__)  # <slot wrapper '__hash__' of 'int' objects>
     print(str.__hash__)  # <slot wrapper '__hash__' of 'str' objects>
@@ -63,3 +63,7 @@ def variable():
             province = each
             print(province)  # 江苏 安徽 上海
         # print(province)  # 江苏 江苏 安徽 安徽 上海
+
+
+if __name__ == '__main__':
+    variable()
