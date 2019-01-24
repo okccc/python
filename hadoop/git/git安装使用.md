@@ -31,7 +31,7 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - 删除文件(夹),本地和远程都删除：git rm -r .idea & git commit -am 'delete...' & git push
 - 删除已经托管到github的文件(夹),本地保留：添加.idea/到.gitignore & git rm -r --cached .idea/ & git commit -am 'delete...' & git push
 ## branch
-- 查看当前分支：git branch 
+- 查看当前分支：git branch
 - 查看远程/所有分支：git branch -r/-a
 - 创建分支：git branch dev
 - 切换分支：git checkout dev
@@ -120,8 +120,3 @@ git merge origin/master：在本地分支合并远程分支 所取回的更新�
 #### pycharm拉代码
 ![](images/05_pycharm从gitlab拉代码(ssh).png)
 ![](images/06_pycharm从gitlab拉代码(http).png)
-
-
-
-  
-

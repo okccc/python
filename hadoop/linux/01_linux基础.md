@@ -36,6 +36,7 @@ more：显示内容超过一个屏幕：空格翻页,回车下一行,q退出
 less：和more类似,并且可以用j向下移,k向上移  
 more或less状态下,/word 向下搜索,?word向上搜索,多个word用n显示下一个
 head/tail a.txt：显示文件前/后10行  
+head -100 a.txt|tail -10 >> a.log：提取日志文件的
 tail -f catalina.log：动态显示文件后10行  
 wc a.txt：显示3个数字分别是行数、单词数、字符数  
 ls | wc -l：查看某个目录下有多少文件  
@@ -62,8 +63,8 @@ sh -x test.sh：执行shell脚本时,启动跟踪模式
 - stat  
 文件的3个时间戳  
 Access time(atime)：读取操作 cat、cp、grep、sed、more、less、tail、head 会改变此时间  
-Modify time(mtime)：修改操作 vim、ll 会改变此时间    
-Change time(ctime)：修改文件属性或位置 chmod、chown、mv 会改变此时间      
+Modify time(mtime)：修改操作 vim、ll 会改变此时间  
+Change time(ctime)：修改文件属性或位置 chmod、chown、mv 会改变此时间  
  
 - 进程相关  
 nohup ./aaa.sh &: 将该脚本放在后台执行,即使关闭当前终端也能继续运行  
