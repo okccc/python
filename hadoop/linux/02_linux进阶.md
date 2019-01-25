@@ -33,8 +33,8 @@ cat /etc/passwd|sort -t: -k7 -u|head -5：先将数据以冒号分隔,然后按�
 -i：忽略大小写  
 -c：计数  
 -u：只显示不重复的行  
-cat words|sort|uniq -c：排序后删除重复行并计数  
-cat words|sort|uniq -u：排序后仅显示不重复的行  
+<font color=red>cat access.log|sort|uniq -c：排序后删除重复行并计数</font>  
+cat access.log|sort|uniq -u：排序后仅显示不重复的行  
 - 使用案例  
 cat access.log|awk '{print $8}'|sort|uniq -c|sort -nr：网站状态码统计  
 cat access.log|grep "21/Jan/2019"|awk '{print $5}'|sort|uniq -c|sort -nr：查看一天内ip访问数  

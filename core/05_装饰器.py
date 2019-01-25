@@ -1,23 +1,20 @@
 # coding=utf-8
 """
-开闭原则: 已经实现的功能代码不要修改,可以扩展
-   封闭: 已经实现的功能代码
-   开放: 开发扩展功能
-装饰器(decorator): 用来装饰函数,可以扩展函数功能,函数有多个装饰器时要注意执行流程(装饰时由内往外,调用时由外往内)
-            格式: f = deco(f) --->用函数本身接收装饰后的函数
-            注意: f表示这是一个函数,f()表示调用这个函数
+开闭原则：已经实现的功能代码不要修改,可以扩展;即开放扩展功能封闭已实现功能代码
+装饰器(decorator)：用来装饰函数,可以扩展函数功能,函数有多个装饰器时要注意执行流程(装饰时由内往外,调用时由外往内)
+格式: @deco 等价于 f = deco(f) --->用函数本身接收装饰后的函数
 """
 
 
 # 1、装饰器装饰不带参函数
-def deco1(func):
+def deco01(func):
     print("---正在装饰1---")
     def inner():
         print("---正在验证权限1---")
         func()
     return inner
 
-def deco2(func):
+def deco02(func):
     print("---正在装饰2---")
     def inner():
         print("---正在验证权限2---")
@@ -25,25 +22,23 @@ def deco2(func):
     return inner
 
 # @函数名是python语法糖,只要解释器执行到这里,就会自动装饰,而不用等到调用函数的时候
-@deco1  # 等价于 f1 = deco1(f1)
-@deco2  # 等价于 f1 = deco2(f1)
+@deco01  # 等价于 f1 = deco01(f1)
+@deco02  # 等价于 f1 = deco02(f1)
 def f1():
     print("hello python")
-
-# f1 = deco1(f1)
 f1()
 
 print("=" * 50)
 
-# 2、装饰器装饰带参函数(内部函数和指向被装饰函数的函数都要跟随被装饰函数一样带参数)
-def deco3(func):
+# 2、装饰器装饰带参函数(内部函数inner和指向被装饰函数的函数func都要跟随被装饰函数f2一样带参数)
+def deco03(func):
     print("---正在装饰3---")
-    def inner(*args, **kwargs):  # 此处不定义参数61行会报错,可以用不定长参数接收,防止被装饰函数参数个数不一样
+    def inner(*args, **kwargs):  # 此处也要定义参数
         print("---正在验证权限3---")
         func(*args, **kwargs)  # 此处要拆包
     return inner
 
-@deco3  # f2 = deco3(f2)
+@deco03  # f2 = deco03(f2)
 def f2(a, b):
     print("a=%d;b=%d" % (a, b))
 
@@ -52,7 +47,7 @@ f2(10, 20)
 print("=" * 50)
 
 # 3、装饰器装饰有返回值函数(指向被装饰函数的函数要接收返回值,并将返回值作为内部函数的结果返回给被装饰函数)
-def deco4(func):
+def deco04(func):
     print("---正在装饰4---")
     def inner():
         print("---正在验证权限4---")
@@ -60,7 +55,7 @@ def deco4(func):
         return ret  # 将lol返回给83行的调用
     return inner
 
-@deco4  # f3 = deco4(f3)
+@deco04  # f3 = deco04(f3)
 def f3():
     return "lol"
 
@@ -70,7 +65,7 @@ print("the return value is %s" % res)
 print("=" * 50)
 
 # 4、通用装饰器(不管有没有参数和返回值)
-def deco(func):
+def deco0(func):
     print("---正在装饰---")
     def inner(*args, **kwargs):
         print("---正在验证权限---")
@@ -79,8 +74,8 @@ def deco(func):
     return inner
 
 # 5、带参数的装饰器(在装饰不同函数时能起到不同作用)
-def deco5_arg(arg):
-    def deco5(func):
+def deco05_arg(arg):
+    def deco05(func):
         print("---正在装饰---")
         def inner():
             print("---正在验证权限---")
@@ -90,15 +85,15 @@ def deco5_arg(arg):
                 func()
                 func()
         return inner
-    return deco5
+    return deco05
 
-# 1、先执行deco5_arg("**")函数,返回值是deco5这个函数的引用
-# 2、再用@deco5对被装饰函数进行装饰
-@deco5_arg("grubby")  # f4 = deco5_arg(f4)
+# 1、先执行deco05_arg("**")函数,返回值是deco05这个函数的引用
+# 2、再用@deco05对被装饰函数进行装饰
+@deco05_arg("grubby")  # f4 = deco05_arg(f4)
 def f4():
     print("---f4---")
 
-@deco5_arg("moon")  # f5 = deco5_arg(f5)
+@deco05_arg("moon")  # f5 = deco05_arg(f5)
 def f5():
     print("---f5---")
 

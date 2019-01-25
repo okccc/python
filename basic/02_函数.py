@@ -89,9 +89,10 @@ def high_order():
     """
     from functools import reduce
 
-    res1 = list(map(lambda x: x * x, [1, 2, 3]))  # [1, 4, 9]
-    print(res1)
+    res1 = list(map(lambda x: x * x, [1, 2, 3]))
+    print(res1)  # [1, 4, 9]
     res2 = reduce(lambda x, y: x + y, [1, 2, 3, 4])
+    print(type(res2))
     print(res2)  # 10
     res3 = reduce(lambda x, y: x * y, [1, 2, 3], 5)
     print(res3)  # 30
