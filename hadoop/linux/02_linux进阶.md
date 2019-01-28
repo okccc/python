@@ -33,7 +33,7 @@ cat /etc/passwd|sort -t: -k7 -u|head -5：先将数据以冒号分隔,然后按�
 -i：忽略大小写  
 -c：计数  
 -u：只显示不重复的行  
-<font color=red>cat access.log|sort|uniq -c：排序后删除重复行并计数</font>  
+cat access.log|sort|uniq -c：排序后删除重复行并计数  
 cat access.log|sort|uniq -u：排序后仅显示不重复的行  
 - 使用案例  
 cat access.log|awk '{print $8}'|sort|uniq -c|sort -nr：网站状态码统计  
@@ -59,6 +59,7 @@ grep '^import' test.txt: 选取以import开头的行
 grep 'bin$' test.txt：选取以bin结尾的行  
 grep -v '^$' test.txt：选取非空行  
 grep 'mysql' ./*.sh：查看当前目录下包含mysql的脚本  
+<font color=red>grep 'debit_order' *.sql|awk -F: '{print $1}'|uniq -c|sort -nr</font>：查找当前目录下用到debit_order表的sql文件并统计使用次数  
 grep error mysql.log --color -A 10 -B 10：高亮显示关键字所在行的前10行和后10行  
 grep -wf/-vwf a.log b.log：输出两个文件相同/不同的内容  
 ## find
