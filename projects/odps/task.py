@@ -1,9 +1,7 @@
 # coding=utf-8
 import sys
 import argparse
-from odps import parse
-from odps import transform
-from odps import insert
+from projects.odps import parse, insert, transform
 
 
 def main():

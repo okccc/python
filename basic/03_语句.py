@@ -63,6 +63,29 @@ def while01():
         row += 1
 
 
+def exception01():
+    # 异常处理
+    try:
+        # 尝试执行的代码
+        num = int(input("输入整数:"))
+        result = 1 / num
+        print(result)
+    except ZeroDivisionError:
+        # 捕获已知异常
+        print("已知错误: division by zero")
+    except Exception as result:
+        # 捕获未知异常
+        print("未知错误: %s" % result)
+        # 不做处理只抛出异常
+        raise
+    else:
+        # 没有异常才会执行的代码
+        print("代码ok没有问题！")
+    finally:
+        # 最终一定会执行的代码
+        print("=" * 50)
+
+
 """
 with语句: 只适用于以下支持上下文管理协议(context management protocol)的对象
 file

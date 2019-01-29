@@ -30,8 +30,8 @@ class Single(object):
 
 
 s1 = Single("grubby")
-print(id(s1))
-print(s1.name)
+print(id(s1))  # 2971780684936
+print(s1.name)  # grubby
 s2 = Single("moon")
-print(id(s2))
-print(s2.name)
+print(id(s2))  # 2971780684936
+print(s2.name)  # grubby
