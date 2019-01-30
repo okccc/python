@@ -6,10 +6,10 @@ python六大数据类型:
    注意: 变量的CUD操作改变的是list/dict的内容,而list/dict在内存中引用的地址值并不变,重新赋值才会改变变量在内存中引用的地址值
 
 LEGB规则: python使用LEGB的顺序来查找符号对应的对象
-locals: 局部变量
+local: 局部变量
 enclosing: 外部嵌套函数(闭包中常见)
-globals: 全局变量
-builtins: python内置的,与之对应的是像os、random这些要导入的模块
+global: 全局变量,当函数修改全局变量时,如果变量指向的内存地址发生变化(重新赋值)要加global,内存地址不变(list.append())不用加global
+builtins: python内置
 """
 
 
