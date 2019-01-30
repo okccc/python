@@ -13,10 +13,10 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 ![](images/00_工作区和版本库.png)  
 - 将暂存区文件提交到版本库形成版本记录：git commit -m '...'(注意：git只会提交暂存区的修改来创建版本,工作区的修改必须先添加到暂存区)  
 - 如果是已经在track的文件可以不用添加直接提交：git commit -am 'all message ...'
-- 查看版本记录：git log 或者 git log --pretty=oneline aaa.txt
+- 查看版本提交记录(commit)：git log
+- 查看操作记录(commit/reset/pull/merge...)：git reflog
 - 配置别名：git config --global alias.lg 'log --graph --pretty=oneline --abbrev-commit'
 - 删除别名：git config --global --unset alias.lg
-- 查看操作记录：git reflog
 - 查看最新提交的更新：git show/git last  
 查看指定提交的更新：git show commitid  
 查看指定提交指定文件的更新：git show commitid filename
