@@ -74,7 +74,7 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - git log -p master..origin/master：对比本地master分支和origin/master分支的补丁(-p是-patch缩写,补丁/修补的意思) 
 - git merge origin/master：将origin/master分支合并到当前分支
 - git fetch origin master:tmp(将远程master分支下载到本地tmp分支) & git diff tmp & git merge tmp & git branch -d tmp
-- git status对比的是本地master分支(refs/heads/master)和origin/master分支的本地分支(refs/remotes/origin/master)  
+- <font color=red>git status对比的是本地master分支(refs/heads/master)和origin/master分支的本地分支(refs/remotes/origin/master)</font>  
 本地分支commit时refs/heads/master就会随着更新,而refs/remotes/origin/master只有在fetch/pull/push时才会更新,所以本地master分支commit后会提示ahead  
 而当别人更新了远程origin/master后由于本地origin/master还未同步所以显示的是up to date,必须先fetch/pull之后本地origin/master更新了才会提示behind
 #### git pull
