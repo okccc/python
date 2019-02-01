@@ -79,8 +79,56 @@ def main03():
     print("---end---")
 
 
+def copy(file, path1, path2, queue):
+    # print("当前正在%s--->%s拷贝文件：%s" % (path1, path2, file))
+    # 将一个文件从旧目录拷贝到新目录
+    with open(path1 + "/" + file, "rb") as f1:
+        with open(path2 + "/" + file, "wb") as f2:
+            f2.write(f1.read())
+    queue.put(file)
+
+def main04():
+    """
+    需求：拷贝文件夹下的所有文件并显示进度
+    分析：1.拷贝一个文件容易,很多文件属于多任务可以考虑使用进程池
+         2.没拷贝一个文件可以向队列里写点啥,进度条=队列长度/文件数
+    """
+
+    # 1.获取原文件夹
+    path_old = "D://BaiduNetdiskDownload/02 多任务/02-进程"
+    # 2.创建新文件夹
+    try:
+        # 当文件已存在会报错：给可能出异常的代码块添加try
+        path_new = path_old + "【备份】"
+        os.mkdir(path_new)
+    except:
+        # except：可以打印异常,也可以pass不做处理
+        pass
+    # 3.遍历原文件夹获取所有文件
+    files = os.listdir(path_old)
+    count = len(files)
+    # 4.创建进程池
+    pool = multiprocessing.Pool()
+    # 5.创建队列(问题：为什么此处不用Manager()不行?)
+    queue = multiprocessing.Manager().Queue()
+    # 6.往进程池中添加任务
+    for file in files:
+        pool.apply_async(copy, args=(file, path_old, path_new, queue))
+    pool.close()
+    # pool.join()
+    # 在主进程计算进度条
+    num = 0
+    while True:
+        filename = queue.get()
+        # print("正在拷贝文件%s" % filename)
+        num += 1
+        print("\r当前拷贝进度%.2f %%" % (num*100/count), end="")
+        if num == count:
+            break
+
 
 if __name__ == "__main__":
     # main01()
     # main02()
-    main03()
+    # main03()
+    main04()
