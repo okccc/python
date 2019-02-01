@@ -1,6 +1,7 @@
 import threading
 import time
 
+
 def test():
     L = ["aa", "bb", "cc"]
     for i in L:
@@ -24,6 +25,7 @@ def test02():
         time.sleep(0.5)
 
 def main01():
+    # 使用线程实现多任务
     # 线程执行没有顺序,主线程和子线程都在往下执行,谁抢到资源谁运行,可以通过sleep()控制线程执行顺序
     # 调用Thread()创建实例对象,一个实例对象只能创建一个线程,一个线程只能开启一次
     t1 = threading.Thread(target=test01)
