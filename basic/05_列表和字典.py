@@ -23,7 +23,7 @@ def tuple01():
     # 元组和列表相互转换
     num_list = [1, 2, 3, 4]
     print(type(num_list))
-    num_tuple = tuple(num_list)  # tuple()将列表转换成元组、list()将元组转换成列表
+    num_tuple = tuple(num_list)  # tuple()/list()转换数据类型的时候其实也用到了迭代器,先生成新的空元组/列表再往里面append值
     print(type(num_tuple))
 
 
@@ -119,7 +119,7 @@ def list03():
     """
     range()使用风险:
     python2的range(a,b)返回的是包含所有值的list,如果list足够长会占用大量内存空间,可能会MemoryError
-    python3的range(a,b)返回的不是list,只有循环才会返回所有值,不存在该问题
+    python3的range(a,b)返回的不是list而是迭代器,相当于python2的xrange()
     """
     a = [i for i in range(1, 10)]  # for语句控制循环次数,每循环一次都会执行i
     print(a)  # [1, 2, 3, 4, 5, 6, 7, 8, 9]
