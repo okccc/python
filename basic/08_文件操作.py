@@ -31,16 +31,16 @@ os.path.join(os.getcwd(), "images"): 拼接路径
 import os
 
 
-def digui(path, suffix):
+def recursive(path, suffix):
     # 递归操作
     files = os.listdir(path)
     for file in files:
         if os.path.isfile(path + file):
             if file.endswith(suffix):
-                file_new = file.replace("龙天论坛", "")
+                file_new = file.replace("jpg", "png")
                 os.rename(path + file, path + file_new)
         else:
-            digui(path + file + "/", suffix)
+            recursive(path + file + "/", suffix)
 
 
 def test01():
@@ -74,7 +74,7 @@ def test03():
 
 
 if __name__ == "__main__":
-    # digui("D://学习资料/python数据分析与机器学习实战/python数据分析与机器学习实战/", ".flv")
+    recursive("D://PycharmProjects/python/", ".jpg")
     # test01()
-    test02()
+    # test02()
     # test03()
