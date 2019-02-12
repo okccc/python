@@ -1,34 +1,35 @@
 # coding=utf-8
 """
-可迭代对象(Iterable)：可以作用于for循环的对象,可用isinstance(**, Iterable)判断
-迭代器(Iterator)：可以不断调用next()返回下一个值的对象,可用isinstance(**, Iterator)判断
+可迭代对象(Iterable)：包含iter()方法,可以作用于for循环的对象,可用isinstance(**, Iterable)判断
+迭代器(Iterator)：包含iter()和next()方法,可用isinstance(**, Iterator)判断
 iter()函数：'',(),[]等都是Iterable,但不是Iterator,iter()可以将Iterable变成Iterator,生成器一定是迭代器
-
-生成器(generator)：加了yield的函数不再是普通函数,调用该函数不会立即执行而是返回一个生成器,可以不断调用next()获取下一个值
+生成器(generator)：使用yield关键字的函数不再是普通函数,调用该函数不会立即执行而是创建一个生成器对象,调用next()时运行
 yield作用：中断函数并返回后面的值,然后在下一次执行next()方法时从当前位置继续运行
+优点：列表是先生成再调用,迭代器和生成器不保存数据而是保存数据的生成方式,调用时才生成,极大地节省内存空间
 """
 
 from collections import Iterable
 from collections import Iterator
 import sys
+import time
 
 
 def iterator():
-    # 判断是否是可迭代对象
+    # isinstance()判断是否是可迭代对象
     print(isinstance(100, Iterable))  # False
     print(isinstance('abc', Iterable))  # True
     print(isinstance((), Iterable))  # True
     print(isinstance([], Iterable))  # True
     print(isinstance({}, Iterable))  # True
     print(isinstance((i for i in range(1, 10)), Iterable))  # True
-    # 判断是否是迭代器
+    # isinstance()判断是否是迭代器
     print(isinstance(100, Iterator))  # False
     print(isinstance('abc', Iterator))  # False
     print(isinstance((), Iterator))  # False
     print(isinstance([], Iterator))  # False
     print(isinstance({}, Iterator))  # False
     print(isinstance((i for i in range(1, 10)), Iterator))  # True
-    # 将可迭代对象变成迭代器,通过next()不断调用
+    # iter()方法将可迭代对象变成迭代器通过next()不断调用取值,迭代器就是有返回值的可迭代对象
     L = [11, 22, 33]
     I = iter(L)
     print(I)  # <list_iterator object at 0x0000020B96AFD198>
@@ -55,28 +56,25 @@ print(isinstance(f, Iterator))  # True --> 说明生成器也是迭代器
 
 
 """
-多任务: yield可以切换多个任务同时执行
+yield可以实现多任务(协程)
 """
 def test1():
-    count = 0
-    while count < 5:
-        count += 1
-        yield count
+    while True:
+        print("---1---")
+        time.sleep(0.5)
+        yield
 
 def test2():
-    count = 5
-    while count > 0:
-        count -= 1
-        yield count
+    while True:
+        print("---2---")
+        time.sleep(0.5)
+        yield
 
 t1 = test1()
 t2 = test2()
 print(t1)  # <generator object test1 at 0x000001BF7FA01048>
 print(t2)  # <generator object test2 at 0x000001BF7FA016D0>
 while True:
-    try:
-        print(next(t1))
-        print(next(t2))
-    except StopIteration:
-        sys.exit()
+    next(t1)
+    next(t2)
 
