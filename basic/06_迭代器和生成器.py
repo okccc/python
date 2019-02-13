@@ -1,7 +1,7 @@
 # coding=utf-8
 """
-可迭代对象(Iterable)：包含iter()方法,可以作用于for循环的对象,可用isinstance(**, Iterable)判断
-迭代器(Iterator)：包含iter()和next()方法,可用isinstance(**, Iterator)判断
+可迭代对象(Iterable)：可以作用于for循环的对象,包含iter()方法,可用isinstance(**, Iterable)判断
+迭代器(Iterator)：有返回值的可迭代对象,包含iter()和next()方法,可用isinstance(**, Iterator)判断
 iter()函数：'',(),[]等都是Iterable,但不是Iterator,iter()可以将Iterable变成Iterator,生成器一定是迭代器
 生成器(generator)：使用yield关键字的函数不再是普通函数,调用该函数不会立即执行而是创建一个生成器对象,调用next()时运行
 yield作用：中断函数并返回后面的值,然后在下一次执行next()方法时从当前位置继续运行
@@ -11,7 +11,6 @@ yield作用：中断函数并返回后面的值,然后在下一次执行next()�
 from collections import Iterable
 from collections import Iterator
 import sys
-import time
 
 
 def iterator():
@@ -48,33 +47,12 @@ def fibonacci(n):
 f = fibonacci(10)
 print(f)  # <generator object fibonacci at 0x0000023738144308>
 print(isinstance(f, Iterator))  # True --> 说明生成器也是迭代器
-# while True:
-#     try:
-#         print(next(f), end=" ")  # 1 1 2 3 5 8 13 21 34 55
-#     except StopIteration:  # StopIteration异常用于标识迭代的完成,防止出现无限循环的情况
-#         sys.exit()  # 退出python解释器,后续代码不会再执行
-
-
-"""
-yield可以实现多任务(协程)
-"""
-def test1():
-    while True:
-        print("---1---")
-        time.sleep(0.5)
-        yield
-
-def test2():
-    while True:
-        print("---2---")
-        time.sleep(0.5)
-        yield
-
-t1 = test1()
-t2 = test2()
-print(t1)  # <generator object test1 at 0x000001BF7FA01048>
-print(t2)  # <generator object test2 at 0x000001BF7FA016D0>
 while True:
-    next(t1)
-    next(t2)
+    try:
+        print(next(f), end=" ")  # 1 1 2 3 5 8 13 21 34 55
+    except StopIteration:  # StopIteration异常用于标识迭代的完成,防止出现无限循环的情况
+        sys.exit()  # 退出python解释器,后续代码不会再执行
+
+
+
 

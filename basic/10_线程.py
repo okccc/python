@@ -25,13 +25,7 @@ def test02():
         time.sleep(1)
 
 def main01():
-    """
-    使用线程实现多任务:
-    并行：cpu核数 > 任务数,是真的多任务
-    并发：cpu核数 < 任务数,是假的多任务,只是占用cpu的程序切换速度足够快感觉上是多任务
-    线程执行没有顺序,主线程和子线程都在往下执行,谁抢到资源谁运行,可以通过sleep()控制线程执行顺序
-    """
-
+    # 使用线程实现多任务
     # Thread()方法只是创建实例对象,一个实例对象只能创建一个线程且该线程只能开启一次 RuntimeError: threads can only be started once
     t1 = threading.Thread(target=test01)
     t2 = threading.Thread(target=test02)
@@ -45,6 +39,7 @@ def main01():
         # 当子线程都结束只剩下主线程时中断程序
         if len(threading.enumerate()) == 1:
             break
+        # 线程执行没有顺序,主线程和子线程都在抢资源往下运行,可以通过sleep()控制线程执行顺序
         time.sleep(1)
 
 
