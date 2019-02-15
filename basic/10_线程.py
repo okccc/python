@@ -1,3 +1,6 @@
+"""
+有一个原则是：活跃线程数为 CPU(核)数时最佳。过少的活跃线程导致 CPU 无法被充分利用，过多的活跃线程导致过大的线程上下文切换开销
+"""
 import threading
 import time
 
@@ -17,24 +20,26 @@ def test():
 def test01():
     for i in range(5):
         print("---test01---%d" % i)
-        time.sleep(1)
+        time.sleep(0.5)
 
 def test02():
     for i in range(10):
         print("---test02---%d" % i)
-        time.sleep(1)
+        time.sleep(0.5)
 
 def main01():
-    # 使用线程实现多任务
+    # 多线程实现
     # Thread()方法只是创建实例对象,一个实例对象只能创建一个线程且该线程只能开启一次 RuntimeError: threads can only be started once
     t1 = threading.Thread(target=test01)
     t2 = threading.Thread(target=test02)
     # 调用start()方法创建线程并启动线程;该线程会运行target函数,函数运行结束时该子线程结束
     t1.start()
     t2.start()
-
+    # join()方法表示堵塞模式,等待当前已经启动的线程执行完再继续往下执行
+    # t1.join()
+    # t2.join()
     while True:
-        # 统计当前正在运行的线程数
+        # 统计当前正在运行的线程
         print(threading.enumerate())
         # 当子线程都结束只剩下主线程时中断程序
         if len(threading.enumerate()) == 1:
@@ -116,7 +121,8 @@ def main04():
 
 
 if __name__ == "__main__":
-    main01()
+    # main01()
     # main02()
     # main03()
-    # main04()
+    main04()
+

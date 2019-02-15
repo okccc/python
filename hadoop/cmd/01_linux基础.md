@@ -102,7 +102,7 @@ who：显示当前用户登陆时间
 查看操作系统：cat /etc/issue、cat /etc/redhat-release  
 查看系统位数：getconf LONG_BIT  
 
-- <font color=red>top：显示系统整体负载</font>  
+- <font color=red>top/htop：进程管理监控工具</font>  
 第一行：系统时间 + 系统运行时间 + 用户数 + 1/5/15分钟系统平均负载  
 第二行：总进程数(total) + 正在运行进程数(running) + 睡眠进程数(sleeping) + 停止的进程数(stopped) + 僵尸进程数(zombie)  
 第三行：用户空间CPU占比(us) + 内核空间CPU占比(sy) + CPU空置率(id)  

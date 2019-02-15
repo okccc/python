@@ -2,6 +2,8 @@ import gevent
 from gevent import monkey
 import time
 import sys
+import requests
+import random
 
 
 def test01():
@@ -57,7 +59,22 @@ def main02():
     ])
 
 
+def download(url):
+    response = requests.get(url)
+    with open(str(random.random())[-5:]+".jpg", "wb") as f:
+        f.write(response.content)
+
+def main03():
+    urls = [
+        "https://rpic.douyucdn.cn/live-cover/appCovers/2018/12/13/5987179_20181213225638_small.jpg",
+        "https://rpic.douyucdn.cn/live-cover/appCovers/2018/05/17/1797614_20180517095218_small.jpg"
+    ]
+    for url in urls:
+        g = gevent.spawn(download, url)
+        g.join()
+
 
 if __name__ == '__main__':
     # main01()
-    main02()
+    # main02()
+    main03()

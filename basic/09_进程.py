@@ -1,4 +1,26 @@
+"""
+并行：cpu核数 > 任务数 ---> 真的多任务
+并发：cpu核数 < 任务数 ---> 假的多任务,因为一个cpu在同一时刻只能运行一个任务,只是占用cpu的程序切换速度足够快感觉不出来
+cpu密集型：各种循环、逻辑判断、计数等 ---> 使用多进程充分利用多核cpu并行运算,一个进程会占用一个cpu
+io密集型：网络传输、文件读写 ---> 使用多线程在io阻塞时可以切换线程不浪费cpu资源,cpu速度比io快得多所以单cpu足够用多cpu反而开销大不划算
+
+实现多任务3种方式
+进程：程序运行时会产生进程,进程是资源分配的单位,进程=代码+资源;系统开销大切换速度慢且进程间相互独立
+线程：线程在进程里面,获取资源执行代码,一个线程只能干一件事,进程默认会有一个主线程;系统开销小切换速度快且线程间共享数据
+协程：协程在线程里面,利用线程中延时操作的等待时间(网络传输、磁盘IO等)运行别的线程
+切换资源大小：进程 > 线程 > 协程  ---> 理论上协程消耗资源最少效率最高,进程更稳定
+进程池(公园划船)：当不确定需要多少进程才能完成多任务时可以采用进程池,进程池里的进程可以循环使用
+
+python解释器：将python代码翻译成0和1交给cpu执行
+GIL：全局解释器锁,保证多线程程序在同一时刻只有一个线程在执行(不是python的问题是python解释器CPython的问题,因为早期计算机都是单核cpu)
+一个进程只有一个GIL,所以多核cpu在运行多线程时派不上用场,甚至多核多线程比单核多线程还慢,因为单核里唤醒的线程能获取GIL无缝连接,
+多核的话cpu0释放GIL后其他cpu上的线程也会来竞争资源但是GIL可能马上又被cpu0拿到导致其他cpu的线程唤醒后又睡眠,这样效率更低
+为了利用计算机的多核cpu建议使用多进程,因为每个进程都有独立的GIL互不干扰是真正的并行
+
+"""
+
 import multiprocessing
+import threading
 import time
 import os
 import random
@@ -7,29 +29,15 @@ import random
 def test01():
     for i in range(5):
         print("---test01---%d" % i)
-        time.sleep(1)
+        time.sleep(0.5)
 
 def test02():
     for i in range(5):
         print("---test02---%d" % i)
-        time.sleep(1)
+        time.sleep(0.5)
 
 def main01():
-    """
-    并行：cpu核数 > 任务数,是真的多任务
-    并发：cpu核数 < 任务数,是假的多任务,只是占用cpu的程序切换速度足够快感觉上是多任务
-
-    实现多任务3种方式
-    进程：程序运行时会产生进程,进程是资源分配的单位,一个程序可以开启多个进程,进程=代码+资源
-    线程：线程在进程里面,获取资源执行代码,一个线程只能干一件事,进程默认会有一个主线程
-    协程：协程在线程里面,利用线程执行任务中延时操作的等待时间(网络、IO等)执行别的任务
-
-    切换资源大小：进程 > 线程 > 协程  ---> 理论上协程消耗资源最少效率最高,进程更稳定
-    进程之间相互独立,线程之间共享资源
-    进程池(公园划船)：当不确定需要多少进程才能完成多任务时可以采用进程池,进程池里的进程可以循环使用
-    """
-
-    # 使用进程实现多任务
+    # 多进程实现多任务
     p1 = multiprocessing.Process(target=test01)
     p2 = multiprocessing.Process(target=test02)
     p1.start()
@@ -139,8 +147,40 @@ def main04():
                 break
 
 
+def count(n):
+    while n > 0:
+        n -= 1
+
+def main05():
+    # 单线程
+    s1 = time.time()
+    count(100000000)
+    count(100000000)
+    s2 = time.time()
+    print(s2 - s1)
+    # 多线程
+    t1 = threading.Thread(target=count, args=(100000000,))
+    t2 = threading.Thread(target=count, args=(100000000,))
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
+    s3 = time.time()
+    print(s3 - s2)
+    # 多进程
+    p1 = multiprocessing.Process(target=count, args=(100000000,))
+    p2 = multiprocessing.Process(target=count, args=(100000000,))
+    p1.start()
+    p2.start()
+    p1.join()
+    p2.join()
+    s4 = time.time()
+    print(s4 - s3)
+
+
 if __name__ == "__main__":
     # main01()
     # main02()
     # main03()
-    main04()
+    # main04()
+    main05()
