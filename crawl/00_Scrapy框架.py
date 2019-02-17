@@ -1,7 +1,7 @@
 # coding=utf-8
 """
 Scrapy是用纯Python编写的应用框架,用于爬取网站数据、提取结构性数据
-Scrapy使用了Twisted(主要对手Tornado)异步网络框架处理网络通讯,可以加快下载速度,并且包含各种中间件接口
+Scrapy使用了Twisted(协程)异步网络框架处理网络通讯,可以加快下载速度,并且包含各种中间件接口
 
 Windows安装Scrapy：
 直接安装很麻烦,要手动安装很多模块(巨多坑),所以选择用anaconda安装
