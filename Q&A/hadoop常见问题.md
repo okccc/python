@@ -54,6 +54,7 @@ impala-shell -i master2.meihaofenqi.net -q 'invalidate metadata'
 
 - cdh7180端口无法访问(cm界面打不开)  
 find / -type f -perm 755 -name 'cloudera*'  
-service cloudera-scm-server status：cloudera-scm-server dead but pid file exist  
-rm -f /var/run/cloudera-scm-agent.pid  
+service cloudera-scm-server status  
+service cloudera-scm-server restart  
+service cloudera-scm-agent status  
 service cloudera-scm-agent restart
