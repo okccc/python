@@ -72,7 +72,7 @@ def logging01():
     1、使用logging提供的模块级别的函数
     logging.basicConfig(**kwargs)
 
-    2、使用Logging日志系统的四大组件
+    2、使用logging日志系统的四大组件
     日志器(Logger): 提供了应用程序可一直使用的接口
     处理器(Handler): 将logger创建的日志记录发送到合适的目的输出
     过滤器(Filter): 提供了更细粒度的控制工具来决定输出哪条日志记录，丢弃哪条日志记录
@@ -80,17 +80,16 @@ def logging01():
     """
 
     import logging.handlers
-    import datetime
 
     # 方式一：使用logging函数
-    # 输出在控制台
+    # 1.输出在控制台
     logging.basicConfig(
         level=logging.DEBUG,
         format="%(asctime)s - %(levelname)s - %(message)s",
         datefmt="%m/%d/%Y %H:%M:%S %p"
     )
 
-    # 输出到文件
+    # 2.输出到文件
     logging.basicConfig(
         level=logging.DEBUG,
         format="%(asctime)s - %(levelname)s - %(message)s",
@@ -99,21 +98,23 @@ def logging01():
         filemode="a"
     )
 
-    # 方式二：使用Logger四大组件
+    # 方式二：使用logging四大组件
+    # 1.创建logger对象
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
-
-    rf_handler = logging.handlers.TimedRotatingFileHandler('./all.log', when='midnight', interval=1, backupCount=7,
-                                                           atTime=datetime.time(0, 0, 0, 0))
-    rf_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
-
-    f_handler = logging.FileHandler('./err.log')
-    f_handler.setLevel(logging.ERROR)
-    f_handler.setFormatter(
-        logging.Formatter("%(asctime)s - %(levelname)s - %(filename)s[:%(lineno)d] - %(message)s"))
-
-    logger.addHandler(rf_handler)
-    logger.addHandler(f_handler)
+    # 2.创建一个handler用于输出日志到控制台
+    sh = logging.StreamHandler()
+    sh.setLevel(logging.DEBUG)
+    # 3.创建一个handler用于写入日志到文件
+    fh = logging.FileHandler(filename='./err.log', mode='a', encoding='utf8')
+    fh.setLevel(logging.ERROR)
+    # 4.定义handler输出格式
+    formatter = logging.Formatter("%(asctime)s - %(filename)s[:%(lineno)d] - %(levelname)s - %(message)s")
+    sh.setFormatter(formatter)
+    fh.setFormatter(formatter)
+    # 5.将handler添加到logger
+    logger.addHandler(sh)
+    logger.addHandler(fh)
 
     logger.debug('debug message')
     logger.info('info message')
