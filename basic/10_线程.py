@@ -32,12 +32,16 @@ def main01():
     # Thread()方法只是创建实例对象,一个实例对象只能创建一个线程且该线程只能开启一次 RuntimeError: threads can only be started once
     t1 = threading.Thread(target=test01)
     t2 = threading.Thread(target=test02)
+    # setDaemon(True)将线程设置为守护线程,当主线程结束时守护线程也结束
+    # t1.setDaemon(True)
+    # t2.setDaemon(True)
     # 调用start()方法创建线程并启动线程;该线程会运行target函数,函数运行结束时该子线程结束
     t1.start()
     t2.start()
     # join()方法表示堵塞模式,等待当前已经启动的线程执行完再继续往下执行
     # t1.join()
     # t2.join()
+
     while True:
         # 统计当前正在运行的线程
         print(threading.enumerate())
@@ -45,7 +49,9 @@ def main01():
         if len(threading.enumerate()) == 1:
             break
         # 线程执行没有顺序,主线程和子线程都在抢资源往下运行,可以通过sleep()控制线程执行顺序
-        time.sleep(1)
+        time.sleep(0.5)
+
+    print("主线程over!")
 
 
 g_num = 0
@@ -121,8 +127,8 @@ def main04():
 
 
 if __name__ == "__main__":
-    # main01()
+    main01()
     # main02()
     # main03()
-    main04()
+    # main04()
 

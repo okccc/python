@@ -278,7 +278,7 @@ urlopen()不支持代理和cookie等http/https高级功能的问题:
 2、通过urllib.request模块的build_opener()方法使用这些处理器对象,创建自定义opener对象
 3、opener对象调用open()方法发送http请求
 """
-def HTTPHandler():
+def http_handler():
     """
     HTTPHandler处理器
     """
@@ -296,7 +296,7 @@ def HTTPHandler():
     print(response.read().decode("utf-8"))
 
 
-def ProxyHandler01():
+def proxy_handler01():
     """
     ProxyHandler处理器: 使用代理IP,针对反爬虫
     很多网站会通过检测某一时段内IP的访问次数(流量统计、系统日志等),将不正常的IP封掉
@@ -332,7 +332,7 @@ def ProxyHandler01():
     print(response.read().decode("utf-8"))
 
 
-def ProxyHandler02():
+def proxy_handler02():
     """
     但是免费代理有很大缺陷,可以花钱买专门的代理,通过用户名/密码授权使用
     urllib.request模块:

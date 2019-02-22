@@ -1,12 +1,6 @@
 # coding=utf-8
-"""
-解决问题：
-1.某些标签里的text被内部某个标签割开成了好几段导致xpath无法直接获取,可以用remove_tags适当去除标签方便获取文本
-2.requests.exceptions.TooManyRedirects: Exceeded 30 redirects
-"""
 import requests
 from bs4 import BeautifulSoup
-from w3lib.html import remove_tags
 import pymysql
 import threading
 from queue import Queue
@@ -73,32 +67,6 @@ class BaiDu01(object):
         return BeautifulSoup(response.text, "lxml")
 
     def parse_data(self, soup):
-        # # xpath解析
-        # html = etree.HTML(response.text)
-        # results = html.xpath("//div[@id='content_left']/div[contains(@class, 'datas')]/h3/a")
-        # for each in results:
-        #     link = each.xpath("./@href")[0]
-        #     # 百度反爬虫：搜索的结果都是www.baidu.com域名的重定向跳转链接,需要继续访问跳转链接获取重定向后的url
-        #     real_link = ""
-        #     if link.startswith("http"):
-        #         # requests默认会自动处理302跳转,经过跳转的请求返回的url/status_code/headers都是跳转后的信息,可用response.history追踪跳转情况
-        #         # 如果请求跳转过多可能会报错：TooManyRedirects: Exceeded 30 redirects 禁用重定向还可以减少网络消耗提高访问速度
-        #         response = requests.get(link, headers=headers, allow_redirects=False)
-        #         if response.status_code < 400:
-        #             # 禁用重定向后status_code是302,通过response.headers["Location"]获取重定向的url
-        #             real_link = response.headers["Location"]
-        #             if "www.zhihu.com" in real_link:
-        #                 real_link = real_link.replace("https", "http")
-        #     # 去除碍事标签直接获取文本
-        #     title = remove_tags(etree.tostring(each, encoding="utf8").decode("utf8"))
-        #     for word in negative_words:
-        #         if word in title:
-        #             # 有word符合就添加数据
-        #             data = {"title": title, "link": real_link}
-        #             datas.append(data)
-        #             # 结束循环防止一个title多个word重复添加
-        #             break
-
         for tag in soup.select("h3 > a"):
             title = tag.text
             link = tag.attrs["href"]
@@ -164,7 +132,7 @@ class BaiDu02(object):
                                "正规", "违规", "暴力", "轰炸", "威胁", "后悔", "反悔", "恐吓", "服务费", "传销", "退款", "套路", "虚假", "逾期"]
         self.flag = False
         self.datas = []
-        # 构造url队列、请求队列
+        # 构造url队列、请求响应队列
         self.url_queue = Queue()
         self.soup_queue = Queue()
 
@@ -255,8 +223,8 @@ class BaiDu02(object):
         threads.append(t_url)
         for i in range(1, 20):
             # 3.发送请求,获取响应
-            t_get = threading.Thread(target=self.get_data)
-            threads.append(t_get)
+            t_html = threading.Thread(target=self.get_data)
+            threads.append(t_html)
         for i in range(1, 5):
             # 4.解析数据
             t_parse = threading.Thread(target=self.parse_data)

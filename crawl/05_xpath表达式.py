@@ -4,7 +4,7 @@ xpath使用路径表达式获取xml文档中的元素和属性
 元素: <class 'lxml.etree._Element'>,需要序列化成字符串才能输出
      当xpath表达式返回结果是元素时,可用 text()/.text 获取当前标签的文本内容, tag()/.tag 获取当前标签的名称
 属性: <class 'lxml.etree._ElementUnicodeResult'>,可以直接输出(Python里的字符串是Unicode编码)
-     当xpath表达式返回结果是属性时,结果就是当前属性的值
+     当xpath表达式返回结果是属性时,结果就是当前属性的值,也可以用get()方法获取 --> /a/img/@src 等同于 tag = /a/img; tag.get("src")
 xpath函数: http://www.w3school.com.cn/xpath/xpath_functions.asp
 
 节点:
@@ -101,10 +101,10 @@ def test():
 """
 2、etree读取文件
 """
-html = etree.parse("hello.html")
+html = etree.parse("images/hello.html")
 # print(type(html))  # <class 'lxml.etree._ElementTree'>
 result = etree.tostring(html, encoding="utf8").decode("utf-8")
-# print(type(result))  # <class 'str'>
+# print(type(datas))  # <class 'str'>
 
 def test01():
     """
@@ -204,9 +204,10 @@ def w3lib_example():
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.1; rv2.0.1) Gecko/20100101 Firefox/4.0.1"}
     params = {"wd": "美好分期", "pn": 30}
     response = requests.get(url, params=params, headers=headers)
-    html = etree.HTML(response.text)
-    results = html.xpath("//div[@id='content_left']/div[contains(@class, 'result')]/h3/a")
+    text = etree.HTML(response.text)
+    results = text.xpath("//div[@id='content_left']/div[contains(@class, 'result')]/h3/a")
     for each in results:
+        # 被<br>分成了好几段导致xpath无法直接获取,可用remove_tags去除碍事标签直接获取文本
         title = remove_tags(etree.tostring(each, encoding="utf8").decode("utf8"))
         link = each.xpath("./@href")[0]
         data = {"title": title, "link": link}

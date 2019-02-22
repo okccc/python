@@ -1,49 +1,52 @@
-# import requests, pdfkit
-# from bs4 import BeautifulSoup
-#
-# r = requests.get('https://mp.weixin.qq.com/s/FEt9yawhaaje1M_r4DRQpA')
-# soup = BeautifulSoup(r.text, 'html.parser')
-#
-#
-# #%%
-# target = soup.findAll('p')
-#
-# for item in target:
-#     for link in item.findAll('a'):
-#         href = link.get('href')
-#         if href.startswith('http'):
-#             # 特殊处理图片，增加src
-#             r = requests.get(href)
-#             soup = BeautifulSoup(r.text, 'html.parser')
-#             imgs = soup.findAll('img')
-#             for img in imgs:
-#                 if img.get('data-src'):
-#                     img['src'] = img['data-src']
-#             # 生成文件
-#             print(item.text)
-#             try:
-#                 pdfkit.from_string(
-#                         soup.prettify(),
-#                         'files/' + item.text.strip().replace(' ','_') + '.pdf'
-#                 )
-#             except:
-#                 pass
-
-
-
+import requests
+import pdfkit
+from bs4 import BeautifulSoup
+import itchat
+import pandas as pd
+from pyecharts import Map
 
 def test():
-    import requests
+    r = requests.get('https://mp.weixin.qq.com/s/FEt9yawhaaje1M_r4DRQpA')
+    soup = BeautifulSoup(r.text, 'html.parser')
+    target = soup.findAll('p')
 
-    url = "http://szextshort.weixin.qq.com/mmtls/2ec2ec95"
-    # url = "https://baike.sogou.com/m/getLemmaParagraph?action=2&lemmaId=6373535&contentId=179389089&isNewLemma=false&isHotLemma=true&hasWeibo=false&startDirId=-9&endDirId=&_=1548146070595"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 12_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/16B92 MicroMessenger/6.7.4(0x1607042c) NetType/WIFI Language/zh_CN",
-    }
-    data = {}
-    response = requests.post(url, data=data, headers=headers)
-    print(response.status_code)
+    for item in target:
+        for link in item.findAll('a'):
+            href = link.get('href')
+            if href.startswith('http'):
+                # 特殊处理图片，增加src
+                r = requests.get(href)
+                soup = BeautifulSoup(r.text, 'html.parser')
+                imgs = soup.findAll('img')
+                for img in imgs:
+                    if img.get('data-src'):
+                        img['src'] = img['data-src']
+                # 生成文件
+                print(item.text)
+                try:
+                    pdfkit.from_string(
+                            soup.prettify(),
+                            'files/' + item.text.strip().replace(' ','_') + '.pdf'
+                    )
+                except:
+                    pass
 
 
-if __name__ == '__main__':
-    test()
+def weixin_friends():
+    itchat.login()
+    friends = itchat.get_friends(update=True)
+    print(type(friends))  # <class 'itchat.storage.templates.ContactList'>
+    df = pd.DataFrame(friends)
+    print(type(df))  # <class 'pandas.core.frame.DataFrame'>
+    province = df.Province
+    print(type(province))  # <class 'pandas.core.series.Series'>
+    print(province)
+    count = province.value_counts()
+    print(type(count))  # <class 'pandas.core.series.Series'>
+    count = count[count.index != '']
+    print(count)
+    address = list(count.index)
+    num = list(count.values)
+    map = Map(title="微信好友分布", width=1000, height=500)
+    map.add("", address, num, maptype="china", is_visualmap=True, visual_text_color='#000')
+    map.render("D://PycharmProjects/python/analysis/aaa.html")

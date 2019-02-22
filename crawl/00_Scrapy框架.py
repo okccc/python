@@ -90,5 +90,4 @@ Scrapy-redis提供了下面四个组件(components)：(四种组件意味着这�
     Item Pipeline
     Base Spider
 scrapy-redis的总体思路：
-
 """
