@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-正则表达式 :用于操作字符串
+re(regular expression)：用于匹配字符串,r""表示不转义\直接取原生字符串("aaa\tbbb" --> "aaa bbb" | r"aaa\tbbb" --> "aaa\tbbb")
 
 pattern = re.compile("")
 pattern.match(): 从起始位置往后查找,返回第一个符合的字符串
@@ -171,7 +171,7 @@ class NeihanduanziSpider(object):
 
 
 if __name__ == "__main__":
-    # regex()
+    regex()
 
-    s = NeihanduanziSpider()
-    s.work()
+    # s = NeihanduanziSpider()
+    # s.work()
