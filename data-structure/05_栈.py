@@ -1,21 +1,11 @@
 # coding=utf-8
-"""
-栈: 是一种先进后出的线性表,只允许在一端进行操作
-   可以用顺序表或链表实现
-栈的操作:
-Stack() 创建一个新的空栈
-push(item) 添加一个新的元素item到栈顶
-pop() 弹出栈顶元素
-peek() 返回栈顶元素
-is_empty() 判断栈是否为空
-size() 返回栈的元素个数
-"""
-
 class Stack(object):
-    """栈"""
+    """
+    栈：一种先进后出的线性表,只能在一端插入/删除,可以用顺序表或链表实现
+    """
 
     def __init__(self):
-        # 用list(顺序表)来实现栈,私有化属性防止外部直接用insert,remove,append等方法操作[]
+        # 用list(顺序表)实现栈,私有化属性防止外部直接用insert,remove,append等方法操作[]
         self.__items = []
 
     # 判断是否为空
@@ -33,24 +23,26 @@ class Stack(object):
 
     # 返回栈顶元素
     def peek(self):
-        return self.__items[len(self.__items) - 1]
+        if self.__items:
+            return self.__items[-1]
+        else:
+            return None
 
-    # 返回栈大小
+    # 栈大小
     def size(self):
         return len(self.__items)
 
 
-# 测试代码
 if __name__ == "__main__":
     s = Stack()
-    print(s.is_empty())
+    print(s.is_empty())  # True
     s.push(11)
     s.push(22)
     s.push(33)
-    print(s.is_empty())
-    print(s.size())
-    print(s.peek())
-    print(s.pop())
-    print(s.peek())
-    print(s.size())
+    print(s.is_empty())  # False
+    print(s.size())  # 3
+    print(s.peek())  # 33
+    print(s.pop())  # 33
+    print(s.peek())  # 22
+    print(s.size())  # 2
 

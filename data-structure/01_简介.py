@@ -1,20 +1,18 @@
 # coding=utf-8
 """
-timeit模块：可以测试一段Python程序的运行速度
-t = Timer(stmt='pass', setup='pass', timer=<timer function>)
-t.timeit(n)   -- 测试n次代码结果取平均值
-然而程序的算法复杂度不能只看时间,因为不同性能的机器运行时间不一样,应该根据程序的运算数量来判断
-
-时间复杂度计算规则：
+算法复杂度
 基本操作(赋值/加减乘除)：只有常数项,O(1)
 顺序结构(代码移到下一行)：时间复杂度按加法计算
 循环结构(for/while)：时间复杂度按乘法计算
 分支结构(if)：时间复杂度取最大值
 时间消耗：O(1) < O(logn) < O(n) < O(nlogn) < O(n2) < O(n3) < O(2n) < O(n!) < O(nn)
 大O记法：处理规模为n的数据所用时间T(n)即是算法复杂度,一般只看最高次项,比如3n^2和10n^2是一个级别,复杂度默认指最坏复杂度
-数据结构：静态的描述了数据元素之间的关系
-程序 = 算法 + 数据结构
-算法是解决问题的设计思想,数据结构是算法处理问题的载体
+程序 = 算法 + 数据结构 --> 算法是解决问题的设计思想,数据结构描述了数据元素之间的关系,是算法处理问题的载体
+
+timeit模块：可以测试一段Python程序的运行速度
+t = Timer(stmt='pass', setup='pass', timer=<timer function>)
+t.timeit(n)   -- 测试n次代码结果取平均值
+然而程序的算法复杂度不能只看时间,因为不同性能的机器运行时间不一样,应该根据程序的运算数量来判断
 
 线性表：某类元素的一个集合,记录着元素之间的顺序关系线性表是最基本的数据结构之一
 根据存储方式不同分为:
@@ -46,13 +44,13 @@ from timeit import Timer
 def test():
     # 如果 a+b+c=N且 a^2+b^2=c^2(a,b,c 为自然数)，如何求出所有a、b、c可能的组合？
     start_time = time.time()
-    for a in range(0, 1001):  # 循环操作
-        for b in range(0, 1001):  # 循环操作
+    for a in range(0, 1001):  # 循环结构
+        for b in range(0, 1001):  # 循环结构
             # for c in range(0, 1001):
-            c = 1000 - a - b  # 基本操作
-            if a + b + c == 1000 and a ** 2 + b ** 2 == c ** 2:  #
+            c = 1000 - a - b  # 循环结构内部的基本操作
+            if a + b + c == 1000 and a ** 2 + b ** 2 == c ** 2:  # 循环结构内部的分支结构
                 print("a=%d,b=%d,c=%d" % (a, b, c))
-    # 算法复杂度：T(n) = n * n * (1+max(0,1)) = 2n^2 = O(n^2)
+    # 该函数算法复杂度：T(n) = n * n * (1 + max(0, 1)) = 2n^2 = O(n^2)
     end_time = time.time()
     print("time:%d" % (end_time - start_time))
 
@@ -76,7 +74,7 @@ def test04():
         L.extend([i])
 
 t1 = Timer(stmt="test01()", setup="from __main__ import test01")
-print("+:", t1.timeit(10000))
+print("+=", t1.timeit(10000))
 t2 = Timer(stmt="test02()", setup="from __main__ import test02")
 print("append", t2.timeit(10000))
 t3 = Timer(stmt="test03()", setup="from __main__ import test03")
