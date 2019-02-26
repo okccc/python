@@ -92,14 +92,16 @@ def high_order():
     res1 = list(map(lambda x: x * x, [1, 2, 3]))
     print(res1)  # [1, 4, 9]
     res2 = reduce(lambda x, y: x + y, [1, 2, 3, 4])
-    print(type(res2))
+    print(type(res2))  # <class 'int'>
     print(res2)  # 10
     res3 = reduce(lambda x, y: x * y, [1, 2, 3], 5)
     print(res3)  # 30
-    res4 = reduce(lambda a, b: a if (a > b) else b, [23, 11, 59, 42, 100])
-    print(res4)  # 100
-    res5 = list(filter(lambda x: x % 2 == 0, [1, 2, 3, 4]))
-    print(res5)  # [2, 4]
+    res4 = reduce(lambda x, y: x * 10 + y, [1, 3, 5, 7, 9])
+    print(res4)  # 13579
+    res5 = reduce(lambda a, b: a if (a > b) else b, [23, 11, 59, 42, 100])
+    print(res5)  # 100
+    res6 = list(filter(lambda x: x % 2 == 0, [1, 2, 3, 4]))
+    print(res6)  # [2, 4]
 
 
 if __name__ == '__main__':
