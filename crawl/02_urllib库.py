@@ -1,37 +1,5 @@
 # coding=utf8
 """
-http请求主要分为get和post两种:
-get是从服务器上获取数据,post是向服务器传送数据
-get请求: 参数显示在浏览器的url中,例如: http://www.baidu.com/s?wd=Chinese
-post请求: 参数在请求体当中,以隐式的方式发送,请求的参数包含在"Content-Type"消息头里,指明该消息体的媒体类型和编码
-注意: 尽量避免get方式提交表单,可能会导致安全问题
-
-http状态码汇总:
-200：请求成功
-301：永久性重定向    www.jindong.com --> www.jd.com
-302：临时性重定向    未登录时访问个人中心会跳转到登录页面
-403：没有权限访问
-404：找不到资源
-500：服务器错误
-
-http请求包含: 请求行,请求头,空行,请求体(post)
-POST http://fanyi.youdao.com/translate_o?smartresult=dict&smartresult=rule HTTP/1.1
-Host: fanyi.youdao.com
-Connection: keep-alive
-Content-Length: 202
-Accept: application/json, text/javascript, */*; q=0.01
-Origin: http://fanyi.youdao.com
-X-Requested-With: XMLHttpRequest
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.89 Safari/537.36
-Content-Type: application/x-www-form-urlencoded; charset=UTF-8
-Referer: http://fanyi.youdao.com/
-Accept-Encoding: gzip, deflate
-Accept-Language: zh-CN,zh;q=0.9
-Cookie: OUTFOX_SEARCH_USER_ID=-388253338@10.169.0.84; JSESSIONID=aaal-CPvBwa9P85-5f7ew; OUTFOX_SEARCH_USER_ID_NCOO=2060469077.47785; fanyi-ad-id=39535; fanyi-ad-closed=1; ___rl__test__cookies=1517115259862
-
-i=rabbit&from=AUTO&to=AUTO&smartresult=dict&client=fanyideskweb&salt=1517115259867&sign=cb455e27816176d6dbdbd09cfa87c8cd&doctype=json&version=2.1&keyfrom=fanyi.web&action=FY_BY_REALTIME&typoResult=false
-
-
 urllib在python3中被改为urllib.parse
 urllib2在python3中被改为urllib.request
 
@@ -41,7 +9,7 @@ unquote(): 解码
 
 2、urllib.request模块
 request方法:
-Request(): 构造请求对象,主要有3个参数: url,data(区分get/post请求): 默认为空;headers(http报头的键值对): 默认为空;
+Request(): 构造请求对象,主要有3个参数: url,data(区分get/post请求): 默认为空;headers(http报头的键值对): 默认为空
 urlopen(): 发送请求
 add_header(): 添加/修改一个HTTP报头
 get_header(): 获取一个已有的HTTP报头,注意第一个字母大写,后面全小写
@@ -50,7 +18,7 @@ response方法:
 read(): 读取服务器返回文件的内容
 info(): 返回服务器响应的HTTP报头
 getcode(): 返回HTTP请求的响应码
-geturl(): 返回返回实际数据的url,防止重定向问题
+geturl(): 返回响应实际数据的url,防止重定向问题
 """
 
 import urllib.request
@@ -65,12 +33,6 @@ def urllib01():
 
     # 不同浏览器在发送请求的时候,会有不同的User-Agent头
     # urllib2默认的User-Agent头为：Python-urllib/x.y,需要伪装成浏览器
-    # HTTP报头
-    ua_header = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.89 Safari/537.36"
-    }
-
-    # User-Agent列表
     ua_list = [
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv2.0.1) Gecko/20100101 Firefox/4.0.1",
         "Mozilla/5.0 (Windows NT 6.1; rv2.0.1) Gecko/20100101 Firefox/4.0.1",
@@ -80,8 +42,6 @@ def urllib01():
 
     # 随机选一个(针对反爬虫)
     user_agent = random.choice(ua_list)
-    # print(type(user_agent))
-    # print(user_agent)
 
     # 通过request()方法构造一个请求对象
     request = urllib.request.Request(url)  # 此时User-Agent: Python-urllib/3.5
@@ -99,7 +59,7 @@ def urllib01():
     # 通过get_header()方法获取一个已有的HTTP报头,注意第一个字母大写,后面全小写
     print(request.get_header("User-agent"))
 
-    # 输出HTTP响应码,成功返回200,4服务器页面出错,5服务器问题
+    # 输出HTTP响应码
     print(response.getcode())
 
     # 输出返回实际数据的url,防止重定向问题
@@ -273,7 +233,6 @@ def cookie03():
 """
 urlopen()不支持代理和cookie等http/https高级功能的问题:
 解决方案: 使用相关handler处理器来创建特定功能的处理器对象(其实urlopen也是一个特殊的opener)
-
 1、通过urllib.request模块创建相关handler处理器对象
 2、通过urllib.request模块的build_opener()方法使用这些处理器对象,创建自定义opener对象
 3、opener对象调用open()方法发送http请求

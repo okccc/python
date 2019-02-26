@@ -5,15 +5,45 @@ robots协议：该网站各个页面的爬取权限
 淘宝网：https://www.taobao.com/robots.txt
 腾讯网：http://www.qq.com/robots.txt
 
-网页三大特征:
+网页三大特征
 1.网页都有唯一的URL(统一资源定位符)
 2.网页都使用HTML(超文本标记语言)描述页面信息 ---> 可以放超链接所以叫超文本
 3.网页都使用HTTP/HTTPS(超文本传输协议)传输HTML数据
 DNS：将域名映射成IP地址的域名解析服务
 
+http请求方式
+get是从服务器上获取数据,post是向服务器传送数据
+get请求：参数显示在浏览器的url中,例如：http://www.baidu.com/s?wd=Chinese
+post请求：参数在请求体当中,以隐式的方式发送,请求的参数包含在"Content-Type"消息头里,指明该消息体的媒体类型和编码
+注意：尽量避免get方式提交表单,可能会导致安全问题
+
+http请求包含：请求行,请求头,空行,请求体(post)
+POST http://fanyi.youdao.com/translate_o?smartresult=dict&smartresult=rule HTTP/1.1
+Host：fanyi.youdao.com
+Connection：keep-alive
+Content-Length：202
+Accept：application/json, text/javascript, */*; q=0.01
+Origin：http://fanyi.youdao.com
+X-Requested-With：XMLHttpRequest
+User-Agent：Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.89 Safari/537.36
+Content-Type：application/x-www-form-urlencoded; charset=UTF-8
+Referer：http://fanyi.youdao.com/
+Accept-Encoding：gzip, deflate
+Accept-Language：zh-CN,zh;q=0.9
+Cookie：OUTFOX_SEARCH_USER_ID=-388253338@10.169.0.84; JSESSIONID=aaal-CPvBwa9P85-5f7ew; OUTFOX_SEARCH_USER_ID_NCOO=2060469077.47785; fanyi-ad-id=39535; fanyi-ad-closed=1; ___rl__test__cookies=1517115259862
+
+i=rabbit&from=AUTO&to=AUTO&smartresult=dict&client=fanyideskweb&salt=1517115259867&sign=cb455e27816176d6dbdbd09cfa87c8cd&doctype=json&version=2.1&keyfrom=fanyi.web&action=FY_BY_REALTIME&typoResult=false
+
+http状态码汇总
+200：请求成功
+301：永久性重定向    www.jindong.com --> www.jd.com
+302：临时性重定向    未登录时访问个人中心会跳转到登录页面
+403：没有权限访问
+404：找不到资源
+500：服务器错误
+
 
 Scrapy是纯Python编写的应用框架,使用了Twisted(协程)异步网络框架,且包含各种中间件接口,爬取速度贼快
-
 Windows安装Scrapy：
 直接安装很麻烦,要手动安装很多模块(巨多坑),所以选择用anaconda安装
 以管理员身份运行anaconda prompt：conda install Scrapy一步搞定
