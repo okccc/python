@@ -1,83 +1,99 @@
 # coding=utf-8
 """
-爬虫: 爬取网页数据的程序,网络爬取的过程可以理解为模拟浏览器操作的过程
+爬虫：爬取网页数据的程序,网络爬取的过程可以理解为模拟浏览器操作的过程
+robots协议：该网站各个页面的爬取权限
+淘宝网：https://www.taobao.com/robots.txt
+腾讯网：http://www.qq.com/robots.txt
 
 网页三大特征:
-1、网页都有自己唯一的URL(统一资源定位符)进行定位
-2、网页都使用HTML(超文本标记语言)描述页面信息        -- 因为能放超链接,所以叫超文本
-3、网页都使用HTTP/HTTPS(超文本传输协议)传输HTML数据
+1.网页都有唯一的URL(统一资源定位符)
+2.网页都使用HTML(超文本标记语言)描述页面信息 ---> 可以放超链接所以叫超文本
+3.网页都使用HTTP/HTTPS(超文本传输协议)传输HTML数据
+DNS：将域名映射成IP地址的域名解析服务
 
-爬虫设计思路:
-1、确定待爬取URL地址
-2、通过HTTP/HTTPS协议获取对应的HTML页面
-3、提取HTML页面有用数据: a,需要的数据就存储起来
-                      b,如果是页面里的其他URL,就继续执行第二步
 
-为什么选python写爬虫?
-PHP: 对多线程,异步支持不够好,并发处理能力很弱;爬虫是工具性程序,对速度和效率要求比较高
-Java: 语言本身很笨重,代码量很大,重构成本比较高,任何修改都会导致代码的大量变动,爬虫经常需要修改部分采集代码
-C/C++: 运行效率和性能几乎最强,但是学习成本很高,代码成型比较慢
-python: 开发效率高,支持模块多,HTTP请求模块和HTML解析模块丰富;强大的Scrapy框架及高效的scrapy-redis分布式策略;而且调用其他接口也很方便(胶水语言)
+Scrapy是纯Python编写的应用框架,使用了Twisted(协程)异步网络框架,且包含各种中间件接口,爬取速度贼快
 
-爬虫学习内容:
-1、Python基本语法
+Windows安装Scrapy：
+直接安装很麻烦,要手动安装很多模块(巨多坑),所以选择用anaconda安装
+以管理员身份运行anaconda prompt：conda install Scrapy一步搞定
+Linux安装Scrapy：
+pip install Scrapy
+如果报错：Could not find a version that satisfies the requirement Twisted>=13.1.0 (from Scrapy)
+原因：centos系统将自带的python2升级到python3之后pip无法安装twisted
+解决：yum install bzip2-devel --> 再重新编译安装Python：./configure prefix=/usr/local/python3  make && make install
 
-2、如何抓取HTML页面: HTTP请求的处理,urllib,urllib2,requests
-                  处理后的请求可以模拟浏览器发送请求,获取服务器响应的文件
+打开Anaconda Prompt终端：
+(base) C:\Users\chenqian>Scrapy
+Scrapy 1.5.1 - no active project
+Usage:
+  Scrapy <command> [options] [args]
+Available commands:
+  bench         Run quick benchmark test
+  fetch         Fetch a URL using the Scrapy downloader
+  genspider     Generate new spider using pre-defined templates
+  runspider     Run a self-contained spider (without creating a project)
+  settings      Get settings values
+  shell         Interactive scraping console
+  startproject  Create new project
+  version       Print Scrapy version
+  view          Open URL in browser, as seen by Scrapy
+  [ more ]      More commands available when run from project directory
+Use "Scrapy <command> -h" to see more info about a command
 
-3、解析服务器响应内容: re,xpath,BeautifulSoup4(bs4),jsonpath,pyquery等
-                   给需要提取的数据定义一个规则,符合这个规则的数据就会被匹配
+Scrapy项目四步骤：
+1.新建项目：Scrapy startproject myspider(项目名称)
+|---myspider
+    |---myspider                    # 项目的Python模块,将会从这里引用代码
+    |   |---base.bash
+    |   |---items.py                # 项目的目标文件
+    |   |---pipelines.py            # 项目的管道文件
+    |   |---settings.py             # 项目的配置文件
+    |   |---spiders                 # 爬虫主程序
+    |       |---base.bash
+    |---Scrapy.cfg                  # 项目的配置文件
+2.明确目标(编写items.py)：设置需要保存的数据字段
+3.制作爬虫(spiders/xxx.py)：爬取数据
+  生成Spider模板：cd myspider;Scrapy genspider itcast(爬虫名) www.itcast.cn(网站域名)
+  生成CrawlSpider模板：cd myspider;Scrapy genspider -t crawl tencent(爬虫名) tencent.com(网站域名)
+4.存储数据(pipelines.py)：设计管道存储爬取内容,存入文件或数据库
+  当Item在Spider中被收集之后,它将会被传递到Item Pipeline,这些Item Pipeline组件按定义的顺序处理Item
+运行：Scrapy crawl ***
+     Scrapy crawl *** -o json/csv/xml
+将myspider项目导入到pycharm运行,并选择装有Scrapy框架的Anaconda3作为Project Interpreter
 
-4、如何采集动态HTML,验证码的处理: 通用的动态页面采集:Selenium + PhantomJS(无界面):模拟真实浏览器加载js,ajax等非静态页面数据
-                             Tesseract:机器学习库,机器图像识别系统,可以处理简单的验证码,复杂的验证码可以通过手动输入/专门的打码平台
+Scrapy shell:
+可以在不启动spider的情况下调试代码,也可以用来测试xpath和css表达式(结合IPython食用效果更佳)
+案例：Scrapy shell "http://esf.fang.com/"
+***(此处省略n多日志)
+[s] Available Scrapy objects:
+[s]   Scrapy     Scrapy module (contains Scrapy.Request, Scrapy.Selector, etc)
+[s]   crawler    <Scrapy.crawler.Crawler object at 0x7fbc431bd3c8>
+[s]   item       {}
+[s]   request    <GET http://esf.fang.com/>
+[s]   response   <200 http://esf.fang.com/>
+[s]   settings   <Scrapy.settings.Settings object at 0x7fbc41831748>
+[s]   spider     <DefaultSpider 'default' at 0x7fbc4095e198>
+[s] Useful shortcuts:
+[s]   fetch(url[, redirect=True]) Fetch URL and update local objects (by default, redirects are followed)
+[s]   fetch(req)                  Fetch a Scrapy.Request and update local objects
+[s]   shelp()           Shell help (print this help)
+[s]   view(response)    View response in a browser --> 这个很有用,可以在浏览器打开通过Scrapy爬虫获取到的网页数据
+In [1]:(此处调试代码)
 
-5、Scrapy框架:(Scrapy,Pyspider)
-    高定制性高性能(异步网络框架twisted),所以数据下载速度非常快,提供了数据存储,数据下载,提取规则等组件.
+Selectors选择器:
+内置XPath和CSS Selector表达式,Selector有四个基本的方法,最常用的还是xpath
+xpath()：传入xpath表达式,返回该表达式对应所有节点的selector list列表
+extract()：序列化该节点为Unicode字符串并返回list -->  extract()==getall()  extract()[0]==get()
+css()：传入CSS表达式,返回对应的所有节点的selector list列表,语法同BeautifulSoup4
+re()：根据传入的正则表达式对数据进行提取,返回Unicode字符串list列表
 
-6、分布式策略scrapy-reids:
-    scrapy-redis,在Scrapy的基础上添加了一套以Redis数据库为核心的组件.
-    让Scrapy框架支持分布式的功能,主要在Redis里做请求指纹去重,请求分配,数据临时存储.
-
-7、爬虫 - 反爬虫 - 反反爬虫:
-    其实爬虫做到最后,最头疼的不是复杂的页面,也不是晦涩的数据,而是网站另一边的反爬虫人员.
-    User-Agent,代理,验证码,动态数据加载,加密数据.
-    数据价值,是否值的去费劲做反爬虫.
-    1. 机器成本 + 人力成本 > 数据价值,就不反了,一般做到封IP就结束了.
-    2. 面子的战争....
-    爬虫和反爬虫之间的斗争,最后一定是爬虫获胜!
-    为什么?只要是真实用户可以浏览的网页数据,爬虫就一定能爬下来!
-
-通用爬虫与聚焦爬虫:
-1、通用爬虫: 搜索引擎用的爬虫系统,很多网站的官网旁边都有一个百度快照就是百度的爬虫
-
-目标: 尽可能把互联网上所有网页下载下来,放到本地服务器形成备份,对这些网页做相关处理(提取关键字,去掉广告),最后提供一个用户检索接口.
-流程: 爬取网页 - 存储数据 - 内容处理 - 提供检索/排名服务
-抓取流程:
-a) 首选选取一部分已有的URL,把这些URL放到待爬取队列.
-b) 从队列里取出这些URL,然后解析DNS得到主机IP,然后去IP对应的服务器里下载HTML页面,保存到搜索引擎的本地服务器.
-c) 分析这些HTML页面,找出页面里其他的URL连接,继续执行第二步,直到爬取条件结束.
-
-搜索引擎如何获取一个新网站的URL:
-1. 主动向搜索引擎提交网址:http://zhanzhang.baidu.com/linksubmit/url
-2. 在其他网站里设置网站的外链接.
-3. 搜索引擎会和DNS服务商进行合作,可以快速收录新的网站.
-
-DNS: 就是把域名解析成IP的一种技术.
-
-通用爬虫需要遵守规则:
-Robots协议: 会告诉搜索引擎该网站各个页面的爬取权限,一般只有大型的搜索引擎爬虫才会遵守
-淘宝网: https://www.taobao.com/robots.txt
-腾讯网: http://www.qq.com/robots.txt
-
-搜索引擎排名:
-1. PageRank值: 根据网站流量统计,流量越高,网站越值钱,排名越靠前.
-2. 竞价排名: 谁给钱多,谁排名就高.
-
-通用爬虫的缺点:
-1. 只能提供文本相关的内容(HTML,Word,PDF),不能提供多媒体文件(音乐,图片,视频)和二进制文件(程序,脚本).
-2. 提供的结果千篇一律,不能针对不同背景领域的人提供不同的搜索结果.
-3. 不能理解人类语义上的检索.
-
-为了解决这个问题,聚焦爬虫出现了:
-聚焦爬虫: 爬虫程序员写的针对某种内容的爬虫.
+Scrapy不支持分布式,Scrapy-redis可以实现Scrapy分布式爬取
+conda install Scrapy-redis或者pip install Scrapy-redis
+Scrapy-redis提供了下面四个组件(components)：(四种组件意味着这四个模块都要做相应的修改)
+    Scheduler
+    Duplication Filter
+    Item Pipeline
+    Base Spider
+Scrapy-redis的总体思路：在Scrapy的基础上添加了一套以Redis数据库为核心的组件.让Scrapy框架支持分布式的功能,主要在Redis里做请求指纹去重,请求分配,数据临时存储.
 """
