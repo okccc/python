@@ -11,6 +11,8 @@ import json
 import logging
 import threading
 from queue import Queue  # 线程安全
+from fake_useragent import UserAgent
+import time
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -23,14 +25,14 @@ class QiuBai01(object):
     # 单线程
     def __init__(self):
         self.url = "https://www.qiushibaike.com/hot/page/{}/"
-        self.headers = {"User-Agent": "Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11"}
+        self.ua = UserAgent()
 
     def get_url(self):
         return [self.url.format(i) for i in range(1, 14)]
 
     def get_data(self, url):
         print(url)
-        response = requests.get(url, headers=self.headers)
+        response = requests.get(url, headers={"User-Agent": self.ua.random})
         return etree.HTML(response.text)
 
     @staticmethod
@@ -89,7 +91,7 @@ class QiuBai02(object):
     # 多线程
     def __init__(self):
         self.url = "https://www.qiushibaike.com/hot/page/{}/"
-        self.headers = {"User-Agent": "Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11"}
+        self.ua = UserAgent()
         # 构造url队列、请求响应队列、解析数据队列
         self.url_queue = Queue()
         self.html_queue = Queue()
@@ -107,12 +109,12 @@ class QiuBai02(object):
             # 从url_queue取出url
             url = self.url_queue.get()
             print(url)
-            response = requests.get(url, headers=self.headers)
+            response = requests.get(url, headers={"User-Agent": self.ua.random})
             # return etree.HTML(response.text)
 
-            # 将html源码放入队列
+            # 将html源码放入html_queue
             self.html_queue.put(etree.HTML(response.text))
-            # 队列task_done()后get()才会减1
+            # 将处理完的url标记为task_done,此时url_queue.size - 1
             self.url_queue.task_done()
 
     def parse_data(self):
@@ -150,7 +152,7 @@ class QiuBai02(object):
                 items.append(item)
             # return items
 
-            # 将items放入队列
+            # 将items放入item_queue
             self.item_queue.put(items)
             self.html_queue.task_done()
 
@@ -182,13 +184,16 @@ class QiuBai02(object):
         t_save = threading.Thread(target=self.save_data)
         threads.append(t_save)
         for t in threads:
-            # 由于子线程是while死循环,将线程设置为守护线程,主线程结束子线程也结束
+            # 由于该子线程是死循环,需要在调用start()之前将其设置为守护线程,表示该线程不重要,当主线程结束时不用等待该子线程直接退出
             t.setDaemon(True)
             t.start()
         for q in [self.url_queue, self.html_queue, self.item_queue]:
             # 让主线程block,等待queue中的items全部处理完
             q.join()
         print("任务全部结束,主线程over!")
+        # while True:
+        #     print(threading.enumerate())
+        #     time.sleep(1)
 
 
 if __name__ == "__main__":

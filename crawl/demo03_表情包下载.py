@@ -2,32 +2,41 @@
 import requests
 from lxml import etree
 import urllib.request
+from fake_useragent import UserAgent
 import threading
 from queue import Queue
 import os
 import re
+import logging
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%m/%d/%Y %H:%M:%S %p"
+)
+
 
 class DouTu01(object):
     def __init__(self):
         self.url = "https://www.doutula.com/photo/list/?page={}"
-        self.headers = {"User-Agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Maxthon 2.0)"}
+        self.ua = UserAgent()
 
     def get_url(self):
-        return [self.url.format(i) for i in range(1, 100)]
+        return [self.url.format(i) for i in range(1, 30)]
 
     def get_data(self, url):
-        response = requests.get(url, headers=self.headers)
+        response = requests.get(url, headers={"User-Agent": self.ua.random})
         return etree.HTML(response.text)
 
     @staticmethod
     def parse_data(html):
         imgs = html.xpath('//div[@class="page-content text-center"]//a/img[@class!="gif"]')
         for img in imgs:
-            # 如果当前标签已经是最内层标签,建议用get()获取属性值,因为xpath返回的列表可能会list index out of range,而get()返回None
+            # 如果当前标签已经是最内层标签,建议用get()获取属性值,因为xpath返回的是列表,可能会索引越界,而get()则返回None
             img_url = img.get("data-original")
             alt = img.get("alt")
-            # 使用正则将特殊字符替换掉
-            alt = re.sub(r"[/?!.*,]", "", alt)
+            # 使用正则将特殊字符替换掉,r""表示取原生字符串而不对字符串内部的特殊字符转义
+            alt = re.sub(r"[?？!！]", "", alt)
             # splitext()：将path切割成root + extension
             suffix = os.path.splitext(img_url)[1][0:4]
             filename = "D://doutu/" + alt + suffix
@@ -48,13 +57,13 @@ class DouTu01(object):
 class DouTu02(object):
     def __init__(self):
         self.url = "https://www.doutula.com/photo/list/?page={}"
-        self.headers = {"User-Agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Maxthon 2.0)"}
+        self.ua = UserAgent()
         # 构造url队列、请求响应队列
         self.url_queue = Queue()
         self.html_queue = Queue()
 
     def get_url(self):
-        for i in range(1, 100):
+        for i in range(1, 30):
             # 将url放入url_queue
             self.url_queue.put(self.url.format(i))
 
@@ -62,28 +71,30 @@ class DouTu02(object):
         while True:
             # 从url_queue取出url
             url = self.url_queue.get()
-            response = requests.get(url, headers=self.headers)
+            response = requests.get(url, headers={"User-Agent": self.ua.random})
             # 将html源码放入html_queue
             self.html_queue.put(etree.HTML(response.text))
+            # 将处理完的url标记为task_done,此时url_queue.size - 1
             self.url_queue.task_done()
 
     def parse_data(self):
         while True:
-            html = self.html_queue.get()
-            imgs = html.xpath('//div[@class="page-content text-center"]//a/img[@class!="gif"]')
-            for img in imgs:
-                # 如果当前标签已经是最内层标签,建议用get()获取属性值,因为xpath返回的列表可能会list index out of range,而get()返回None
-                img_url = img.get("data-original")
-                alt = img.get("alt")
-                # 使用正则将特殊字符替换掉
-                alt = re.sub(r"[/?!.*,]", "", alt)
-                # splitext()：将path切割成root + extension
-                suffix = os.path.splitext(img_url)[1][0:4]
-                filename = "D://doutu/" + alt + suffix
-                print(filename)
-                # urlretrieve()：如果被检索的url是个文件可以直接将其复制到本地
-                urllib.request.urlretrieve(img_url, filename=filename)
-            self.html_queue.task_done()
+                # 从html_queue取出html
+                html = self.html_queue.get()
+                imgs = html.xpath('//div[@class="page-content text-center"]//a/img[@class!="gif"]')
+                for img in imgs:
+                    # 如果当前标签已经是最内层标签,建议用get()获取属性值,因为xpath返回的列表可能会list index out of range,而get()返回None
+                    img_url = img.get("data-original")
+                    alt = img.get("alt")
+                    # 使用正则将特殊字符替换掉
+                    alt = re.sub(r"[?？!！]", "", alt)
+                    # splitext()：将path切割成root + extension
+                    suffix = os.path.splitext(img_url)[1][0:4]
+                    filename = "D://doutu/" + alt + suffix
+                    print(filename)
+                    # urlretrieve()：如果被检索的url是个文件可以直接将其复制到本地
+                    urllib.request.urlretrieve(img_url, filename=filename)
+                self.html_queue.task_done()
 
     def main(self):
         threads = []
@@ -95,7 +106,7 @@ class DouTu02(object):
             t_html = threading.Thread(target=self.get_data)
             threads.append(t_html)
         # 3.解析数据
-        for i in range(1, 20):
+        for i in range(1, 5):
             t_parse = threading.Thread(target=self.parse_data)
             threads.append(t_parse)
         for t in threads:

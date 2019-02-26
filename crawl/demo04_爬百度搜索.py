@@ -6,6 +6,7 @@ import threading
 from queue import Queue
 import logging
 import time
+from fake_useragent import UserAgent
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -18,7 +19,7 @@ class BaiDu01(object):
     # 单线程
     def __init__(self):
         self.url = "https://www.baidu.com/s?wd={}&pn={}&gpc={}"
-        self.headers = {"User-Agent": "Chrome Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"}
+        self.ua = UserAgent()
         self.config = {
             "host": "10.9.2.196",
             "port": 3306,
@@ -63,7 +64,7 @@ class BaiDu01(object):
 
     def get_data(self, url):
         # print(url)
-        response = requests.get(url, headers=self.headers)
+        response = requests.get(url, headers={"User-Agent": self.ua.random})
         return BeautifulSoup(response.text, "lxml")
 
     def parse_data(self, soup):
@@ -75,7 +76,7 @@ class BaiDu01(object):
             if link.startswith("http"):
                 # requests默认会自动处理302跳转,经过跳转的请求返回的url/status_code/headers都是跳转后的信息,可用response.history追踪跳转情况
                 # 如果请求跳转过多可能会报错：TooManyRedirects: Exceeded 30 redirects 禁用重定向还可以减少网络消耗提高访问速度
-                response = requests.get(link, headers=self.headers, allow_redirects=False)
+                response = requests.get(link, headers={"User-Agent": self.ua.random}, allow_redirects=False)
                 if response.status_code < 400:
                     # 禁用后status_code是302,通过response.headers["Location"]获取重定向的url
                     real_link = response.headers["Location"]
@@ -118,7 +119,7 @@ class BaiDu02(object):
     # 多线程
     def __init__(self):
         self.url = "https://www.baidu.com/s?wd={}&pn={}&gpc={}"
-        self.headers = {"User-Agent": "Chrome Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"}
+        self.ua = UserAgent()
         self.config = {
             "host": "10.9.2.196",
             "port": 3306,
@@ -174,13 +175,15 @@ class BaiDu02(object):
         while True:
             url = self.url_queue.get()
             # print(url)
-            response = requests.get(url, headers=self.headers)
+            response = requests.get(url, headers={"User-Agent": self.ua.random})
             # return BeautifulSoup(response.text, "lxml")
             self.soup_queue.put(BeautifulSoup(response.text, "lxml"))
+            # 将处理完的url标记为task_done,此时url_queue.size - 1
             self.url_queue.task_done()
 
     def parse_data(self):
         while True:
+            # 从soup_queue取出soup
             soup = self.soup_queue.get()
             for tag in soup.select("h3 > a"):
                 title = tag.text
@@ -188,7 +191,7 @@ class BaiDu02(object):
                 # 百度搜索的条目都是www.baidu.com域名的地址,点击后会重定向到真实地址,所以需要再次发送请求获取搜索结果的真实url
                 real_link = ""
                 if link.startswith("http"):
-                    response = requests.get(link, headers=self.headers, allow_redirects=False)
+                    response = requests.get(link, headers={"User-Agent": self.ua.random}, allow_redirects=False)
                     if response.status_code < 400:
                         # 禁用后status_code是302,通过response.headers["Location"]获取重定向的url
                         real_link = response.headers["Location"]
