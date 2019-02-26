@@ -1,12 +1,11 @@
 # coding=utf-8
-
 import requests
 from lxml import etree
+from selenium import webdriver
 import json
 import time
 import pymysql
 import logging
-from selenium import webdriver
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -15,8 +14,7 @@ logging.basicConfig(
 )
 
 
-# 需求：爬取拉勾网java工程师职位信息
-class LagouSpider01(object):
+class LaGou01(object):
     """
     方式一：抓接口,使用requests模块发送网络请求,需要伪造请求头(反爬虫很容易识别伪造的headers,指不定少了哪个参数就不行)
     """
@@ -131,7 +129,7 @@ class LagouSpider01(object):
             conn.close()
 
 
-class LagouSpider02(object):
+class LaGou02(object):
     """
     方式二：使用selenium模拟浏览器操作(推荐)
     """
@@ -262,6 +260,6 @@ class LagouSpider02(object):
 
 
 if __name__ == '__main__':
-    ls = LagouSpider01()
-    # ls = LagouSpider02()
+    ls = LaGou01()
+    # ls = LaGou02()
     ls.parse_page()

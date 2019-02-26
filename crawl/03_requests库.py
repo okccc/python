@@ -1,8 +1,7 @@
 # coding=utf-8
 """
-Requests: 基于urllib3实现,继承了urllib2的所有特性,并且支持HTTP连接保持和连接池,支持使用cookie保持会话
-          支持文件上传,支持自动确定响应内容的编码,支持国际化的URL和POST数据自动编码
-fiddler抓包工具: 是一个位于客户端和服务器之间的代理服务器,客户端和服务器的收发数据都会先经过fiddler,这样就可以截取请求和响应中传输的数据
+requests：基于urllib3实现,继承了urllib2的所有特性,功能更强大
+fiddler：是一个位于客户端和服务器之间的代理服务器,客户端和服务器收发数据都会先经过fiddler,这样就可以截取请求和响应中传输的数据
 """
 
 import requests
@@ -27,7 +26,7 @@ def get():
     print(response.encoding)  # utf-8
     # 查看响应url
     print(response.url)  # https://www.baidu.com/s?wd=%E7%9F%A5%E4%B9%8E
-    # 查看响应吗
+    # 查看响应码
     print(response.status_code)  # 200
     # 查看响应头
     print(response.headers)

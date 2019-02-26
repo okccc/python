@@ -9,7 +9,7 @@ import time
 from fake_useragent import UserAgent
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
     datefmt="%m/%d/%Y %H:%M:%S %p"
 )
@@ -168,15 +168,16 @@ class BaiDu02(object):
             gpc = "stf=%.3f,%.3f|stftype=1" % (time.time() - 86400, time.time())
             # return [self.url.format(word, (i-1)*10, gpc) for word in words for i in range(1, 3)]
             for word in words:
-                for i in range(1, 3):
+                for i in range(1, 2):
                     self.url_queue.put(self.url.format(word, (i-1)*10, gpc))
 
     def get_data(self):
         while True:
+            # 从url_queue取出url
             url = self.url_queue.get()
-            # print(url)
             response = requests.get(url, headers={"User-Agent": self.ua.random})
             # return BeautifulSoup(response.text, "lxml")
+            # 将html源码放入soup_queue
             self.soup_queue.put(BeautifulSoup(response.text, "lxml"))
             # 将处理完的url标记为task_done,此时url_queue.size - 1
             self.url_queue.task_done()
@@ -201,16 +202,18 @@ class BaiDu02(object):
                         # print(word)
                         # 有word符合就添加数据
                         data = {"title": title, "link": real_link}
+                        print(data)
                         self.datas.append(data)
                         # 结束循环防止一个title多个word重复添加
                         break
+            # 将处理完的soup标记为task_done,此时soup_queue.size - 1
             self.soup_queue.task_done()
 
     def filter_data(self):
-        filter_words = ["美好", "美容", "医院", "医疗", "医美", "祛痘", "植发", "整形", "门诊", "诊所"]
+        print(self.datas)
         data_new = []
         for data in self.datas:
-            for word in filter_words:
+            for word in ["美好", "医院"]:
                 if word in data["title"]:
                     data_new.append(data)
                     break
@@ -220,6 +223,7 @@ class BaiDu02(object):
     def main(self):
         # 1.获取所有关键字
         words = self.get_hospital()
+        print(len(words))
         threads = []
         # 2.获取url列表
         t_url = threading.Thread(target=self.get_url, args=(words,))
@@ -228,7 +232,7 @@ class BaiDu02(object):
             # 3.发送请求,获取响应
             t_html = threading.Thread(target=self.get_data)
             threads.append(t_html)
-        for i in range(1, 5):
+        for i in range(1, 20):
             # 4.解析数据
             t_parse = threading.Thread(target=self.parse_data)
             threads.append(t_parse)
