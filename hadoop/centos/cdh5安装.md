@@ -4,7 +4,7 @@
 [cdh5安装文档2](http://www.jianshu.com/p/57179e03795f)    
 一：环境准备
 Centos安装完后，System--->Preferences--->Network Connection  
-![设置ip地址 ](images/008.jpeg)  
+![设置ip地址 ](images/008.png)  
 
 修改完ip后，service network restart  
 设置网络代理：  

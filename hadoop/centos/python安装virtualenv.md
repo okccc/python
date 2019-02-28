@@ -12,7 +12,7 @@ pip._vendor.urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='files
 - 安装virtualenvwrapper  
 pip install virtualenvwrapper
 - 将virtualenvwrapper.sh配入当前shell环境  
-![](images/004.jpg)
+![](images/004.png)
 - 使环境变量生效  
 source ~/.bash_profile
 - 添加软连接  
@@ -29,5 +29,5 @@ mkvirtualenv --help
 - 安装django  
 pip install django==1.8.2
 - 查看版本  
-![](images/005.jpg)
+![](images/005.png)
 

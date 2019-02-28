@@ -47,7 +47,7 @@ RowKey 和 ColumnName ：二进制值(Java 类型 byte[])
 Timestamp ：是一个64 位整数(Java 类型 long)  
 value ：是一个字节数组(Java类型 byte[])  
 存储结构  
-![](images/存储结构.jpeg)    
+![](images/存储结构.png)    
 hbase和hive区别  
 两者都是架构在hadoop之上的,以hdfs作为底层存储  
 Hive：高延迟、结构化、面向分析  
@@ -66,7 +66,7 @@ LSM树原理：把一棵大树拆分成n棵小树,它首先将小树写入内存
 Hbase存储：为了防止内存数据丢失,小树写进内存的同时会暂时持久化到磁盘,分别对应HBase的MemStore    和HLog,MemStore上的树达到一定大小之后,会flush到HRegion磁盘中(一般就是Hadoop    DataNode)这样MemStore就变成了DataNode上的磁盘文件StoreFile,然后HRegionServer定期会对DataNode数据做merge操作,彻底删除无效空间,多棵小树此时合并成大树,来增强读性能  
 WAL机制：每个HRegionServer中都会有一个HLog对象,HLog是一个实现Write Ahead Log的类,每次用户操作写入Memstore的同时,也会写一份数据到HLog文件,HLog文件定期会滚动刷新,并删除旧文件(已经持久化到StoreFile中的数据)  
 数据恢复：如果HRegionServer故障,HMaster会通过Zookeeper感知,HMaster首先处理遗留的HLog文件,将不同region的log数据拆分,分别放到相应region目录下,然后再将失效的region重新分配,领取到这些region的HRegionServer在Load Region的过程中,会发现有历史遗留HLog需要处理,因此会Replay HLog中的数据到MemStore中,然后flush到StoreFiles,完成数据恢复  
-![](images/hbase.jpeg)  
+![](images/hbase.png)  
 Hbase数据导入  
 方式一：通过client api逐条put,慢  
 方式二：用sqoop(待研究)  

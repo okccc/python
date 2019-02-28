@@ -2,7 +2,7 @@
 vi flume-env.sh
 修改java_home=/home/cq/jdk1.8.0_65  
 查看版本：flume-ng version  
-![](images/flume原理.jpg)
+![](images/flume原理.png)
 client ：生产数据，运行在一个独立的线程  
 event ：是flume数据传输的基本单元  
 agent：jvm 运行flume的最小独立单元，由source、channel和sink三大组件构成  

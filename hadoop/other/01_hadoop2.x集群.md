@@ -50,7 +50,7 @@ scp -r /home/cq/zookeeper-3.4.5/ centos03:/home/cq
 查看状态：zkServer.sh status  
 进入当前这台机：zkCli.sh  
 进入指定ip的客户端：zkCli.sh –server <ip>    
-![](../images/zookeeper.jpg)  
+![](images/zookeeper.png)  
 zookeeper选举机制  
 全新集群：比较myid(半数机制)  
 非全新集群(有机器中途宕机)：先看谁数据最新，再比较myid  
@@ -67,7 +67,7 @@ EPHEMERAL_SEQUENTIAL
 1、在centos01上安装hadoop  
 tar -zxvf hadoop-2.4.1.tar.gz  
 修改环境变量：vi /etc/profile  
-![](../images/环境变量.jpeg)  
+![](images/环境变量.png)  
 修改hadoo-env.sh  
 export JAVA_HOME=/home/cq/jdk1.8.0_65  
 修改core-site.xml  
@@ -253,11 +253,11 @@ yarn application -kill ***                 杀掉yarn进程
 删除hdfs文件：hadoop fs -rm /aaa/angela.txt  
 删除hdfs文件夹：hadoop fs -rm -r /aaa  
 查看hdfs总空间大小：hadoop fs -df -h /  
-![](../images/hdfs总空间.png)  
+![](images/hdfs总空间.png)  
 查看hdfs某个目录大小：hadoop fs -du -s -h /user/hive/warehouse  
-![](../images/hdfs某个目录.png)    
+![](images/hdfs某个目录.png)    
 查看hdfs某个目录下所有文件大小：hadoop fs -du -h /user/root/.Trash/Current/user/hive/warehouse  
-![](../images/hdfs目录下文件大小.png)      
+![](images/hdfs目录下文件大小.png)      
 ## <font color=red>Trash</font>   
 hadoop的回收站trash默认是关闭的，还是打开比较好，防止误删数据  
 修改core-site.xml  
@@ -273,14 +273,14 @@ hadoop的回收站trash默认是关闭的，还是打开比较好，防止误删
 手动清空回收站：hadoop fs -expunge，先将当前回收站目录/user/用户名/.Trash/current重命名为：/user/用户名/.Trash/yyMMddHHmmss(当前系统时间，精确到秒)，再次执行清空回收站操作，就彻底删除了；  
 ## <font color=red>MapReduce</font>  
 - Eclipse安装hadoop插件  
-![](../images/hadoop插件.jpeg)  
+![](images/hadoop插件.png)  
 下载对应hadoop版本的插件：  
 将hadoop-eclipse-plugin-2.6.0.jar放到eclipse的plugins目录下，重启eclipse  
 然后将hadoop2.6解压到本地，将hadoop.dll和winutils.exe放到hadoop的bin目录下  
 设置Window->Prefrences->Hadoop Map/Reduce的installation directory  
 设置Window->Open Perspective->Other->Map/Reduce  
 创建hdfs连接：  
-![](../images/hdfs连接.jpeg)  
+![](images/hdfs连接.png)  
 能看到DFS Locations下的hdfs目录说明插件安装成功。  
 常见错误：  
 Permission denied: user=admin, access=EXECUTE, inode="/user":cq:supergroup:drwxrwx---  
@@ -358,5 +358,5 @@ public class WordCount {
     }  
 }  
 ```
-![](../images/map.jpg)  
-![](../images/reduce.jpg)  
+![](images/map.png)  
+![](images/reduce.png)  

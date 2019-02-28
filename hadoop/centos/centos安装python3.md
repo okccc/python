@@ -2,8 +2,8 @@
 [参考文档](http://www.cnblogs.com/JahanGu/p/7452527.html)
 ***
 - 查看系统已有python版本和执行路径  
-![](images/001.jpg)  
-![](images/002.jpg)  
+![](images/001.png)  
+![](images/002.png)  
 
 - 依赖环境    
 centos6.5：yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc make  
@@ -29,7 +29,7 @@ ln -s /usr/local/python3/bin/python3 /usr/bin/python
 ln -s /usr/local/python3/bin/pip3 /usr/bin/pip
 
 - 测试是否安装成功  
-![](images/003.jpg)
+![](images/003.png)
 
 - 由于执行yum需要python2所以要修改下yum配置  
 vim /usr/bin/yum  

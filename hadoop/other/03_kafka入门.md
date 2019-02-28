@@ -13,7 +13,7 @@ zookeeper.connect=centos01:2181,centos02:2181,centos03:2181
 zkServer.sh start  
 4、在每一台节点上启动broker  
 进入kafka_home：kafka-server-start.sh config/server.properties & （在控制台打印启动信息）  
-![](images/broker.jpeg)    
+![](images/broker.png)    
 重新启动！  
 5、在kafka集群中创建topic  
 kafka-topics.sh --create --zookeeper centos01:2181 --replication-factor 3 --partitions 1 --topic girls  
@@ -22,7 +22,7 @@ kafka-topics.sh --create --zookeeper centos01:2181 --replication-factor 3 --part
 查看topic分区和副本信息：kafka-topics.sh --describe --zookeeper  centos01:2181  
 删除topic：kafka-topics.sh --delete --zookeeper ubuntu:2181 --topic test01  
 （注意：要先在server.properties最后一行添加配置delete.topic.enable=true，不然删不掉）  
-![](images/kafka.jpeg)    
+![](images/kafka.png)    
 6、用一个producer向某一个topic中写入消息  
 kafka-console-producer.sh --broker-list centos01:9092 --topic replicationgirls  
 i love xiaohuli   
@@ -44,7 +44,7 @@ Topic ：消息根据topic进行归类，每个topic被分成多个partition(区
 partition：在存储层面是逻辑append log文件，包含多个segment文件  
 Segement：消息存储的真实文件，会不断追加生成新的消息，默认存储7天  
 offset：消息在文件中的位置（偏移量）  
-![](images/kafka流程图.jpeg)  
+![](images/kafka流程图.png)  
 <font color=red>kafka api</font>  
 ```java
 public class ProducerDemo {  
@@ -113,19 +113,19 @@ public class ConsumerDemo {
 ```
 <font color=red>zookeeper监控</font>  
 kafka启动时会在zookeeper上创建brokers节点和consumers节点。  
-![](images/zk01.jpeg)    
+![](images/zk01.png)    
 ids：监控broker是否存活     格式: /brokers/ids/[0...N]    
-![](images/zk02.jpeg)  
+![](images/zk02.png)  
 topics：查找partition在哪台broker上     格式: /brokers/topics/[topic]/partitions/[0...N]   
-![](images/zk03.jpeg)  
-![](images/zk04.jpeg)  
+![](images/zk03.png)  
+![](images/zk04.png)  
 owners：标记partition被组内哪个consumer消费.临时znode。  
 格式: /consumers/[group_id]/owners/[topic]/[broker_id-partition_id]  
-![](images/zk05.jpeg)    
-![](images/zk06.jpeg)    
+![](images/zk05.png)    
+![](images/zk06.png)    
 ids：记录该组中的consumer消费的topic的partition个数  
 格式: /consumers/[group_id]/ids/[consumer_id]  
-![](images/zk07.jpeg)  
+![](images/zk07.png)  
 offsets：跟踪每个consumer组目前所消费的partition中最大的offset。    
 格式: /consumers/[group_id]/offsets/[topic]/[broker_id-partition_id]  
-![](images/zk08.jpeg)  
+![](images/zk08.png)  
