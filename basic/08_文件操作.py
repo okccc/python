@@ -37,7 +37,7 @@ def recursive(path, suffix):
     for file in files:
         if os.path.isfile(path + file):
             if file.endswith(suffix):
-                file_new = file.replace("jpg", "png")
+                file_new = file.replace(suffix, ".png")
                 os.rename(path + file, path + file_new)
         else:
             recursive(path + file + "/", suffix)
@@ -74,7 +74,7 @@ def test03():
 
 
 if __name__ == "__main__":
-    recursive("D://PycharmProjects/python/", ".jpg")
+    recursive("D://PycharmProjects/python/", ".jpeg")
     # test01()
     # test02()
     # test03()
