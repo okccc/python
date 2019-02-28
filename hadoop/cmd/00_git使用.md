@@ -20,14 +20,14 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - 查看最新提交的更新：git show/git last  
 查看指定提交的更新：git show commitid  
 查看指定提交指定文件的更新：git show commitid filename
-- 工作区未track文件  
+- 删除工作区未track文件  
 git clean -n：提醒你哪些文件会被删除  
 git clean -f：删除当前目录下所有未track文件,也可以指定path删除  
 git clean -df：删除当前目录下所有未track文件(夹)
-- 撤销修改/删除  
-场景1：只修改/删除了工作区文件,直接丢弃改动：git checkout -- aaa.txt  (git checkout本质上是用版本库的版本替换工作区的版本)  
-场景2：修改/删除了工作区文件并添加到了暂存区,先取消暂存再丢弃改动：git reset HEAD aaa.txt & git checkout -- aaa.txt  
-场景3：不仅添加到暂存区还提交到了版本库,先回退版本再丢弃改动：git reset HEAD^ & git checkout -- bbb.txt
+- 撤销工作区已track文件的修改/删除  
+场景1：只修改/删除了工作区文件,直接丢弃改动：git checkout aaa.txt/.  (git checkout本质上是用版本库的版本替换工作区的版本)  
+场景2：修改/删除了工作区文件并添加到了暂存区,先取消暂存再丢弃改动：git reset HEAD aaa.txt & git checkout aaa.txt  
+场景3：不仅添加到暂存区还提交到了版本库,先回退版本再丢弃改动：git reset HEAD^ & git checkout aaa.txt
 - 版本回退(慎用!)：git reset 38fd442 或者 git reset HEAD^/HEAD~1/HEAD~10(HEAD是指向当前版本的指针默认指向master分支)
 - 对比文件  
 对比工作区和HEAD版本：git diff HEAD -- aaa.txt  
