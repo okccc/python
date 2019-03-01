@@ -7,7 +7,6 @@ fiddler：是一个位于客户端和服务器之间的代理服务器,客户端
 import requests
 import json
 
-
 def get():
     # 请求地址
     url = "https://www.baidu.com/s?"
@@ -33,14 +32,12 @@ def get():
     # 追踪重定向：是一个Response对象的列表,为了完成请求而创建了这些对象,对象列表按照从远到近的请求排序
     print(type(response.history))  # <class 'list'>
     print(response.history)  # []  -- 如果是重定向会显示[<Response [302]>, <Response [302]>...]
-
     # 使用response.text时,Requests会基于HTTP响应的文本编码自动解码响应内容,大多数Unicode字符集都能被无缝解码
-    # print(type(response.text))  # <class 'str'>
+    print(type(response.text))  # <class 'str'>
     # 使用response.content时,返回的是服务器响应数据的原始二进制字节流,可以用来保存图片等二进制文件
-    # print(type(response.content))  # <class 'bytes'>
+    print(type(response.content))  # <class 'bytes'>
     # 注意：如果response.text乱码可以改成response.content.decode('charset')  # charset是该网站编码
     # print(response.content.decode("gb2312"))
-
 
 def post():
     # 请求地址
@@ -58,24 +55,20 @@ def post():
     # 查看响应数据
     print(response.text)
     # {"type": "EN2ZH_CN", "errorCode": 0, "elapsedTime": 1, "translateResult": [[{"src": "hello", "tgt": "你好"}]]}
-
     # 如果是json文件也可以直接显示
     print(response.json())
     # {'translateResult': [[{'src': 'hello', 'tgt': '你好'}]], 'type': 'EN2ZH_CN', 'errorCode': 0, 'elapsedTime': 1}
-
     # 对比数据类型发现：response.json() 其实就是 json.loads(response.text)
     print(type(response.json()))  # dict
     print(type(json.loads(response.text)))  # dict
 
-
 def ajax():
-    # 需求：抓取拉勾网java工程师职位信息(详见demo03)
+    # 需求：抓取拉勾网java工程师职位信息(详见demo05)
 
     # 地址栏url
     # url = "https://www.lagou.com/jobs/list_java?labelWords=&fromSearch=true&suginput="
     # 真实请求地址(F12-->Network-->Headers)
     url = "https://www.lagou.com/jobs/positionAjax.json?city=%E4%B8%8A%E6%B5%B7&needAddtionalResult=false"
-
     # 请求头(有些网站做了反爬虫,调试过程中headers可以多写几个参数(ua,cookie,referer,host...)尽量让请求看上去像是真实浏览器访问的不然会故意返回500错误,此处引申出selenium)
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36",
@@ -83,56 +76,45 @@ def ajax():
         "Referer": "https://www.lagou.com/jobs/list_java?labelWords=&fromSearch=true&suginput=",
         # ...
     }
-
     # 请求数据
     formdata = {
         "first": "false",
         "pn": 1,
         "kd": "java"
     }
-
     # 发送post请求
     for i in range(1, 10):
         formdata["pn"] = i
         response = requests.post(url, data=formdata, headers=headers)
         print(response.json())
 
-
-# 免费代理
 def proxy01():
-    """
-    注意：代理类型要和目标站点的url协议保持一致,即访问http站点就要用http类型的代理;如果用https代理访问http站点,虽然也能请求成功但其实并没有走代理而是用的本地ip直接访问
-         可以通过response.headers/response.text结果对比是否使用了代理ip
-    """
-
+    # 注意：代理类型要和目标站点的url协议保持一致,比如https代理访问http站点虽然也能请求成功但其实并没有走代理而是本地ip直接访问
     # 请求地址
     url = "http://httpbin.org/ip"  # ip测试网站
-    # 代理IP列表
+    # 免费代理IP列表
     proxies = {
         "http": "http://119.10.67.144:808",  # 假设该代理ip有效
         # "https": "https://119.10.67.144:808",
     }
-    # 随机选一个
-    # 发送请求(代理要加上proxies参数)
+    # 发送请求
     response1 = requests.get(url)
     response2 = requests.get(url, proxies=proxies)
-    # 查看响应数据
-    print(response1.headers)  # {'Server': 'gunicorn/19.8.1', 'Date': 'Wed, 20 Jun 2018 02:19:10 GMT', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': 'true'}
+    # 可以通过response.headers/response.text结果对比是否使用了代理ip
+    print(response1.headers)  # {'Server': 'gunicorn/19.8.1', 'Date': 'Wed, 20 Jun 2018 02:19:10 GMT' ...}
     print(response2.headers)  # {'Server': 'Proxy'}
     print(response1.text)  # {"origin":"106.75.64.149"} -- 真实ip
     print(response2.text)  # {"origin":"119.10.67.144"} -- 代理ip
 
-# 私密代理
 def proxy02():
     # 请求地址
     url = "https://nba.hupu.com/"
     # 私密代理IP
     proxy = {"http": "http://user:password@ip:port/"}
-    # 发送请求(代理要加上proxies参数)
+    # 发送请求
     response = requests.get(url, proxies=proxy)
     # 查看响应数据
     print(response.text)
-
 
 def web():
     # 请求地址
@@ -143,7 +125,6 @@ def web():
     response = requests.get(url, auth=auth)
     # 查看响应数据
     print(response.text)
-
 
 def cookie():
     # 请求地址
@@ -159,31 +140,30 @@ def cookie():
     print(type(cookiedict))  # <class 'dict'>
     print(cookiedict)  # {'BDORZ': '27315'}
 
-
 def session():
     # 创建session对象,可以保存cookie值
-    session = requests.session()
+    s = requests.session()
     # 请求头
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.1; rv2.0.1) Gecko/20100101 Firefox/4.0.1"}
+    headers = {"User-Agent": "Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11"}
     # 登录页面(通常带有login/sign字眼)：可通过fiddler抓包获取登录时的webform表单数据
     url_login = "https://signin.aliyun.com/1065151969971491/login.htm"
-    # 登录后的其它页面
-    url = "https://ide-cn-shanghai.data.aliyun.com/web/folder/listObject?keyword=&objectId=-1&projectId=29820&reRender=true&tenantId=171224272675329&type=1"
     # 需要登录的用户名和密码
     data = {"user_principal_name": "chenqian@1065151969971491", "password_ims": "Cq111111"}
     # 发送附带用户信息的请求(此时session已包含登录后的cookie值)
-    session.post(url_login, data=data, headers=headers)
+    s.post(url_login, data=data, headers=headers)
+    # 非登录页
+    url = "https://ide-cn-shanghai.data.aliyun.com/web/folder/listObject?keyword=&objectId=-1&projectId=29820&reRender=true&tenantId=171224272675329&type=1"
     # 然后就可以访问登录后的其它页面了
-    response = session.get(url, headers=headers, allow_redirect=False)
+    response = s.get(url, headers=headers, allow_redirect=False)
     print(response.text)
 
 
 if __name__ == "__main__":
-    get()
+    # get()
     # post()
     # ajax()
     # proxy01()
     # proxy02()
     # web()
     # cookie()
-    # session()
+    session()
