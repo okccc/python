@@ -16,7 +16,7 @@ logging.basicConfig(
 
 class LaGou01(object):
     """
-    方式一：抓接口,使用requests模块发送网络请求,需要伪造请求头(反爬虫很容易识别伪造的headers,指不定少了哪个参数就不行)
+    # 1.抓接口,使用requests模块发送网络请求,需要伪造请求头(反爬虫很容易识别伪造的headers,指不定少了哪个参数就不行)
     """
 
     def parse_page(self):
@@ -35,7 +35,7 @@ class LaGou01(object):
         }
         # 请求数据
         formdata = {
-            "first": "false",
+            "first": "true",
             "pn": 1,
             "kd": "java"
         }
@@ -44,7 +44,7 @@ class LaGou01(object):
             formdata["pn"] = i
             # 获取请求数据
             response = requests.post(url, data=formdata, headers=headers)
-            # 转成python对象(dict)
+            # 将json字符串转成dict
             data = json.loads(response.text)
             # 获取所有职位信息的编号
             ids = data['content']['hrInfoMap'].keys()
@@ -131,13 +131,13 @@ class LaGou01(object):
 
 class LaGou02(object):
     """
-    方式二：使用selenium模拟浏览器操作(推荐)
+    # 2.使用selenium模拟浏览器操作(推荐)
     """
 
     def __init__(self):
         # 创建浏览器对象
         self.driver = webdriver.Chrome(executable_path="D://chromedriver/chromedriver.exe")
-        # 初始页面
+        # 地址栏url
         self.url = "https://www.lagou.com/jobs/list_java?labelWords=&fromSearch=true&suginput="
 
     def parse_page(self):
