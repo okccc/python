@@ -1,35 +1,21 @@
 # coding=utf-8
 """
 双链表: 每个节点有两个链接,一个指向前一个节点,若是头节点就指向空值;另一个指向下一个节点,若是尾节点就指向空值
-       元素域elem存放具体数据
-       链接域pre存放上一个节点位置
-       链接域next存放下一个节点位置
-常用操作:
-is_empty() 链表是否为空
-length() 链表长度
-travel() 遍历链表
-add(item) 链表头部添加
-append(item) 链表尾部添加
-insert(pos, item) 指定位置添加
-remove(item) 删除节点
-search(item) 查找节点是否存在
 """
 
-
-# 节点实现
 class Node(object):
     """双链表的节点"""
-
     def __init__(self, item):
+        # 存放元素
         self.item = item
+        # 存放上一个节点位置
         self.pre = None
+        # 存放下一个节点位置
         self.next = None
 
 
-# 双链表实现
-class DoubleLinkedList(object):
+class DoubleLinkList(object):
     """双链表"""
-
     def __init__(self):
         # 链表头
         self.head = None
@@ -155,19 +141,18 @@ class DoubleLinkedList(object):
         return False
 
 
-# 测试代码
 if __name__ == "__main__":
-    dll = DoubleLinkedList()
-    print(dll.is_empty())
-    print(dll.length())
+    dll = DoubleLinkList()
+    print(dll.is_empty())  # Ture
+    print(dll.length())  # 0
     dll.add(11)
     dll.add(22)
     dll.append(33)
     dll.insert(2, 44)
-    print(dll.is_empty())
-    print(dll.length())
-    dll.travel()
-    print(dll.search(33))
-    print(dll.search(55))
+    print(dll.is_empty())  # False
+    print(dll.length())  # 4
+    dll.travel()  # 22 11 44 33
+    print(dll.search(33))  # True
+    print(dll.search(55))  # False
     dll.remove(22)
-    dll.travel()
+    dll.travel()  #11 44 33

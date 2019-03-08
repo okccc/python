@@ -6,7 +6,7 @@
 """
 
 def bubble_sort(l):
-    """冒泡排序(复杂度n^2)：将数据两两比较,大的放右边,先确定最大的"""
+    """1.冒泡排序(复杂度n^2)：将数据两两比较,大的放右边,先确定最大的"""
     n = len(l)
     # 外循环控制循环次数
     for i in range(n-1):
@@ -24,7 +24,7 @@ def bubble_sort(l):
 
 
 def select_sort(l):
-    """选择排序(复杂度n^2)：将第一个位置的元素依次与后面的比较大小,先确定最小的"""
+    """2.选择排序(复杂度n^2)：将第一个位置的元素依次与后面的比较大小,先确定最小的"""
     n = len(l)
     # 外循环控制循环次数
     for i in range(n-1):
@@ -39,13 +39,33 @@ def select_sort(l):
         l[i], l[min_index] = l[min_index], l[i]
 
 
-def quick_sort(l):
-    """快速排序："""
-    pass
+def quick_sort(l, first, last):
+    """3.快速排序(复杂度logn)：先找到中间值,再对中间值左右的值分别做快排"""
+    if first > last:
+        return
+    # 先假设第一个元素就是中间值
+    mid = l[first]
+    low = first
+    high = last
+    while low < high:
+        # high左移
+        while low < high and l[high] >= mid:
+            high -= 1
+        l[low] = l[high]
+        while low < high and l[low] < mid:
+            low += 1
+        l[high] = l[low]
+    # 退出循环时low==high
+    l[low] = mid
+
+    # 对low左边的列表执行快排
+    quick_sort(l, first, low-1)
+    # 对low右边的列表执行快排
+    quick_sort(l, low+1, last)
 
 
 def sequence_search(l, i):
-    """顺序查找"""
+    """顺序查找(复杂度n)"""
     for x in range(len(l) - 1):
         if l[x] == i:
             return x
@@ -71,7 +91,8 @@ if __name__ == "__main__":
     # 排序
     L1 = [33, 99, 22, 55, 44, 77, 11, 88]
     # bubble_sort(L1)
-    select_sort(L1)
+    # select_sort(L1)
+    quick_sort(L1, 0, len(L1)-1)
     print(L1)  # [11, 22, 33, 44, 55, 77, 88, 99]
 
     # 搜索

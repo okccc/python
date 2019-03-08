@@ -10,7 +10,6 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - 初始化仓库：git init
 - 将工作区文件(夹)添加到暂存区：git add aaa.txt 或者 git add . 
 - 查看工作区/暂存区/仓储区文件的状态：git status  
-![](images/00_工作区和版本库.png)  
 - 将暂存区文件提交到版本库形成版本记录：git commit -m '...'(注意：git只会提交暂存区的修改来创建版本,工作区的修改必须先添加到暂存区)  
 - 如果是已经在track的文件可以不用添加直接提交：git commit -am 'all message ...'
 - 查看版本提交记录(commit)：git log
