@@ -14,6 +14,7 @@ encode: 将unicode转换成指定编码格式
 decode: 将指定编码格式转换成unicode
 """
 
+import numpy as np
 
 def str01():
     str1 = "hello python hello java"
@@ -80,7 +81,27 @@ def str01():
     str2 = "haha: " + str1 + ","
     print(str2)
 
+def str02(str1, str2):
+    """需求：求两个字符串的最长公共子串"""
+
+    # 两个字符串的长度
+    len1, len2 = len(str1), len(str2)
+    # 最大匹配长度、匹配起始位置
+    num, p = 0, 0
+    # 创建一个元素全是0的矩阵
+    arr = np.zeros(shape=(len1 + 1, len2 + 1), dtype=int)
+    print(arr)
+
+    for i in range(len1):
+        for j in range(len2):
+            if str1[i] == str2[j]:
+                arr[i + 1][j + 1] = arr[i][j] + 1
+                if arr[i + 1][j + 1] > num:
+                    num, p = arr[i + 1][j + 1], i + 1
+    return num, str1[p - num:p]
+
 
 if __name__ == '__main__':
-    str01()
-
+    # str01()
+    res = str02("美贝尔整形医院黑心骗子医生没医德不要脸坑你没商量-上饶新闻网", "美贝尔整形医院黑心骗子医生没医德不要脸坑你没商量-红河新闻网")
+    print(res)
