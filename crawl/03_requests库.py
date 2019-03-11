@@ -90,6 +90,7 @@ def ajax():
 
 def proxy01():
     # 注意：代理类型要和目标站点的url协议保持一致,比如https代理访问http站点虽然也能请求成功但其实并没有走代理而是本地ip直接访问
+    # http和https区别：https(443)在http(80)基础上加了一层安全套接字,HTTPS = HTTP + SSL,客户端/服务器会对传输数据加密/解密,更安全但性能更低
     # 请求地址
     url = "http://httpbin.org/ip"  # ip测试网站
     # 免费代理IP列表
