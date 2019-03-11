@@ -73,7 +73,7 @@ def sequence_search(l, i):
 
 
 def binary_search(l, item):
-    """二分查找(复杂度logn)：必须作用于有序的顺序表,因为要操作索引"""
+    """二分查找(复杂度logn：对半分多少次结束-->2的多少次方等于n)：必须作用于有序的顺序表,因为要操作索引"""
     min = 0
     max = len(l) - 1
     while min <= max:
