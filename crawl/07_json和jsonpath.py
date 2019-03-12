@@ -5,8 +5,9 @@ JSON(JavaScript Object Notation):
 2.轻量级的文本数据交换格式(比如网站前后台不同语言之间的数据交换)
 3.类似xml且比xml更小更快更易解析
 json其实就是javascript中的数组和对象,通过这两种结构可以表示各种复杂的结构
-数组: 在js中用[]表示,数据结构为["python", "java"],通过索引取值;字段值类型可以是字符串、数字、数组、对象等
-对象: 在js中用{}表示,数据结构为{key: value}键值对,通过key取值;key是字符串,value可以是字符串、数字、数组、对象等
+数组array --> python中list,数据结构为["python", "java"],通过索引取值;字段值类型可以是字符串、数字、数组、对象等
+对象object --> python中dict,数据结构为{key: value}键值对,通过key取值;key是字符串,value可以是字符串、数字、数组、对象等
+空值null --> python中None
 json模块提供了四个功能: dumps、dump、loads、load,用于Json字符串和Python对象之间的序列化/反序列化
 
 JsonPath: 遍历Json对象中的节点;JsonPath之于Json相当于XPath之于XML
