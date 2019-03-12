@@ -10,7 +10,7 @@ import json
 def get():
     # 请求地址
     url = "https://www.baidu.com/s?"
-    # 请求头
+    # 请求头：一般加上User-Agent就可以,不行的话再加上HOST/COOKIE试试
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.1; rv2.0.1) Gecko/20100101 Firefox/4.0.1"}
     # 参数
     params = {"wd": "知乎"}
@@ -57,7 +57,7 @@ def post():
     # {"type": "EN2ZH_CN", "errorCode": 0, "elapsedTime": 1, "translateResult": [[{"src": "hello", "tgt": "你好"}]]}
     # 如果是json文件也可以直接显示
     print(response.json())
-    # {'translateResult': [[{'src': 'hello', 'tgt': '你好'}]], 'type': 'EN2ZH_CN', 'errorCode': 0, 'elapsedTime': 1}
+    # {"type": "EN2ZH_CN", "errorCode": 0, "elapsedTime": 1, "translateResult": [[{"src": "hello", "tgt": "你好"}]]}
     # 对比数据类型发现：response.json() 其实就是 json.loads(response.text)
     print(type(response.json()))  # dict
     print(type(json.loads(response.text)))  # dict
@@ -89,8 +89,13 @@ def ajax():
         print(response.json())
 
 def proxy01():
-    # 注意：代理类型要和目标站点的url协议保持一致,比如https代理访问http站点虽然也能请求成功但其实并没有走代理而是本地ip直接访问
-    # http和https区别：https(443)在http(80)基础上加了一层安全套接字,HTTPS = HTTP + SSL,客户端/服务器会对传输数据加密/解密,更安全但性能更低
+    """
+    注意：代理类型要和目标站点的url协议保持一致,比如用https代理访问http站点虽然也能请求成功但实际上并没有走代理而是用的本地ip直接访问
+    http和https区别：https(443)在http(80)基础上加了一层安全套接字,HTTPS = HTTP + SSL,客户端/服务器会对传输数据加密/解密,更安全但性能更低
+    代理作用：1.隐藏真实ip地址
+            2.让服务器以为不是同一个客户端在发送请求
+    """
+
     # 请求地址
     url = "http://httpbin.org/ip"  # ip测试网站
     # 免费代理IP列表
@@ -142,7 +147,14 @@ def cookie():
     print(cookiedict)  # {'BDORZ': '27315'}
 
 def session():
-    # 创建session对象,可以保存cookie值
+    """
+    访问登录页面三种方式：
+    1.实例化session对象,先post再get
+    2.在headers中添加值为字符串的Cookie键
+    3.在请求方法中添加dict格式的cookies参数 --> 字典生成式 cookies = {i.split("=")[0]:i.split("=")[1] for i in Cookie.split("; ")}
+    """
+
+    # 1.创建session对象,可以保存cookie值,实现客户端和服务端的会话保持
     s = requests.session()
     # 请求头
     headers = {"User-Agent": "Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11"}
@@ -152,19 +164,19 @@ def session():
     data = {"user_principal_name": "chenqian@1065151969971491", "password_ims": "Cq111111"}
     # 发送附带用户信息的请求(此时session已包含登录后的cookie值)
     s.post(url_login, data=data, headers=headers)
-    # 非登录页
+    # 其他页面
     url = "https://ide-cn-shanghai.data.aliyun.com/web/folder/listObject?keyword=&objectId=-1&projectId=29820&reRender=true&tenantId=171224272675329&type=1"
-    # 然后就可以访问登录后的其它页面了
+    # 现在就可以访问必须登录才能访问的页面了
     response = s.get(url, headers=headers, allow_redirect=False)
     print(response.text)
 
 
 if __name__ == "__main__":
     # get()
-    # post()
+    post()
     # ajax()
     # proxy01()
     # proxy02()
     # web()
     # cookie()
-    session()
+    # session()
