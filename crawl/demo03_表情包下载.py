@@ -41,7 +41,7 @@ class DouTu01(object):
             suffix = os.path.splitext(img_url)[1][0:4]
             filename = "D://doutu/" + alt + suffix
             print(filename)
-            # urlretrieve()：如果被检索的url是个文件可以直接将其复制到本地
+            # 如果被检索的url是个文件可以直接将其复制到本地 --> 快速保存图片
             urllib.request.urlretrieve(img_url, filename=filename)
 
     def main(self):
@@ -92,7 +92,7 @@ class DouTu02(object):
                     suffix = os.path.splitext(img_url)[1][0:4]
                     filename = "D://doutu/" + alt + suffix
                     print(filename)
-                    # urlretrieve()：如果被检索的url是个文件可以直接将其复制到本地
+                    # 如果被检索的url是个文件可以直接将其复制到本地 --> 快速保存图片
                     urllib.request.urlretrieve(img_url, filename=filename)
                 self.html_queue.task_done()
 

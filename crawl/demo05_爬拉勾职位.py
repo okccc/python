@@ -13,8 +13,9 @@ logging.basicConfig(
     datefmt="%m/%d/%Y %H:%M:%S %p"
 )
 
+
 class LaGou01(object):
-    # 抓接口,使用requests模块发送网络请求,需要伪造请求头(反爬虫很容易识别伪造的headers,指不定少了哪个参数就不行)
+    # 1.抓接口,使用requests模块发送网络请求,需要伪造请求头(反爬虫很容易识别伪造的headers,指不定少了哪个参数就不行)
     def __init__(self):
         # 抓包分析获取接口、请求头、请求数据
         self.url = "https://www.lagou.com/jobs/positionAjax.json?city=%E4%B8%8A%E6%B5%B7&needAddtionalResult=false"
@@ -101,12 +102,13 @@ class LaGou01(object):
         cur = conn.cursor()
 
         value = []
-        for field in ["id", "name", "address", "salary", "experience", "education", "label", "company", "temptation", "description"]:
+        for field in ["id", "name", "address", "salary", "experience", "education", "label", "company", "temptation",
+                      "description"]:
             value.append(position[field])
         print(value)
 
         try:
-            sql = "replace into position values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            sql = "REPLACE INTO position VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cur.execute(sql, value)
             conn.commit()
         except Exception as e:
@@ -129,7 +131,7 @@ class LaGou01(object):
 
 
 class LaGou02(object):
-    # 使用selenium模拟浏览器操作(推荐)
+    # 2.使用selenium模拟浏览器操作(推荐)
     def __init__(self):
         # 创建浏览器对象
         self.driver = webdriver.Chrome(executable_path="D://chromedriver/chromedriver.exe")
@@ -222,11 +224,12 @@ class LaGou02(object):
         conn = pymysql.connect(**self.config)
         cur = conn.cursor()
         value = []
-        for field in ["id", "name", "address", "salary", "experience", "education", "label", "company", "temptation", "description"]:
+        for field in ["id", "name", "address", "salary", "experience", "education", "label", "company", "temptation",
+                      "description"]:
             value.append(position[field])
         print(value)
         try:
-            sql = "replace into positions values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            sql = "REPLACE INTO positions VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cur.execute(sql, value)
             conn.commit()
         except Exception as e:

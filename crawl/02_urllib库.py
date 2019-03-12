@@ -42,29 +42,21 @@ def urllib01():
 
     # 随机选一个(针对反爬虫)
     user_agent = random.choice(ua_list)
-
     # 通过request()方法构造一个请求对象
     request = urllib.request.Request(url)  # 此时User-Agent: Python-urllib/3.5
-
     # 通过add_header()方法添加/修改一个HTTP报头
     request.add_header("User-Agent", user_agent)
-
     # 通过urlopen()方法发送请求,并返回服务器响应内容
     response = urllib.request.urlopen(request)
-
     # 输出服务器相应内容
     html = response.read().decode("utf-8")
     print(type(html))
-
     # 通过get_header()方法获取一个已有的HTTP报头,注意第一个字母大写,后面全小写
     print(request.get_header("User-agent"))
-
     # 输出HTTP响应码
     print(response.getcode())
-
     # 输出返回实际数据的url,防止重定向问题
     print(response.geturl())
-
     # 输出服务器相应的HTTP报头
     print(response.info)
 
@@ -102,24 +94,19 @@ def post():
 
     # {"errorCode":50}问题: 将url里的translate_o改成translate
     url = "http://fanyi.youdao.com/translate?smartresult=dict&smartresult=rule"
-
     # 完整的请求头
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.1; rv2.0.1) Gecko/20100101 Firefox/4.0.1"}
-
     # 用户接口输入
     kw = input("输入要翻译的内容:")
-
     # post请求数据(抓包时WebForms里的参数)
     formdata = {
         "i": kw,
         "doctype": "json"
     }
-
     # url转码
     data = urllib.parse.urlencode(formdata)
     # TypeError: POST data should be bytes or an iterable of bytes. It cannot be of type str.
     data1 = bytes(data, encoding="utf-8")
-
     # 创建请求对象(有data参数说明是post请求)
     request = urllib.request.Request(url, data=data1, headers=headers)
     # 向服务器提交请求
@@ -136,28 +123,23 @@ def ajax():
 
     # ajax页面的url也是通过抓包获取
     url = "https://movie.douban.com/j/chart/top_list?type=11&interval_id=100%3A90&action="
-
     # 请求头
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.1; rv2.0.1) Gecko/20100101 Firefox/4.0.1"}
-
     # post请求数据(分析抓包时WebForms里的参数找出规律)
     formdata = {
         "start": "0",
         "limit": "20"
     }
-
     # URL转码
     data = urllib.parse.urlencode(formdata)
     # TypeError: POST data should be bytes or an iterable of bytes. It cannot be of type str.
     data = bytes(data, encoding="utf-8")
-
     # 创建请求对象
     request = urllib.request.Request(url, data=data, headers=headers)
     # 向服务器提交请求
     response = urllib.request.urlopen(request)
     # 服务器响应数据
     result = response.read().decode("utf-8")
-
     # 保存到本地
     with open("D://movie.json", "w", encoding="utf-8") as f:
         f.write(result)
