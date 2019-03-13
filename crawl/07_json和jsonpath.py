@@ -9,6 +9,7 @@ json其实就是javascript中的数组和对象,通过这两种结构可以表�
 对象object --> python中dict,数据结构为{key: value}键值对,通过key取值;key是字符串,value可以是字符串、数字、数组、对象等
 空值null --> python中None
 json模块提供了四个功能: dumps、dump、loads、load,用于Json字符串和Python对象之间的序列化/反序列化
+抓包技巧：很多网站页面在手机版的response返回的是json数据,这样解析起来方便很多
 
 JsonPath: 遍历Json对象中的节点;JsonPath之于Json相当于XPath之于XML
 XPath    JsonPath       描述
@@ -27,9 +28,11 @@ n/a	        ()	        支持表达式计算
 """
 
 import json
+import requests
 import jsonpath
 import chardet
-import requests
+from pprint import pprint
+import re
 
 def dumps():
     """
@@ -90,36 +93,41 @@ def load():
     print(dict_str)  # {'city': '上海', 'name': 'grubby'}
     print(type(dict_str))  # <class 'dict'>
 
-
-def lagou():
-    """
-    需求: 获取拉勾网城市Json文件http://www.lagou.com/lbs/getAllCitySearchLabels.json的所有城市
-    jsonpath.jsonpath(obj, express): traverse JSON object using jsonpath expr, returning values or paths
-    """
-
-    # 文件链接
+def json01():
+    # 获取拉勾城市信息
     url = "http://www.lagou.com/lbs/getAllCitySearchLabels.json"
     # 请求头
     headers = {"User-Agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"}
     # 发送get请求
     response = requests.get(url, headers=headers)
     # 将json格式的字符串转换成Python对象
-    D = json.loads(response.text)
-    print(type(D))  # <class 'dict'>
-    # 通过JsonPath表达式解析
-    citys = jsonpath.jsonpath(D, '$..name')
-    print(type(citys))  # <class 'list'>
-    # for city in city_list:
-    #     print(city)
+    data = json.loads(response.text)
+    # pprint可以格式化输出内容,使dict等数据格式看着更美观
+    pprint(data)
+    # 通过JsonPath解析出目标字段
+    citys = jsonpath.jsonpath(data, '$..name')
+    print(citys)  # <class 'list'>
+    # 保存数据
+    with open("./city.json", "w", encoding="utf8") as f:
+        # indent参数设置换行时的缩进,这样json字符串就不是一整行而是json格式
+        f.write(json.dumps(data, ensure_ascii=False, indent=4))
 
-    # 将list序列化成json数组
-    array = json.dumps(citys, ensure_ascii=False)
-    print(type(array))  # <class 'str'>
-    print(chardet.detect(array.encode('utf-8')))  # {'encoding': 'utf-8', 'confidence': 0.99, 'language': ''}
-
-    # 写入本地文件
-    with open("D://city.txt", "w") as f:
-        f.write(array)
+def json02():
+    # 抓取36kr上的文章
+    url = "https://36kr.com/"
+    # 请求头
+    headers = {"User-Agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"}
+    # 发送请求获取响应
+    response = requests.get(url, headers=headers)
+    # 通过在response中搜索文章标题发现数据在第69行的<script></script>标签里面,正则匹配取出数据
+    # res = re.findall("<script>var props=(.*?)</script>", response.text)[0]
+    res = re.findall("<script>var props=(.*?),locationnal=", response.text)[0]
+    # 将json字符串转换成dict
+    data = json.loads(res)  # json.decoder.JSONDecodeError: Extra data: line 1 column 144652 (char 144651)
+    print(data)
+    # 将数据写入本地分析错误原因,发现1:144652处有个,locationnal={...},说明这是用逗号隔开的两个json串,经取舍取前面部分即可
+    with open("images/36kr.json", "w", encoding="utf8") as f:
+        f.write(res)
 
 
 if __name__ == "__main__":
@@ -127,4 +135,5 @@ if __name__ == "__main__":
     # loads()
     # dump()
     # load()
-    lagou()
+    # json01()
+    json02()
