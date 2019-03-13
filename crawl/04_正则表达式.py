@@ -1,6 +1,7 @@
 # coding=utf-8
 """
-re(regular expression)：用于匹配字符串,r""表示不转义直接取原生字符串("aaa\tbbb" --> "aaa bbb" | r"aaa\tbbb" --> "aaa\tbbb")
+re(regular expression)：用于匹配字符串,r""表示忽视\的转义效果("aaa\tbbb" --> "aaa bbb" | r"aaa\tbbb" --> "aaa\tbbb")
+pattern = re.compile(r"...")：预编译正则表达式生成pattern对象放到内存中,然后再与目标字符串匹配,可以提升效率
 
 * : 零次或多次,等同于{0,}
 ? : 零次或一次,等同于{0,1}
@@ -37,8 +38,6 @@ import urllib.request
 import chardet
 
 def regex01():
-    # pattern = re.compile(r"...")：编译正则表达式生成pattern对象,供match()、search()、findall()匹配字符串
-
     # 1.match()：只匹配字符串的开始,返回第一个符合的字符串,不符合就返回None
     pattern = re.compile("\d+")
     m = pattern.match("aaa123bbb456")
@@ -49,7 +48,7 @@ def regex01():
     print(m)  # <_sre.SRE_Match object; span=(3, 5), match='12'>
     print(m.group())  # 12
 
-    pattern = re.compile("([a-z]+) ([a-z]+)", re.I)  # re.I表示忽略大小写,re.S表示全文匹配
+    pattern = re.compile("([a-z]+) ([a-z]+)", re.I)  # re.I表示忽略大小写
     m = pattern.match("Hello World Hello python")
     # group()方法返回符合规则的组,不写默认0
     print(m.group(0))  # Hello World
@@ -71,15 +70,11 @@ def regex01():
     s = pattern.search("aaa123bbb456", 3, 5)
     print(s.group())  # 12
 
-    # 3.findall()：匹配所有的,返回列表
-    pattern = re.compile("\d+")
+    # 3.findall()：匹配所有的,返回列表 --> 爬虫常用
+    pattern = re.compile("\d+")  # re默认是贪婪模式,尽可能匹配多的内容
     f = pattern.findall("abc 123 def 456")
-    # findall()返回的是列表,不需要调用group()
     print(f)  # ['123', '456']
-    pattern = re.compile("\d+.*")  # *表示贪婪模式(默认)
-    f = pattern.findall("abc 123 def 456")
-    print(f)  # ['123 def 456']
-    pattern = re.compile("\d+?")  # ?表示非贪婪模式
+    pattern = re.compile("\d+?")  # 在+/*后面加上?表示非贪婪模式,尽可能匹配少的内容
     f = pattern.findall("abc 123 def 456")
     print(f)  # ['1', '2', '3', '4', '5', '6']
 
@@ -96,7 +91,6 @@ def regex01():
     print(s2)  # hellopython
 
 
-# 爬取数据
 def regex02():
     # 请求地址
     url = "http://www.neihanpa.com/article/list_5_1.html"
@@ -112,8 +106,8 @@ def regex02():
     # 爬网页的时候要注意网页源码的charset,乱码时要用decode()做解码;ignore参数表示忽略非gb2312编码的字符,因为网站可能会注入少量其它字符
     html = response.read().decode("gb2312", "ignore")
     print(type(html))  # <class 'str'>
-    # 使用正则过滤数据
-    pattern = re.compile('<div class="f18 mb20">(.*?)</div>', re.S)
+    # re.findall("a(.*?)b", "str")能返回()中的内容,()前后内容起到定位和过滤作用 --> 抓网页常用
+    pattern = re.compile('<div class="f18 mb20">(.*?)</div>', re.S)  # re.S表示将"."的作用扩展到整个字符串,包括"\n"
     items = pattern.findall(html)
     print(type(items))  # <class 'list'>
     for item in items:
@@ -123,5 +117,5 @@ def regex02():
 
 
 if __name__ == "__main__":
-    # regex01()
-    regex02()
+    regex01()
+    # regex02()
