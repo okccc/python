@@ -12,7 +12,6 @@ import logging
 import threading
 from queue import Queue  # 线程安全
 from fake_useragent import UserAgent
-import time
 
 logging.basicConfig(
     level=logging.DEBUG,
