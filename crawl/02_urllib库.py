@@ -145,12 +145,6 @@ def ajax():
         f.write(result)
 
 
-"""
-cookie: 网站服务器为了辨别用户身份和进行Session跟踪而储存在浏览器上的一段文本文件,cookie可以保持登录信息到用户下次与服务器的会话
-Python处理Cookie,一般是通过http.cookiejar模块和urllib.request模块的HTTPCookieProcessor处理器类一起使用
-http.cookiejar模块: 存储cookie对象
-HTTPCookieProcessor处理器: 处理cookie对象,并构建handler对象
-"""
 def cookie01():
     """
     1、访问网站获取cookie并输出在控制台
@@ -195,7 +189,7 @@ def cookie02():
 
 def cookie03():
     """
-    3、从文件获取cookie,作为请求的一部分访问页面
+    # 3、从文件获取cookie,作为请求的一部分访问页面
     """
 
     # 创建cookieJar对象(用MozillaCookieJar,有load()实现)
@@ -212,13 +206,6 @@ def cookie03():
     print(res3.read().decode("utf-8", "ignore"))
 
 
-"""
-urlopen()不支持代理和cookie等http/https高级功能的问题:
-解决方案: 使用相关handler处理器来创建特定功能的处理器对象(其实urlopen也是一个特殊的opener)
-1、通过urllib.request模块创建相关handler处理器对象
-2、通过urllib.request模块的build_opener()方法使用这些处理器对象,创建自定义opener对象
-3、opener对象调用open()方法发送http请求
-"""
 def http_handler():
     """
     HTTPHandler处理器
