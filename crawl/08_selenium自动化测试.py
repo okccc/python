@@ -1,7 +1,8 @@
 # coding=utf-8
 """
-Selenium是一个Web自动化测试工具,会按指定的命令自动操作,可以结合第三方浏览器做网络爬虫
+Selenium是一个Web自动化测试工具,会按指定的命令自动操作,可以结合第三方浏览器做网络爬虫,模拟登录操作
 Selenium很慢：因为requests只会请求当前url,而Selenium会请求当前url+js+css+img所有这些资源,可以设置chrome不加载图片提升速度
+ChromeDriver镜像下载地址 --> https://npm.taobao.org/
 注意事项：
 selenium获取的页面数据是浏览器中elements的内容
 find_element返回一个element,如果没有就会报错,find_elements返回列表,如果没有就是空列表,可根据find_elements结果列表长度判断是否有下一页
@@ -13,14 +14,20 @@ selenium请求第一页数据时会等待页面加载完,而在点击翻页后�
 判断页面是否ajax动态加载：
 在网页源码里查找页面上的数据信息,搜到说明是正常页面,url地址即真实请求地址(直接抓源码即可)
 搜不到说明页面数据是调用了其它接口,F12-->Network-->Headers或者fiddler找到真实请求地址,格式类似xxxAjax.json?key=value(需要抓接口或者selenium模拟浏览器操作)
+
+tesseract是一个将图像翻译成文字的OCR库(optical character recognition) --> 识别验证码效果一般,还是用云打码平台吧
+from PIL import Image
+import pytesseract
+img = Image.open("./test.jpg")
+print(pytesseract.image_to_string(img))
 """
 
 from selenium import webdriver  # 导入webdriver
 from selenium.webdriver import ActionChains  # 导入行为链
+from selenium.webdriver.common.keys import Keys  # 导入keys调用键盘按键
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys  # 导入keys调用键盘按键
 import time
 import requests
 

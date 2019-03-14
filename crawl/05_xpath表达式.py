@@ -4,7 +4,8 @@ HTML(Hyper Text Markup Language): 超文本标记语言 ---> 展示数据
 XML(Extensible Markup Language): 可扩展标记语言 ---> 传输和存储数据,可以持久化
 HTML DOM(Document Object Model for HTML): 文档对象模型 ---> 访问和操作HTML文档
 XPath(XML Path Language): 是一种在XML文档中查找信息的语言 ---> 遍历XML文档中的元素和属性
-注意: chrome能匹配到数据但程序可能匹配不到,因为有些网站对不同浏览器显示页面略有差异(比如tag名称不同),换个IE内核的浏览器: IE/遨游/360/搜狗
+注意: 使用chrome插件Xpath Helper选择标签时,会给选中的标签添加属性class="xh-highlight",并且chrome能匹配到数据但程序可能匹配不到,
+     因为有些网站对不同浏览器显示页面略有差异(比如tag标签名称不同),这时可以换个IE内核的浏览器试试 --> IE/遨游/360/搜狗/世界之窗...
 
 lxml库: 是一款高性能的HTML/XML解析器 ---> 用xpath表达式解析并提取HTML/XML数据(可结合XMLQuire或者Chrome插件XPath Helper调试)
 lxml库的etree模块
