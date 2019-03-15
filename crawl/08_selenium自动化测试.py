@@ -34,18 +34,19 @@ import requests
 class Selenium01(object):
     def __init__(self):
         # 设置chrome不加载图片,不然打开页面速度有点慢(可选)
-        # options = webdriver.ChromeOptions()
-        # prefs = {"profile.managed_default_content_settings.images": 2}
-        # options.add_experimental_option("prefs", prefs)
+        options = webdriver.ChromeOptions()
+        prefs = {"profile.managed_default_content_settings.images": 2}
+        options.add_experimental_option("prefs", prefs)
 
         # 创建浏览器对象
-        self.driver = webdriver.Chrome(executable_path="D://chromedriver/chromedriver.exe", )
+        self.driver = webdriver.Chrome(executable_path="D://chromedriver/chromedriver.exe", options=options)
 
     def introduce(self):
         # 打开百度页面
         self.driver.get("https://www.baidu.com")
-        # 截屏
+        # 设置窗口最大化
         self.driver.maximize_window()
+        # 截屏
         self.driver.save_screenshot("./screen.png")
         # 获取input标签 --> webdriver.py模块包含各种定位元素方法
         tag = self.driver.find_element_by_id("kw")

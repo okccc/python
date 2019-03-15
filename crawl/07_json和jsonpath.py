@@ -9,7 +9,6 @@ json其实就是javascript中的数组和对象,通过这两种结构可以表�
 对象object --> python中dict,数据结构为{key: value}键值对,通过key取值;key是字符串,value可以是字符串、数字、数组、对象等
 空值null --> python中None
 json模块提供了四个功能: dumps、dump、loads、load,用于Json字符串和Python对象之间的序列化/反序列化
-抓包技巧：很多网站页面在手机版的response返回的是json数据,这样解析起来方便很多
 
 JsonPath: 遍历Json对象中的节点;JsonPath之于Json相当于XPath之于XML
 XPath    JsonPath       描述
@@ -25,6 +24,8 @@ XPath    JsonPath       描述
 []	        ?()	        支持过滤操作
 n/a	        ()	        支持表达式计算
 ()	        n/a	        分组,JsonPath不支持
+
+抓包技巧：很多网站页面在手机版的response返回的是json数据,这样解析起来方便很多
 """
 
 import json
@@ -109,7 +110,7 @@ def json01():
     print(citys)  # <class 'list'>
     # 保存数据
     with open("./city.json", "w", encoding="utf8") as f:
-        # indent参数设置换行时的缩进,这样json字符串就不是一整行而是json格式
+        # dumps()可以设置换行时的缩进,这样json字符串就不是一整行而是json格式
         f.write(json.dumps(data, ensure_ascii=False, indent=4))
 
 def json02():

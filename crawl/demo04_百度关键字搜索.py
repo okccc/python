@@ -179,7 +179,7 @@ class BaiDu02(object):
             # return BeautifulSoup(response.text, "lxml")
             # 将html源码放入soup_queue
             self.soup_queue.put(BeautifulSoup(response.text, "lxml"))
-            # 将处理完的url标记为task_done,此时url_queue.size - 1
+            # 将处理完的url标记为task_done,此时url_queue.qsize - 1
             self.url_queue.task_done()
 
     def parse_data(self):
@@ -206,7 +206,7 @@ class BaiDu02(object):
                         self.datas.append(data)
                         # 结束循环防止一个title多个word重复添加
                         break
-            # 将处理完的soup标记为task_done,此时soup_queue.size - 1
+            # 将处理完的soup标记为task_done,此时soup_queue.qsize - 1
             self.soup_queue.task_done()
 
     def filter_data(self):
@@ -237,9 +237,11 @@ class BaiDu02(object):
             t_parse = threading.Thread(target=self.parse_data)
             threads.append(t_parse)
         for t in threads:
-            t.setDaemon(True)
+            # 由于该子线程是死循环,需要在调用start()之前将其设置为守护线程,表示该线程不重要,当主线程结束时不用等待该子线程直接退出
+            t.setDaemon(daemonic=True)
             t.start()
         for q in (self.url_queue, self.soup_queue):
+            # 让主线程block,等待queue中的items全部处理完
             q.join()
         # 5.处理最终结果
         self.filter_data()

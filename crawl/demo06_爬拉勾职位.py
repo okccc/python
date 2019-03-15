@@ -108,7 +108,7 @@ class LaGou01(object):
         print(value)
 
         try:
-            sql = "REPLACE INTO position VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            sql = "REPLACE INTO positions VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cur.execute(sql, value)
             conn.commit()
         except Exception as e:
@@ -123,11 +123,11 @@ class LaGou01(object):
             # 1.发送请求接受响应
             position_ids = self.get_ids(i)
             print(position_ids)
-            # for position_id in position_ids:
-            #     # 2.解析数据
-            #     item = self.parse_data(position_id)
-            #     # 3.保存数据
-            #     self.save_data(item)
+            for position_id in position_ids:
+                # 2.解析数据
+                item = self.parse_data(position_id)
+                # 3.保存数据
+                self.save_data(item)
 
 
 class LaGou02(object):

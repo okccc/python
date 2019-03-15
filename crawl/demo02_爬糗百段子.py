@@ -113,7 +113,7 @@ class QiuBai02(object):
 
             # 将html源码放入html_queue
             self.html_queue.put(etree.HTML(response.text))
-            # 将处理完的url标记为task_done,此时url_queue.size - 1
+            # 将处理完的url标记为task_done,此时url_queue.qsize - 1
             self.url_queue.task_done()
 
     def parse_data(self):
@@ -149,10 +149,10 @@ class QiuBai02(object):
                     "comments": comments,
                 }
                 items.append(item)
-            # return items
 
             # 将items放入item_queue
             self.item_queue.put(items)
+            # 将处理完的html标记为task_done
             self.html_queue.task_done()
 
     def save_data(self):
@@ -162,20 +162,21 @@ class QiuBai02(object):
             with open("D://qiubai.json", "a", encoding="utf8") as f:
                 for item in items:
                     f.write(json.dumps(item, ensure_ascii=False) + "\n")
+            # 将处理完的items标记为task_donen
             self.item_queue.task_done()
 
     def main(self):
         threads = []
-        # 1.获取url
+        # 1.获取url列表
         t_url = threading.Thread(target=self.get_url)
         threads.append(t_url)
         # 2.发送请求,获取响应
-        for i in range(1, 10):
+        for i in range(10):
             # 爬虫速度主要慢在网络传输,可以使用多线程发送请求
             t_html = threading.Thread(target=self.get_data)
             threads.append(t_html)
         # 3.解析数据
-        for i in range(1, 3):
+        for i in range(10):
             # 使用多线程提取数据
             t_parse = threading.Thread(target=self.parse_data)
             threads.append(t_parse)
@@ -184,7 +185,7 @@ class QiuBai02(object):
         threads.append(t_save)
         for t in threads:
             # 由于该子线程是死循环,需要在调用start()之前将其设置为守护线程,表示该线程不重要,当主线程结束时不用等待该子线程直接退出
-            t.setDaemon(True)
+            t.setDaemon(daemonic=True)
             t.start()
         for q in [self.url_queue, self.html_queue, self.item_queue]:
             # 让主线程block,等待queue中的items全部处理完
