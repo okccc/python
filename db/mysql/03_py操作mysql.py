@@ -7,11 +7,11 @@ import pymysql
 
 # 创建数据库连接
 config = {
-    "host": "rm-uf69e2i0360c1ozrvo.mysql.rds.aliyuncs.com",
-    "port": 3307,
-    "user": "test_web",
-    "password": "WRx&Mtbv6*(_5+R=Wu",
-    "db": "db_data",
+    "host": "localhost",
+    "port": 3306,
+    "user": "root",
+    "password": "root",
+    "db": "test",
     "charset": "utf8",
     "cursorclass": pymysql.cursors.DictCursor  # 以dict格式返回数据
 }
@@ -24,7 +24,7 @@ conn = pymysql.connect(**config)
 cur = conn.cursor()
 
 # 要执行的sql语句
-sql = "insert into test values(%s,%s,%s)"
+sql = "replace into positions values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
 value = ()
 values = [(), ()]
 

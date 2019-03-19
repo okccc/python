@@ -4,7 +4,6 @@ import json
 import threading
 from queue import Queue
 from selenium import webdriver
-from lxml import etree
 import time
 import logging
 
@@ -107,7 +106,7 @@ class DouYu01(object):
 
 
 class DouYu02(object):
-    # 1.抓接口之App端：chrome抓包斗鱼手机版页面的Network做分析找出请求url
+    # 2.抓接口之App端：chrome抓包斗鱼手机版页面的Network做分析找出请求url
     def __init__(self):
         # 数据接口
         self.url = "https://m.douyu.com/api/room/list?page={}&type="
@@ -199,7 +198,7 @@ class DouYu02(object):
 
 class DouYu03(object):
     """
-    2.使用selenium模拟浏览器操作
+    3.使用selenium模拟浏览器操作
       html = etree.HTML(driver.page_source)-->html.xpath()不能和driver.find_elements_by_xpath()混着用
       driver.page_source速度更快但是html.xpath()有时候取数据莫名其妙报错,可以用driver.find_elements_by_xpath()
     """
@@ -224,13 +223,14 @@ class DouYu03(object):
                 "category": li.find_element_by_xpath('.//span[@class="DyListCover-zone"]').text,
                 "online": li.find_element_by_xpath('.//span[@class="DyListCover-hot"]').text
             }
-            print(item)
             items.append(item)
         # 获取下一页按钮的input标签
-        next_page = self.driver.find_element_by_xpath('//li[@class=" dy-Pagination-next"]')
+        next_page = self.driver.find_elements_by_xpath('//li[@class=" dy-Pagination-next"]')
+        next_page = next_page[0] if len(next_page) > 0 else None
         return items, next_page
 
-    def save_data(self, items):
+    @staticmethod
+    def save_data(items):
         with open("./douyu.json", "a", encoding="utf8") as f:
             for item in items:
                 print(item)
