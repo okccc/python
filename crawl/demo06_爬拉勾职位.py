@@ -4,6 +4,8 @@ from lxml import etree
 from selenium import webdriver
 import json
 import time
+import csv
+import codecs
 import pymysql
 import logging
 
@@ -13,224 +15,150 @@ logging.basicConfig(
     datefmt="%m/%d/%Y %H:%M:%S %p"
 )
 
-
 class LaGou01(object):
-    # 1.抓接口,使用requests模块发送网络请求,需要伪造请求头(反爬虫很容易识别伪造的headers,指不定少了哪个参数就不行)
+    # 1.抓接口：使用requests模块请求,需要伪造请求头(拉勾反爬虫有点东西,能轻松识别伪造的headers,指不定少了哪个参数就不行)
     def __init__(self):
         # 抓包分析获取接口、请求头、请求数据
         self.url = "https://www.lagou.com/jobs/positionAjax.json?city=%E4%B8%8A%E6%B5%B7&needAddtionalResult=false"
         # 请求头
         self.headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36",
-            "Cookie": "_ga=GA1.2.1632229811.1551433595; user_trace_token=20190301174634-e6860271-3c06-11e9-88dd-5254005c3644; LGUID=20190301174634-e6860baf-3c06-11e9-88dd-5254005c3644; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%2216938a748a5c4-0f51663fd41519-3d644701-1327104-16938a748a6941%22%2C%22%24device_id%22%3A%2216938a748a5c4-0f51663fd41519-3d644701-1327104-16938a748a6941%22%7D; showExpriedIndex=1; showExpriedCompanyHome=1; showExpriedMyPublish=1; hasDeliver=205; gate_login_token=be26ff66f397b706256aefb504fb3ce03c809505678707fb; index_location_city=%E4%B8%8A%E6%B5%B7; JSESSIONID=ABAAABAAAIAACBIAEB1C6DEE2DCA456D6063E2CF66D39D3; WEBTJ-ID=20190304111617-16946b3b88d416-079994951d3bce-3d644601-1327104-16946b3b88e52b; Hm_lvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1551433595,1551669377; _gid=GA1.2.1726247041.1551669378; _putrc=01A61E721A07441C; login=true; unick=1573976179%40qq.com; TG-TRACK-CODE=search_code; Hm_lpvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1551669963; LGRID=20190304112602-3ca124f6-3e2d-11e9-89d2-5254005c3644; SEARCH_ID=6d3fb33e50d74a218fb79c49aa6a739e",
-            "Referer": "https://www.lagou.com/jobs/list_java?labelWords=&fromSearch=true&suginput=",
-            # ...
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36",
+            "Cookie": "_ga=GA1.2.1632229811.1551433595; user_trace_token=20190301174634-e6860271-3c06-11e9-88dd-5254005c3644; LGUID=20190301174634-e6860baf-3c06-11e9-88dd-5254005c3644; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%2216938a748a5c4-0f51663fd41519-3d644701-1327104-16938a748a6941%22%2C%22%24device_id%22%3A%2216938a748a5c4-0f51663fd41519-3d644701-1327104-16938a748a6941%22%7D; _gid=GA1.2.81669527.1552786672; showExpriedIndex=1; showExpriedCompanyHome=1; showExpriedMyPublish=1; hasDeliver=205; gate_login_token=72b21e037a0b076f0f0f0a7878f6dced1a117ae4e212831f; index_location_city=%E4%B8%8A%E6%B5%B7; WEBTJ-ID=20190318095637-1698e83d28a69d-007b37cccff29f-3d644509-1327104-1698e83d28b456; _putrc=01A61E721A07441C; JSESSIONID=ABAAABAAAIAACBI6A186064BFF78580C26C24595F21C2A7; login=true; unick=1573976179%40qq.com; _gat=1; PRE_UTM=; PRE_LAND=https%3A%2F%2Fwww.lagou.com%2F; Hm_lvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1552819562,1552874198,1552960185,1552962642; LGSID=20190319103043-feba9dfe-49ee-11e9-a333-5254005c3644; PRE_HOST=www.google.com; PRE_SITE=https%3A%2F%2Fwww.google.com%2F; TG-TRACK-CODE=index_hotsearch; LGRID=20190319103048-0181f0f9-49ef-11e9-aac9-525400f775ce; Hm_lpvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1552962647; SEARCH_ID=b954989dca554359b06fdbf5781e33bc",
+            "Referer": "https://www.lagou.com/jobs/list_java?labelWords=&fromSearch=true&suginput=?labelWords=hot",
+            "X-Requested-With": "XMLHttpRequest",
+            "Origin": "https://www.lagou.com",
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
         }
-        self.proxies = {"https": "https://222.170.101.98:37025"}
 
-    def get_ids(self, i):
+    def get_data(self, i):
         # 请求数据
-        form_data = {"first": "true", "pn": i, "kd": "java"}
+        form_data = {"first": "false", "pn": i, "kd": "java"}
         # 获取请求数据
-        response = requests.post(self.url, data=form_data, headers=self.headers, proxies=self.proxies, timeout=5)
+        response = requests.post(self.url, data=form_data, headers=self.headers)
         # 将json字符串转成dict
         data = json.loads(response.text)
         print(data)
-        # 获取所有job编号
-        position_ids = data["content"]["hrInfoMap"].keys()
-        # position_ids = [d['positionId'] for d in data['content']['positionResult']['result']]
-        return position_ids
+        # 获取当前所有职位信息
+        position_list = data["content"]["positionResult"]["result"]
+        positions = []
+        keys = ["positionId","companyId","positionName","salary","companyShortName","companySize","district","linestaion",
+                "workYear","education","positionLables","industryField","hitags","companyLabelList","positionAdvantage"]
+        for position in position_list:
+            # 字典生成式取部分字段
+            position = {key: position[key] for key in keys}
+            positions.append(position)
+        return positions
 
-    def parse_detail(self, id):
-        """
-        解析每个职位的详细信息
-        """
-
-        # 详情页链接
-        url = "https://www.lagou.com/jobs/" + str(id) + ".html"
-        # 请求头
-        headers = {
-            "User-Agent": "Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11",
-            "Referer": "https://www.lagou.com/jobs/list_java?labelWords=&fromSearch=true&suginput=",
-            "Cookie": "JSESSIONID=ABAAABAABEEAAJA6EA181175874A387649B864C48AE01AA; Hm_lvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1537253504; _ga=GA1.2.1735615114.1537253505; user_trace_token=20180918145145-4ebed506-bb0f-11e8-baf2-5254005c3644; LGUID=20180918145145-4ebed7dd-bb0f-11e8-baf2-5254005c3644; _gid=GA1.2.1064196434.1537253505; index_location_city=%E4%B8%8A%E6%B5%B7; TG-TRACK-CODE=search_code; SEARCH_ID=f52a4cd1d6dd4e50b78974df963ce515; Hm_lpvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1537258174; LGSID=20180918160935-2e005133-bb1a-11e8-baf2-5254005c3644; PRE_UTM=; PRE_HOST=; PRE_SITE=https%3A%2F%2Fwww.lagou.com%2F; PRE_LAND=https%3A%2F%2Fwww.lagou.com%2Fjobs%2Flist_java%3FlabelWords%3D%26fromSearch%3Dtrue%26suginput%3D; LGRID=20180918160935-2e0053c0-bb1a-11e8-baf2-5254005c3644",
-        }
-        # 发送get请求
-        response = requests.get(url, headers=headers)
-        html = etree.HTML(response.text)
-        # 解析字段
-        name = html.xpath('//div[@class="job-name"]/@title')[0]
-        address = "-".join(html.xpath('//div[@class="work_addr"]//a/text()')[:-1])
-        address_detail = html.xpath('//input[@name="positionAddress"]/@value')[0]
-        address = address + "-" + address_detail
-        salary = html.xpath('//dd[@class="job_request"]//span[1]/text()')[0][:-1]
-        experience = html.xpath('//dd[@class="job_request"]//span[3]/text()')[0][:-2]
-        education = html.xpath('//dd[@class="job_request"]//span[4]/text()')[0][:-2]
-        label = " ".join(html.xpath('//li[@class="labels"]/text()'))
-        company = html.xpath('//div[@class="company"]/text()')[0]
-        temptation = html.xpath('//dd[@class="job-advantage"]/p')[0].text
-        description = "".join(html.xpath('//dd[@class="job_bt"]//*/text()')).strip()
-
-        position = {
-            "id": id,
-            "name": name,
-            "address": address,
-            "salary": salary,
-            "experience": experience,
-            "education": education,
-            "label": label,
-            "company": company,
-            "temptation": temptation,
-            "description": description,
-        }
-        self.insert(position)
-
-    def insert(self, position):
-        """
-        将职位信息插入数据库
-        """
-
-        config = {
-            "host": "localhost",
-            "port": 3306,
-            "user": "root",
-            "password": "root",
-            "db": "test",
-            "charset": "utf8"
-        }
-
-        conn = pymysql.connect(**config)
-        cur = conn.cursor()
-
-        value = []
-        for field in ["id", "name", "address", "salary", "experience", "education", "label", "company", "temptation",
-                      "description"]:
-            value.append(position[field])
-        print(value)
-
-        try:
-            sql = "REPLACE INTO positions VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cur.execute(sql, value)
-            conn.commit()
-        except Exception as e:
-            print(e)
-        finally:
-            cur.close()
-            conn.close()
+    def save_data(self, positions):
+        with open("D://lagou.json", "a", encoding="utf8") as f:
+            for position in positions:
+                print(position)
+                f.write(json.dumps(position, ensure_ascii=False, indent=2))
 
     def main(self):
         # 遍历所有页面
-        for i in range(1, 2):
-            # 1.发送请求接受响应
-            position_ids = self.get_ids(i)
-            print(position_ids)
-            for position_id in position_ids:
-                # 2.解析数据
-                item = self.parse_data(position_id)
-                # 3.保存数据
-                self.save_data(item)
+        for i in range(1, 31):
+            # 1.获取当前页数据
+            positions = self.get_data(i)
+            # 2.保存数据
+            self.save_data(positions)
+            # 翻页时间间隔设置长一点
+            time.sleep(5)
 
 
 class LaGou02(object):
-    # 2.使用selenium模拟浏览器操作(推荐)
+    # 2.selenium模拟浏览器操作 --> 抓详情页(意味着要多访问很多页面,原则上能爬列表页就不爬详情页,当然详情页能获取更多数据)
     def __init__(self):
-        # 创建浏览器对象
+        # 初始url
+        self.url = "https://www.lagou.com/jobs/list_java?px=default&city=%E4%B8%8A%E6%B5%B7#filterBox"
+        # 详情页url
+        self.detail_url = "https://www.lagou.com/jobs/{}.html"
+        # 创建Chrome对象
         self.driver = webdriver.Chrome(executable_path="D://chromedriver/chromedriver.exe")
-        # 地址栏url
-        self.url = "https://www.lagou.com/jobs/list_java?labelWords=&fromSearch=true&suginput="
-        # 数据库连接信息
+        # 创建数据库连接
         self.config = {
             "host": "localhost",
             "port": 3306,
             "user": "root",
             "password": "root",
             "db": "test",
-            "charset": "utf8"
+            "charset": "utf8",
+            "cursorclass": pymysql.cursors.DictCursor  # 以dict格式返回数据
         }
 
-    def open_page(self):
-        # 第一步、打开初始页面
-        self.driver.get(self.url)
-        # 循环点击下一页
-        while True:
-            # 获取当前页面源码
-            source = self.driver.page_source
-            # 将字符串解析为HTML文档
-            html = etree.HTML(source)
-            # xpath解析获取当前页面所有job页面链接
-            links = html.xpath('//a[@class="position_link"]/@href')
-            # 遍历所有链接
-            for link in links:
-                # 切换窗口打开job详情页
-                self.switch_window(link)
-            # 获取下一页按钮标签(注意：find_element_by_xpath只能获取元素不能获取元素里的text)
-            tag = self.driver.find_element_by_xpath('//div[@class="pager_container"]/span[last()]')
-            # 判断下一页能否继续点击
-            if tag.get_attribute("class") == "pager_next pager_next_disabled":
-                break
-            else:
-                tag.click()
-            # 设置翻页时间间隔
-            time.sleep(10)
+    def get_page(self):
+        # 存放当前列表页数据的list
+        items = []
 
-    def switch_window(self, link):
-        # 第二步、在job列表页和job详情页之间来回切换,解析完的详情页就关掉并切回列表页,始终保持只有两个窗口
-        # 在新窗口打开job详情页
-        self.driver.execute_script("window.open('%s')" % link)
-        # 跳到详情页
-        self.driver.switch_to_window(self.driver.window_handles[1])
-        # 获取详情页源码
-        source = self.driver.page_source
-        # 解析源码
-        self.parse_detail(source)
+        # # 获取源码
+        # source = self.driver.page_source
+        # # 将source解析为HTML文档
+        # html = etree.HTML(source)
+
+        # 获取当前页的所有职位id
+        job_ids = []
+        tags = self.driver.find_elements_by_xpath('//ul[@class="item_con_list"]/li')
+        for tag in tags:
+            job_ids.append(tag.get_attribute("data-positionid"))
+        # 获取下一页标签 --> find_element()空值会报错,要用find_elements()
+        next_page = self.driver.find_elements_by_xpath('//span[@class="pager_next"] | //span[@class="pager_next "]')
+        next_page = next_page[0] if len(next_page) > 0 else None
+        # 返回结果
+        return items, job_ids, next_page
+
+    def get_detail(self, job_id):
+        # 在新窗口打开详情页
+        self.driver.execute_script("window.open('%s')" % self.detail_url.format(job_id))
+        # 获取所有窗口
+        windows = self.driver.window_handles
+        # 跳转到新打开的窗口
+        self.driver.switch_to_window(windows[1])
+        # 取数据前等3秒
         time.sleep(3)
-        # 关掉详情页
-        self.driver.close()
-        # 再回到列表页
-        self.driver.switch_to_window(self.driver.window_handles[0])
 
-    def parse_detail(self, source):
-        # 第三步、解析详情页
-        # 将字符串解析为HTML文档
-        html = etree.HTML(source)
-        # 解析字段
-        id = html.xpath('//input[@id="jobid"]/@value')[0]
-        name = html.xpath('//div[@class="job-name"]/@title')[0]
-        address = "-".join(html.xpath('//div[@class="work_addr"]//a/text()')[:-1])
-        address_detail = html.xpath('//input[@name="positionAddress"]/@value')[0]
-        address = address + "-" + address_detail
-        salary = html.xpath('//dd[@class="job_request"]//span[1]/text()')[0][:-1]
-        experience = html.xpath('//dd[@class="job_request"]//span[3]/text()')[0][:-2]
-        education = html.xpath('//dd[@class="job_request"]//span[4]/text()')[0][:-2]
-        label = " ".join(html.xpath('//li[@class="labels"]/text()'))
-        company = html.xpath('//div[@class="company"]/text()')[0]
-        temptation = html.xpath('//dd[@class="job-advantage"]/p')[0].text
-        description = "".join(html.xpath('//dd[@class="job_bt"]//*/text()')).strip()
-        position = {
-            "id": id,
-            "name": name,
-            "address": address,
-            "salary": salary,
-            "experience": experience,
-            "education": education,
-            "label": label,
-            "company": company,
-            "temptation": temptation,
-            "description": description,
+        # # 获取source
+        # source = self.driver.page_source
+        # # 解析为HTML文档
+        # html = etree.HTML(source)
+
+        # 获取该职位信息
+        item = {
+            "id": job_id,
+            "name": self.driver.find_element_by_xpath('//div[@class="job-name"]').get_attribute("title"),
+            "address": "-".join([tag.text for tag in self.driver.find_elements_by_xpath('//div[@class="work_addr"]/a')[:-1]]),
+            "salary": self.driver.find_element_by_xpath('//dd[@class="job_request"]//span[@class="salary"]').text,
+            "experience": self.driver.find_element_by_xpath('//dd[@class="job_request"]//span[3]').text[:-2],
+            "education": self.driver.find_element_by_xpath('//dd[@class="job_request"]//span[4]').text[:-2],
+            "label": "".join([tag.text+"," for tag in self.driver.find_elements_by_xpath('//li[@class="labels"]')])[:-1],
+            "company": self.driver.find_element_by_xpath('//div[@class="company"]').text,
+            "temptation": self.driver.find_element_by_xpath('//dd[@class="job-advantage"]/p').text,
+            "description": "".join([tag.text for tag in self.driver.find_elements_by_xpath('//div[@class="job-detail"]//*')]).replace("\n", ""),
         }
-        self.insert(position)
+        # 关窗口前等3秒
+        time.sleep(3)
+        # 处理完数据后关闭窗口
+        self.driver.close()
+        # 跳回到列表页
+        self.driver.switch_to_window(windows[0])
+        # 返回结果
+        return item
 
-    def insert(self, position):
-        # 第四步、数据入库
+    def save_data(self, items):
+        # 连接数据库
         conn = pymysql.connect(**self.config)
+        # 获取游标
         cur = conn.cursor()
-        value = []
-        for field in ["id", "name", "address", "salary", "experience", "education", "label", "company", "temptation",
-                      "description"]:
-            value.append(position[field])
-        print(value)
+        # 当前列表页的结果数据
+        values = []
+        for item in items:
+            value = list(item.values())
+            print(value)
+            values.append(value)
+        # 插入语句
+        sql = "REPLACE INTO positions VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         try:
-            sql = "REPLACE INTO positions VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cur.execute(sql, value)
+            cur.executemany(sql, values)
             conn.commit()
         except Exception as e:
             print(e)
@@ -239,10 +167,127 @@ class LaGou02(object):
             conn.close()
 
     def main(self):
-        self.open_page()
+        # 1.先打开首页
+        self.driver.get(self.url)
+        # 等待页面加载完
+        time.sleep(3)
+        # 2.获取首页数据
+        items, job_ids, next_page = self.get_page()
+        print(job_ids)
+        for job_id in job_ids:
+            item = self.get_detail(job_id)
+            items.append(item)
+        print(items)
+        # 3.保存首页数据
+        self.save_data(items)
+        # 4.判断是否有下一页
+        while next_page is not None:
+            # 有就点击下一页
+            next_page.click()
+            # 等待页面加载完
+            time.sleep(3)
+            # 继续循环取数据存数据
+            items, job_ids, next_page = self.get_page()
+            for job_id in job_ids:
+                item = self.get_detail(job_id)
+                items.append(item)
+            self.save_data(items)
+            # 翻页时间间隔设置长一点
+            time.sleep(10)
+        # 最后退出浏览器
+        self.driver.quit()
+
+
+class LaGou03(object):
+    # 3.selenium模拟浏览器操作 --> 抓列表页(推荐)
+    def __init__(self):
+        # 初始url
+        self.url = "https://www.lagou.com/jobs/list_java?px=default&city=%E4%B8%8A%E6%B5%B7#filterBox"
+        # 创建Chrome对象
+        self.driver = webdriver.Chrome(executable_path="D://chromedriver/chromedriver.exe")
+        # csv文件的表头
+        self.fieldnames = ['id', 'link', 'name', 'address', 'salary', 'experience', 'company', 'mark', 'category', 'attract']
+
+    def get_data(self):
+        # 存放当前列表页数据的list
+        items = []
+
+        # # 获取源码
+        # source = self.driver.page_source
+        # # 将source解析为HTML文档
+        # html = etree.HTML(source)
+
+        # 获取当前页的所有职位id
+        li_list = self.driver.find_elements_by_xpath('//ul[@class="item_con_list"]/li')
+        for li in li_list:
+            item = {
+                # 取单个标签的text用find_element_by_xpath(),取多个标签的text用find_elements_by_xpath()
+                "id": li.find_element_by_xpath('.//a[@class="position_link"]').get_attribute("data-lg-tj-cid"),
+                "link": li.find_element_by_xpath('.//a[@class="position_link"]').get_attribute("href"),
+                "name": li.find_element_by_xpath('.//h3').text,
+                "address": li.find_element_by_xpath('.//span[@class="add"]/em').text,
+                "salary": li.find_element_by_xpath('.//span[@class="money"]').text,
+                "experience": li.find_element_by_xpath('.//div[@class="p_bot"]/div[@class="li_b_l"]').text[7:],
+                "company": li.find_element_by_xpath('.//div[@class="company_name"]/a').text,
+                "mark": li.find_element_by_xpath('.//div[@class="industry"]').text,
+                "category": " ".join([tag.text for tag in li.find_elements_by_xpath('.//div[@class="list_item_bot"]/div[@class="li_b_l"]/span')]),
+                "attract": li.find_element_by_xpath('.//div[@class="li_b_r"]').text,
+            }
+            items.append(item)
+        # 获取下一页标签 --> find_element()空值会报错,要用find_elements()
+        next_page = self.driver.find_elements_by_xpath('//span[@class="pager_next"] | //span[@class="pager_next "]')
+        next_page = next_page[0] if len(next_page) > 0 else None
+        # 返回结果
+        return items, next_page
+
+    def save_data_first(self, items):
+        # 解决excel打开csv文件中文乱码问题
+        with open("D://lagou.csv", "wb") as file:
+            # 写入windows需要确认编码的字符
+            file.write(codecs.BOM_UTF8)
+        # 追加写入数据
+        with open("D://lagou.csv", "a", encoding="utf-8", newline="") as file:
+            # 创建writer对象
+            writer = csv.DictWriter(file, fieldnames=self.fieldnames)
+            # 第一行写入表头
+            writer.writeheader()
+            # 然后写入多行数据
+            writer.writerows(items)
+
+    def save_data_after(self, items):
+        # 追加写入数据
+        with open("D://lagou.csv", "a", encoding="utf-8", newline="") as file:
+            # 创建writer对象
+            writer = csv.DictWriter(file, fieldnames=self.fieldnames)
+            # 然后写入多行数据
+            writer.writerows(items)
+
+    def main(self):
+        # 1.先打开首页
+        self.driver.get(self.url)
+        # 等待页面加载完
+        time.sleep(10)
+        # 2.获取首页数据
+        items, next_page = self.get_data()
+        print(items)
+        # 3.保存首页数据
+        self.save_data_first(items)
+        # 4.判断是否有下一页
+        while next_page is not None:
+            # 有就点击下一页
+            next_page.click()
+            # 翻页时间间隔设置长一点
+            time.sleep(10)
+            # 取数据
+            items, next_page = self.get_data()
+            # 追加写入csv文件
+            self.save_data_after(items)
+        # 最后退出浏览器
+        self.driver.quit()
 
 
 if __name__ == '__main__':
-    ls = LaGou01()
-    # ls = LaGou02()
-    ls.main()
+    # lg = LaGou01()
+    # lg = LaGou02()
+    lg = LaGou03()
+    lg.main()
