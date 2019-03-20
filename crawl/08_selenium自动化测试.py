@@ -12,7 +12,7 @@ ChromeDriver镜像下载地址 --> https://npm.taobao.org/
 
 查看网页源代码(view-source)：服务器发送到浏览器的原始内容
 检查(F12)：elements是经过浏览器渲染执行js动态生成的内容elements=html+js+css+img
-判断页面是否ajax动态加载：
+判断页面是否是动态html：
 在view-source查找页面上的数据信息,有说明是正常页面,当前url地址即真实请求地址(直接抓源码即可)
 没有说明页面数据是调用了其它接口,F12-->Network-->Headers或者fiddler抓包(抓请求接口或者selenium模拟浏览器操作)
 

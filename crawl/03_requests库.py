@@ -77,15 +77,15 @@ def ajax():
         # ...
     }
     # 请求数据
-    formdata = {
+    form_data = {
         "first": "false",
         "pn": 1,
         "kd": "java"
     }
     # 发送post请求
     for i in range(1, 10):
-        formdata["pn"] = i
-        response = requests.post(url, data=formdata, headers=headers)
+        form_data["pn"] = i
+        response = requests.post(url, data=form_data, headers=headers)
         print(response.json())
 
 def proxy01():
