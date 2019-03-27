@@ -8,12 +8,12 @@ mongodb：文档存储,类json格式的数据
 redis：k-v存储,可以通过key快速查询value
 
 redis三大特点：
-1、Redis数据库完全存在于内存中,使用磁盘仅用于持久化,所以读写速度极快,每秒约10万左右集合或者记录
-2、Redis数据类型非常丰富(字符串、list、set、hash...)
-3、Redis有良好的集群支持,可以将数据复制到任意数量的从服务器
+1、数据完全基于内存所以读写速度极快,每秒约10万条数据,为防数据丢失会定期往磁盘写数据持久化
+2、支持多种数据类型(字符串、list、set/zset、hash...)
+3、分布式集群
 
-flushdb  删除当前数据库
-flushall  删除所有数据库
+flushdb  清空当前数据库
+flushall  清空所有数据库
 select 0  选择第一个数据库
 del key_name  删除键值对
 
