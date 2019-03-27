@@ -1,42 +1,26 @@
 # coding=utf-8
-"""
-python常用标准库
-builtins             内置函数
-os                   操作系统
-sys                  python解释器
-functools            常用工具
-json                 编码和解码json对象
-logging              记录日志,调试
-multiprocessing      多进程
-threading            多线程
-copy                 拷贝
-time                 时间
-datetime             日期和时间
-calendar             日历
-hashlib              加密算法
-random               随机数
-re                   字符串正则匹配
-socket               Sockets API
-shutil               文件和目录管理
-glob                 基于文件通配符搜索
-"""
+import hashlib
 
 def hashlib01():
     """
-    hashlib: 加密算法,常用于登录注册
+    hashlib: 提供摘要算法(md5、sha1...) --> 将任意长度的数据(明文)以不可逆的方式转换为固定长度的16进制字符串(密文),适用于验证用户登录等
+             md5(message-Digest Algorithm 5)消息摘要算法
+             sha1(secure hash Algorithm 1)安全哈希算法
     """
-    import hashlib
 
-    # 创建hash对象,md5(message-Digest Algorithm 5)消息摘要算法,得到一个128bit=16byte=32位的密文
-    m = hashlib.md5()
-    print(m)  # <md5 HASH object @ 0x0000020D5C1709E0>
-    # 以字符串参数更新hash对象
-    m.update("hello".encode("utf-8"))
-    # 返回十六进制数字字符串
-    print(m.hexdigest())  # 5d41402abc4b2a76b9719d911017c592
-    # 不管如何更新hash对象,最终返回的都是32位长度的一串数值
-    m.update("jhsahdskdsadaldw".encode("utf-8"))
-    print(m.hexdigest())  # 0bec77eeeedd61ea5db95c0202b68d45
+    # 创建md5对象
+    md5 = hashlib.md5()
+    print(md5)  # <md5 HASH object @ 0x0000020D5C1709E0>
+    md5.update("hello".encode())
+    # 返回128bit=16byte=32位长度的十六进制字符串
+    print(md5.hexdigest())  # 5d41402abc4b2a76b9719d911017c592
+
+    # 创建sha1对象
+    sha1 = hashlib.sha1()
+    print(sha1)  # <sha1 HASH object @ 0x000001E4540F2C60>
+    sha1.update("123456".encode())
+    # 返回160bit=20byte=40位长度的十六进制字符串
+    print(sha1.hexdigest())  # 7c4a8d09ca3762af61e59520943dc26494f8941b
 
 
 def argparse01():
@@ -141,4 +125,7 @@ def openpyxl01():
     for field in sheet["2"]:
         print(field.value)
 
+
+if __name__ == '__main__':
+    hashlib01()
 
