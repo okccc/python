@@ -150,8 +150,8 @@ def cookie():
 
 def session():
     """
-    访问登录页面三种方式：
-    1.实例化session对象,先post再get
+    requests模拟登录：
+    1.实例化session对象,先post再get(推荐)
     2.在headers中添加值为字符串的Cookie键
     3.在请求方法中添加dict格式的cookies参数 --> 字典生成式 cookies = {i.split("=")[0]:i.split("=")[1] for i in Cookie.split("; ")}
     """

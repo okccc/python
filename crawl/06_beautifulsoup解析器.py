@@ -3,10 +3,10 @@
 Beautiful Soup: 也是一个HTML/XML的解析器
 lxml是局部遍历,bs4基于HTML DOM载入整个文档,时间和内存开销大很多,所以性能要低于lxml
 BeautifulSoup用来解析HTML比较简单,API非常人性化,支持CSS选择器、Python标准库中的HTML解析器,也支持lxml的XML解析器
-工具 	  速度 	  使用
-re  	  最快 	  复杂
-xpath 	  快 	  简单(scrapy框架支持)
-bs4 	  慢 	  简单
+工具 	      速度 	  使用
+re.findall()  最快 	  简单
+xpath 	      快 	  简单(scrapy框架支持)
+bs4 	      慢 	  简单
 """
 
 import requests

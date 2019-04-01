@@ -18,9 +18,10 @@ def hashlib01():
     # 创建sha1对象
     sha1 = hashlib.sha1()
     print(sha1)  # <sha1 HASH object @ 0x000001E4540F2C60>
+    sha1.update("grubby".encode())
     sha1.update("123456".encode())
     # 返回160bit=20byte=40位长度的十六进制字符串
-    print(sha1.hexdigest())  # 7c4a8d09ca3762af61e59520943dc26494f8941b
+    print(sha1.hexdigest())  # 07270ab4fea0ea853e5f2009e2f4abbbaf5c2ebb
 
 
 def argparse01():
