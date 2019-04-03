@@ -1,6 +1,4 @@
-"""
-有一个原则是：活跃线程数为 CPU(核)数时最佳。过少的活跃线程导致 CPU 无法被充分利用，过多的活跃线程导致过大的线程上下文切换开销
-"""
+# coding=utf-8
 import threading
 import time
 
