@@ -8,6 +8,7 @@ DataFrame：类似excel的表格型数据结构,每列数据可以是不同类�
 import numpy as np
 import pandas as pd
 
+
 def series():
     # 1.通过list创建,不指定行索引(默认是自增int类型)
     ser = pd.Series(range(1, 5))
@@ -31,6 +32,7 @@ def series():
 
     # 2.通过dict创建(key是行索引)
     pd.Series({"a": 11.1, "b": 22.2, "c": 33.3})
+
 
 def dataframe():
     # 1.通过numpy创建,不指定行/列索引,默认是自增int类型
@@ -68,6 +70,7 @@ def dataframe():
     print(df["D"][3])  # 查找指定列的指定行
     df["G"] = df["C"] * 2  # 添加列
     del(df["F"])  # 删除列
+
 
 def func():
     # describe()
