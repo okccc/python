@@ -121,3 +121,30 @@ def func():
     ser.unstack()  # 默认level=-1将最内层的索引变成列索引,匹配不到的就给NaN值
     ser.unstack(level=0)  # level=0可以将外层索引变成列索引
     ser.unstack().stack()
+
+
+def time_series():
+    """
+    1.时间序列
+    pd.date_range(start="", end="", periods=None, freq="D")
+    start、end、freq --> 生成start和end范围频率为freq的一组时间索引
+    start、periods、freq --> 生成从start开始频率为freq的periods个时间索引
+    2.时间类型转换
+    pd.to_datetime() --> 将字符串转换成时间类型
+    3.时间重采样
+    df.resample() --> 将时间序列从一个频率转化为另一个频率处理,比如 2019-01-01 10:00:00 ~ 2019-01-01
+    """
+    pd.date_range(start="20190101", end="20190131", freq="D")    # D是每天
+    pd.date_range(start="20190101", end="20190501", freq="10D")  # 10D是每10天
+    pd.date_range(start="20190101", end="20190131", freq="B")    # B是每工作日
+    pd.date_range(start="20190101", periods=10, freq="H")        # H是每小时
+    pd.date_range(start="20190101", periods=10, freq="MS")       # MS是每月第一天
+    pd.date_range(start="20190101", periods=10, freq="M")        # M是每月最后一天
+    pd.date_range(start="20190101", periods=10, freq="BMS")      # BMS是每月第一个工作日
+    pd.date_range(start="20190101", periods=10, freq="BM")       # BM是每月最后一个工作日
+
+    df = pd.DataFrame({"timestamp": "2017-06-25 10:12:23", "C": pd.Series(range(5))})
+    print(df)
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df.set_index("timestamp", inplace=True)  # inplace表示原地替换
+    df["timestamp"] = df.resample("M")
