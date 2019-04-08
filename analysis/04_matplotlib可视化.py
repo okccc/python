@@ -85,6 +85,7 @@ def subgraph():
     axs[1, 1].hist(arr)
     plt.show()
 
+
 def legend():
     # 解决matplotlib中文显示问题
     plt.rcParams['font.sans-serif'] = ['SimHei']  # 指定默认字体

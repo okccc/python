@@ -29,7 +29,7 @@ os.path.join(os.getcwd(), "images"): 拼接路径
 """
 
 import os
-
+import re
 
 def recursive(path, suffix):
     # 递归操作
@@ -42,7 +42,6 @@ def recursive(path, suffix):
         else:
             recursive(path + file + "/", suffix)
 
-
 def test01():
     # 往文件的每一行末尾添加两个空格
     with open("C://Users/chenqian/Desktop/xixi", encoding="utf8") as f1:
@@ -54,7 +53,6 @@ def test01():
                     line_new = line[:-1] + "  " + "\n"
                     f2.write(line_new)
 
-
 def test02():
     # TODO
     # 合并小文件: 如果是视频文件合并后会出错,要用moviepy
@@ -64,7 +62,6 @@ def test02():
         for file in files:
             f.write(open(dir+file, 'rb').read())
 
-
 def test03():
     # 去除换行符,将多行内容放到一行
     with open("D://PycharmProjects/python/analysis/csv/city.txt", encoding="utf8") as f1:
@@ -72,9 +69,19 @@ def test03():
             for line in f1.readlines():
                 f2.write(line[:-1])
 
+def test04():
+    # 删除符合条件的行
+    with open("D://PycharmProjects/python/analysis/05_pyecharts可视化.py", encoding="utf8") as f1:
+        with open("D://PycharmProjects/python/analysis/05_pyecharts可视化1.py", "w", encoding="utf8") as f2:
+            for line in f1.readlines():
+                if line.startswith("In") or line.startswith("Out") or re.match("\d+", line):
+                    continue
+                f2.write(line)
+
 
 if __name__ == "__main__":
-    recursive("D://PycharmProjects/python/", ".jpeg")
+    # recursive("D://PycharmProjects/python/", ".jpeg")
     # test01()
     # test02()
     # test03()
+    test04()

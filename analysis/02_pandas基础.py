@@ -60,7 +60,7 @@ def dataframe():
     # 2.通过dict创建(key是列索引,行索引默认是自增int类型)
     df = pd.DataFrame({
             "A": 1.0,  # float
-            "B": pd.Timestamp("20170625"),  # timestamp
+            "B": pd.to_datetime("20170625"),  # timestamp
             "C": pd.Series(range(10, 14)),  # Series
             "D": ["python", "C", "C++", "Java"],  # list
             "E": np.array([10] * 4),  # ndarray

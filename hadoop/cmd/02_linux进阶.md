@@ -59,7 +59,7 @@ grep '^import' test.txt: 选取以import开头的行
 grep 'bin$' test.txt：选取以bin结尾的行  
 grep -v '^$' test.txt：选取非空行  
 grep 'mysql' ./*.sh：查看当前目录下包含mysql的脚本  
-<font color=red>grep 'debit_order' *.sql|awk -F: '{print $1}'|uniq -c|sort -nr</font>：查找当前目录下用到debit_order表的sql文件并统计使用次数  
+<font color=red>grep 'debit_order' *.sql | awk -F: '{print $1}'|uniq -c|sort -nr</font>：查找当前目录下用到debit_order表的sql文件并统计使用次数  
 grep error mysql.log --color -A 10 -B 10：高亮显示关键字所在行的前10行和后10行  
 grep -wf/-vwf a.log b.log：输出两个文件相同/不同的内容  
 ## find

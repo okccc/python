@@ -1,6 +1,5 @@
 # coding=utf-8
 import requests
-from lxml import etree
 from selenium import webdriver
 import json
 import time
