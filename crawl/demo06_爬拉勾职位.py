@@ -70,7 +70,7 @@ class LaGou02(object):
     # 2.selenium模拟浏览器操作 --> 抓详情页(意味着要多访问很多页面,原则上能爬列表页就不爬详情页,当然详情页能获取更多数据)
     def __init__(self):
         # 初始url
-        self.url = "https://www.lagou.com/jobs/list_java?px=default&city=%E4%B8%8A%E6%B5%B7#filterBox"
+        self.url = "https://www.lagou.com/jobs/list_%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90?city=%E8%8B%8F%E5%B7%9E&cl=false&fromSearch=true&labelWords=&suginput="
         # 详情页url
         self.detail_url = "https://www.lagou.com/jobs/{}.html"
         # 创建Chrome对象
@@ -125,7 +125,7 @@ class LaGou02(object):
         item = {
             "id": job_id,
             "name": self.driver.find_element_by_xpath('//div[@class="job-name"]').get_attribute("title"),
-            "address": "-".join([tag.text for tag in self.driver.find_elements_by_xpath('//div[@class="work_addr"]/a')[:-1]]),
+            "address": self.driver.find_element_by_xpath('//div[@class="work_addr"]').text[:-4],
             "salary": self.driver.find_element_by_xpath('//dd[@class="job_request"]//span[@class="salary"]').text,
             "experience": self.driver.find_element_by_xpath('//dd[@class="job_request"]//span[3]').text[:-2],
             "education": self.driver.find_element_by_xpath('//dd[@class="job_request"]//span[4]').text[:-2],
@@ -201,7 +201,8 @@ class LaGou03(object):
     # 3.selenium模拟浏览器操作 --> 抓列表页(推荐)
     def __init__(self):
         # 初始url
-        self.url = "https://www.lagou.com/jobs/list_java?px=default&city=%E4%B8%8A%E6%B5%B7#filterBox"
+        # self.url = "https://www.lagou.com/jobs/list_java?px=default&city=%E4%B8%8A%E6%B5%B7#filterBox"
+        self.url = "https://www.lagou.com/jobs/list_sql?city=%E8%8B%8F%E5%B7%9E&cl=false&fromSearch=true&labelWords=&suginput="
         # 创建Chrome对象
         self.driver = webdriver.Chrome(executable_path="D://chromedriver/chromedriver.exe")
         # csv文件的表头
@@ -220,7 +221,7 @@ class LaGou03(object):
         li_list = self.driver.find_elements_by_xpath('//ul[@class="item_con_list"]/li')
         for li in li_list:
             item = {
-                # 取单个标签的text用find_element_by_xpath(),取多个标签的text用find_elements_by_xpath()
+                # 取单个标签的text用find_element(),取多个标签的text用find_elements()
                 "id": li.find_element_by_xpath('.//a[@class="position_link"]').get_attribute("data-lg-tj-cid"),
                 "link": li.find_element_by_xpath('.//a[@class="position_link"]').get_attribute("href"),
                 "name": li.find_element_by_xpath('.//h3').text,
@@ -287,6 +288,6 @@ class LaGou03(object):
 
 if __name__ == '__main__':
     # lg = LaGou01()
-    # lg = LaGou02()
-    lg = LaGou03()
+    lg = LaGou02()
+    # lg = LaGou03()
     lg.main()

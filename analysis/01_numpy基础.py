@@ -33,11 +33,11 @@ import numpy as np
 arr = np.random.rand(2, 3)
 type(arr)  # 数组类型
 print(arr.ndim)  # 数组维度(一维二维...)
-print(arr.shape)  # 数组维度大小(m行n列)
+print(arr.shape)  # 数组形状(m行n列)
 print(arr.dtype)  # 数组中数据类型
 # 创建一个3行4列的随机浮点型二维数组,uniform()可指定区间大小
 np.random.uniform(low=-10.0, high=10.0, size=(3, 4))
-# astype()可以转换数据类型: 转换float64为int32时,是取整不是四舍五入,比如5.69063769-->5  -3.80322353-->-3
+# 数据类型转换：转换float64为int32时,是取整不是四舍五入,比如5.69063769-->5  -3.80322353-->-3
 arr.astype(dtype=int)
 # 创建一个3行4列的随机整型二维数组,randint()可指定区间大小
 np.random.randint(low=1, high=10, size=(3, 4))

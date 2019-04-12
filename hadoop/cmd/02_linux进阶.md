@@ -5,13 +5,13 @@
 -d：指定分隔符  
 -f：指定字段  
 - 使用案例  
-who|cut -b 3：提取每一行的第3个字节  
-who|cut -b 3-5,8：提取每一行的第3,4,5,8个字节  
-who|cut -b -3：提取前3个字节  
-who|cut -b 3-：提取第3个字节到行尾  
-cat /etc/passwd|head -5|cut -d ':' -f 1：按冒号切割后取第1个字段    
-cat /etc/passwd|head -5|cut -d ':' -f 1,3-5：按冒号切割取第1345个字段  
-cat /etc/passwd|head -5|cut -d ':' -f -2：按冒号切割取前两个字段  
+who | cut -b 3：提取每一 行的第3个字节  
+who | cut -b 3-5,8：提取每一行的第3,4,5,8个字节  
+who | cut -b -3：提取前3个字节  
+who | cut -b 3-：提取第3个字节到行尾  
+cat /etc/passwd | head -5 | cut -d ':' -f 1：按冒号切割后取第1个字段    
+cat /etc/passwd | head -5 | cut -d ':' -f 1,3-5：按冒号切割取第1345个字段  
+cat /etc/passwd | head -5 | cut -d ':' -f -2：按冒号切割取前两个字段  
 ## sort
 - sort：作用于行数据的排序命令  
 -b：忽略最前面的空格符  
@@ -23,23 +23,23 @@ cat /etc/passwd|head -5|cut -d ':' -f -2：按冒号切割取前两个字段
 -k：以指定列排序  
 -u：去重  
 - 使用案例  
-cat /etc/passwd|sort -t: -k3|head -5：先将数据以冒号分割,然后按第3列排序  
-cat /etc/passwd|sort -t: -k3n|head -5：按第3列升序排序且以数字排序  
-cat /etc/passwd|sort -t: -k3nr|head -5：按第3列倒序排序且以数字排序  
-cat /etc/passwd|sort -t: -k6.2,6.4 -k 1r|head -5：先以第六列第2~4个字符升序排序再以第一列降序排序  
-cat /etc/passwd|sort -t: -k7 -u|head -5：先将数据以冒号分隔,然后按第7列升序排序并去重  
+cat /etc/passwd | sort -t: -k3 | head -5：先将数据以冒号分割,然后按第3列排序  
+cat /etc/passwd | sort -t: -k3n | head -5：按第3列升序排序且以数字排序  
+cat /etc/passwd | sort -t: -k3nr | head -5：按第3列倒序排序且以数字排序  
+cat /etc/passwd | sort -t: -k6.2,6.4 -k 1r | head -5：先以第六列第2~4个字符升序排序再以第一列降序排序  
+cat /etc/passwd | sort -t: -k7 -u | head -5：先将数据以冒号分隔,然后按第7列升序排序并去重  
 ## uniq  
 - uniq：对排序过的行数据去重  
 -i：忽略大小写  
 -c：计数  
 -u：只显示不重复的行  
-cat access.log|sort|uniq -c：排序后删除重复行并计数  
-cat access.log|sort|uniq -u：排序后仅显示不重复的行  
+cat access.log | sort | uniq -c：排序后删除重复行并计数  
+cat access.log | sort | uniq -u：排序后仅显示不重复的行  
 - 使用案例  
-cat access.log|awk '{print $8}'|sort|uniq -c|sort -nr：网站状态码统计  
-cat access.log|grep "21/Jan/2019"|awk '{print $5}'|sort|uniq -c|sort -nr：查看一天内ip访问数  
-cat access/log|grep "21/Mar/2018:0[7-8]"|awk '{print $4}'|grep "404"|sort|uniq -c|sort -nr|wc -l：查看一小时内404数量  
-cat access.log|grep "23/Jan/2019"|awk '{print $2}'|cut -c 1-2|sort|uniq -c|sort -nr|head：查看一天内访问最频繁的时间段  
+cat access.log | awk '{print $8}' | sort | uniq -c | sort -nr：网站状态码统计  
+cat access.log | grep "21/Jan/2019" | awk '{print $5}' | sort | uniq -c | sort -nr：查看一天内ip访问数  
+cat access/log | grep "21/Mar/2018:0[7-8]" | awk '{print $4}' | grep "404" | sort | uniq -c | sort -nr | wc -l：查看一小时内404数量  
+cat access.log | grep "23/Jan/2019" | awk '{print $2}' | cut -c 1-2 | sort | uniq -c | sort -nr | head：查看一天内访问最频繁的时间段  
 ## grep
 - grep(global search re print)：基于行的文本搜索工具  
 - 格式: grep -option 'keyword' file  
@@ -58,8 +58,8 @@ grep '[^r]' test.txt：选取不包含某个字符的行
 grep '^import' test.txt: 选取以import开头的行  
 grep 'bin$' test.txt：选取以bin结尾的行  
 grep -v '^$' test.txt：选取非空行  
-grep 'mysql' ./*.sh：查看当前目录下包含mysql的脚本  
-<font color=red>grep 'debit_order' *.sql | awk -F: '{print $1}'|uniq -c|sort -nr</font>：查找当前目录下用到debit_order表的sql文件并统计使用次数  
+grep 'mysql' ./*.sh：查看当前目录下包含mysql的脚本    
+<font color=red>grep 'debit_order' *.sql | awk -F: '{print $1}' | uniq -c | sort -nr</font>：查找当前目录下用到debit_order表的sql文件并统计使用次数  
 grep error mysql.log --color -A 10 -B 10：高亮显示关键字所在行的前10行和后10行  
 grep -wf/-vwf a.log b.log：输出两个文件相同/不同的内容  
 ## find
@@ -143,14 +143,14 @@ sed -e '1,5d' -e 's/test/check/' file：多重编辑且后面操作受前面影�
 sed 's/book/books/g' file：将文件中的所有book替换成books  
 sed 's/book/books/2g' file：从第二处匹配的地方开始替换  
 sed -i 's/book/books/g' file：直接编辑file,将book替换成books  
-echo this is a test line|sed 's/\w\\+/{&}/g'：将选中的单词两边加上大括号  // {this} {is} {a} {test}  
+echo this is a test line | sed 's/\w\\+/{&}/g'：将选中的单词两边加上大括号  // {this} {is} {a} {test}  
 sed 's/(.)line$/\1/g' file：匹配以line结尾的行line前面的部分  
 sed 's/(.)is(.)line/\1\2/g' file：匹配is前面和line前面的部分  
-echo this is digit 7 in a number|sed 's/digit\([0-9]\)/\1/'：this is 7 in a number  
-echo aaa BBB|sed 's/\([a-z]\+\) \([A-Z]\+\)/\2\1/'：交换子串顺序  // BBB aaa  
+echo this is digit 7 in a number | sed 's/digit\([0-9]\)/\1/'：this is 7 in a number  
+echo aaa BBB | sed 's/\([a-z]\+\) \([A-Z]\+\)/\2\1/'：交换子串顺序  // BBB aaa  
 ## awk
 - awk：强大的文本分析处理工具,擅长列操作
-- 格式：awk [-F|-f|-v] 'BEGIN{} /.../{command1;command2} END{}' file  
+- 格式：awk [-F | -f | -v] 'BEGIN{} /.../{command1;command2} END{}' file  
 -F：操作列的字段分隔符  
 -f：调用脚本  
 -v：定义变量  
@@ -181,14 +181,14 @@ awk -F: '{print $1,$3,$5}' OFS=':' /etc/passwd：输出多个指定列并指定�
 awk '/mysql/{print $0}' /etc/passwd：打印包含mysql的行  
 awk '!/mysql/{print $0}' /etc/passwd：打印不包含mysql的行  
 awk '/48\d*/{print $0}' /etc/passwd：打印包含数字且以48开头的行  
-awk -F: '$1~/mail|mysql/{print $1}' /etc/passwd：打印$1字段是mail或mysql的行  
-awk -F: '$1!~/mail|mysql/{print $1}' /etc/passwd：打印$1字段不是mail或mysql的行  
+awk -F: '$1~/mail | mysql/{print $1}' /etc/passwd：打印$1字段是mail或mysql的行  
+awk -F: '$1!~/mail | mysql/{print $1}' /etc/passwd：打印$1字段不是mail或mysql的行  
 awk -F: '$3>=100{print $3}' /etc/passwd：打印$3>=100的行的第三个字段  
 awk -F: '$1~/^m/ && $3>100{print $1,$3}' OFS=":" /etc/passwd：打印$1字段是m开头且$3>100的行的$1和$3字段且以冒号分隔  
 awk '/MemFree/{print int($2/1024) "M"}' /proc/meminfo：计算剩余内存大小  
-route -n|awk 'NR!=1{print}'  > ./route.txt：将查询结果输出到文件  
+route -n | awk 'NR!=1{print}'  > ./route.txt：将查询结果输出到文件  
 ll | awk 'NR!=1 {count+=$5} END{print count,"K"}'：计算当前目录下文件的总大小  
 ll | awk 'NR!=1 {count[$3]++} END{for(i in count) print i,count[i]}'：计算当前目录下不同用户的文件数  
 ll | awk 'NR!=1 {count[$3]+=$5} END{for(i in count) print i,count[i]}'：计算当前目录下不同用户的文件总大小  
-netstat -an|awk '$6=="LISTEN"||NR==1 {printf "%-3s %-10s %-10s %-10s \n",NR,$1,$2,$3}'：格式化输出查询结果  
-netstat -an|awk '$6~/CONN|LIST/{count[$6]++} END{for (i in count) print i,count[i]}'：计算指定状态的连接数量  
+netstat -an | awk '$6=="LISTEN"||NR==1 {printf "%-3s %-10s %-10s %-10s \n",NR,$1,$2,$3}'：格式化输出查询结果  
+netstat -an | awk '$6~/CONN | LIST/{count[$6]++} END{for (i in count) print i,count[i]}'：计算指定状态的连接数量  

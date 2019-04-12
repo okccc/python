@@ -14,6 +14,7 @@ def series():
     ser = pd.Series(range(1, 5))
     type(ser)  # 对象数据类型
     print(ser.dtypes)  # 对象中元素数据类型
+    ser.astype(float)  # 数据类型转换
     print(ser.index, ser.values, ser[3])  # 查看索引和值,根据索引取值
     ser.head(), ser.tail(), ser.head(2)  # 默认查看对象的前/后5条数据,也可以指定条数
 
@@ -38,6 +39,7 @@ def dataframe():
     # 1.通过numpy创建,不指定行/列索引,默认是自增int类型
     df = pd.DataFrame(np.random.rand(3, 4))
     type(df)  # 对象数据类型
+    print(df.shape)  # 对象形状(m行n列)
     print(df.dtypes)  # 对象中元素数据类型
     print(df.index, df.columns, df.values, df[2])  # 对象的行/列索引和值,默认按列索引取值
     df.info()  # 展示当前df在内存中的信息
