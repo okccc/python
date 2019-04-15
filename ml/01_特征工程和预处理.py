@@ -2,11 +2,17 @@
 pandas：一个数据读取非常方便以及基本的处理格式的工具
 scikit-learn：python的机器学习工具,包含很多算法,对于特征的处理提供强大的接口
 特征工程：将原始数据转换为更好地代表预测模型的潜在问题的特征的过程,从而提高预测准确性
+特征处理：通过特定数学方法将数值型数据转换成算法要求的数据
 """
 
+# 特征抽取
 from sklearn.feature_extraction import DictVectorizer  # 字典特征抽取
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer  # 文本特征抽取
+# 特征预处理
+from sklearn.preprocessing import MinMaxScaler, StandardScaler  # 归一化和标准化
+from sklearn.impute import SimpleImputer  # 缺失值处理
 import jieba
+import numpy as np
 
 
 def dict_vector():
@@ -63,8 +69,35 @@ def tf_idf():
     cv = TfidfVectorizer()
     data = cv.fit_transform(raw_documents=[str1, str2, str3])
     print(cv.get_feature_names())  # ['今天', '变好', '已经', '慢慢', '明天', '昨天', '混日子', '重要']
-    print(data.toarray())
+    print(data.toarray())  # ...
+
+
+def mmscaler():
+    """归一化处理"""
+    mms = MinMaxScaler(feature_range=(0, 1))
+    # 数据转换：X=ndarray
+    data = mms.fit_transform(X=[[90,2,10,40], [60,4,15,45], [75,3,13,46]])
+    # 转换结果
+    print(data)  # [[1.  0.  0.  0.  ] [0.  1.  1.  0.83333333] [0.5  0.5  0.6  1.  ]]
+
+
+def sscaler():
+    """标准化缩放"""
+    ss = StandardScaler()
+    # 转换数据：X=ndarray
+    data = ss.fit_transform(X=[[1.,-1.,3.], [2.,4.,2.], [4.,6.,-1.]])
+    # 转换结果
+    print(data)  # [[-1.06904497 -1.35873244  0.98058068][-0.26726124  0.33968311  0.39223227][ 1.33630621  1.01904933 -1.37281295]]
+
+
+def imputer():
+    """缺失值处理"""
+    si = SimpleImputer(missing_values=np.nan, strategy="mean")
+    # 转换数据
+    data = si.fit_transform(X=[[1, 2], [np.nan, 5], [7, 6]])
+    # 转换结果
+    print(data)  # [[1. 2.] [4. 5.] [7. 6.]]
 
 
 if __name__ == '__main__':
-    tf_idf()
+    imputer()
