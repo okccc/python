@@ -6,7 +6,7 @@ NLTK是Python自然语言处理工具包
 """
 
 import nltk  # 调用nltk包管理工具,可以下载语料库和模型等数据;其中Brown语料库和Punkt分词模型必装
-nltk.download()
+# nltk.download()
 from nltk.corpus import brown  # 导入布朗大学语料库
 import jieba  # 中文分词器
 from nltk.stem.porter import PorterStemmer
@@ -40,16 +40,16 @@ def tokenize01():
 
 def jieba01():
     """中文分词处理"""
-    text = "欢迎来到召唤师峡谷"
+    str = "欢迎来到召唤师峡谷"
     # 1.全模式(适合词频统计): 将所有可能出现的词汇全部列出来,返回一个可迭代对象
-    res1 = jieba.cut(text, cut_all=True)
+    res1 = jieba.cut(str, cut_all=True)
     print(type(res1))  # <class 'generator'>
     print(list(res1))  # ['欢迎', '迎来', '来到', '召唤', '召唤师', '峡谷']
     # 2.精确模式(适合文本分析): 尽可能按语义进行分词处理
-    res2 = jieba.cut(text, cut_all=False)
+    res2 = jieba.cut(str, cut_all=False)
     print(list(res2))  # ['欢迎', '来到', '召唤师', '峡谷']
     # 3.搜索引擎模式(适合站内搜索)
-    res3 = jieba.cut_for_search(text)
+    res3 = jieba.cut_for_search(str)
     print(res3)  # <generator object Tokenizer.cut_for_search at 0x0000026ADDD0C0F8>
     print("|".join(res3))  # 欢迎|来到|召唤|召唤师|峡谷
 
