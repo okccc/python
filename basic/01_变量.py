@@ -2,8 +2,10 @@
 """
 python六大数据类型:
 不可变类型: 数字(int float bool)、字符串、元组
-可变类型: 列表、集合、字典(key必须是不可变类型,value任意;因为python设置键值对时会先对key做hash处理,而hash()函数只能接受不可变类型)
+可变类型: 列表、集合、字典(key必须是不可变类型value任意,因为python设置键值对时会先对key做hash处理,而hash函数只能接受不可变类型)
    注意: 变量的CUD操作改变的是list/dict的内容,而list/dict在内存中引用的地址值并不变,重新赋值才会改变变量在内存中引用的地址值
+字典和json区别：
+字典是一种数据结结构,json是一种数据表现形式;字典的key只要能hash就行,json的key必须是字符串
 
 LEGB规则: python使用LEGB的顺序来查找符号对应的对象
 local: 局部变量
