@@ -91,6 +91,22 @@ def transform():
     df[key1_sum_tf2.columns] = key1_sum_tf2
 
 
+def duplicate():
+    # 1.创建series对象
+    s1 = pd.Series(np.random.randint(10, 15, 8))
+    # 判断series对象每行数据是否是重复数据
+    s1.duplicated()
+    # 可以直接过滤掉重复数据的行,只留数据首次出现的行
+    s1.drop_duplicates()
+    # 2.创建dataframe对象
+    df = pd.DataFrame({"data1": np.random.randint(10, 15, 8), "data2": ["a", "b", "c", "b", "b", "a", "a", "c"]})
+    # 将data2列数据的b都替换成d
+    df["data2"].replace("b", "d")
+    # dataframe对象需要指定列进行判断和过滤
+    df.duplicated("data1")
+    df.drop_duplicates("data2")
+
+
 def apply():
     """
     DataFrame对象分组后直接排序会报错,需借助apply()实现：
@@ -174,21 +190,8 @@ def merge():
     df1 = pd.DataFrame({"key": ["a", "b", "c", "d", "a", "b"], "data1": np.random.randn(6)})
     df2 = pd.DataFrame({"data2": np.random.randint(10, 20, 3)}, index=["a", "b", "c"])
     # 将行索引做为外键连接
-    pd.merge(df1, df2, left_on="key", right_index=True, how="left")
+    df = pd.merge(df1, df2, left_on="key", right_index=True, how="left")
+    # 交叉表 --> 特殊分组
+    pd.crosstab(index=df["key"], columns=df["data1"])
 
 
-def duplicate():
-    # 1.创建series对象
-    s1 = pd.Series(np.random.randint(10, 15, 8))
-    # 判断series对象每行数据是否是重复数据
-    s1.duplicated()
-    # 可以直接过滤掉重复数据的行,只留数据首次出现的行
-    s1.drop_duplicates()
-
-    # 2.创建dataframe对象
-    df = pd.DataFrame({"data1": np.random.randint(10, 15, 8), "data2": ["a", "b", "c", "b", "b", "a", "a", "c"]})
-    # 将data2列数据的b都替换成d
-    df["data2"].replace("b", "d")
-    # dataframe对象需要指定列进行判断和过滤
-    df.duplicated("data1")
-    df.drop_duplicates("data2")
