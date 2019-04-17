@@ -119,6 +119,8 @@ def apply():
     df.info()
     print(df.head(10))
     # 需求：按照LeagueIndex列分组,求其他列的topk
+
+    # DataFrameGroupBy对象无法直接sort_values,需借助apply
     # df.groupby("LeagueIndex").sort_values("APM", ascending=False)
 
     # 自定义topk函数,传入默认参数值
