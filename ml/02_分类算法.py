@@ -6,11 +6,14 @@ from sklearn.model_selection import train_test_split  # 数据集分割
 # 特征工程
 from sklearn.feature_extraction.text import TfidfVectorizer  # 文本特征抽取
 from sklearn.preprocessing import StandardScaler  # 特征预处理之标准化缩放
+from sklearn.feature_extraction import DictVectorizer  # 字典特征抽取
 # 分类算法
 from sklearn.neighbors import KNeighborsClassifier  # k近邻算法
 from sklearn.model_selection import GridSearchCV  # 网格搜索+交叉验证
 from sklearn.naive_bayes import MultinomialNB  # 朴素贝叶斯算法
 from sklearn.metrics import classification_report  # 分类模型评估报告
+from sklearn.tree import DecisionTreeClassifier, export_graphviz  # 决策树算法, 导出决策树结构图
+from sklearn.ensemble import RandomForestClassifier  # 随机森林算法
 
 
 def dataset():
@@ -81,7 +84,7 @@ def knn():
     print(df)
 
     # 3.特征工程
-    # 取出dataframe的特征值和目标值
+    # 选取特征值和目标值
     x = df.drop(["place_id"], axis=1)
     y = df["place_id"]
     # 数据集分割
@@ -103,19 +106,17 @@ def knn():
     # print("预测准确率：%s" % score)
 
     # 5.算法调优
-    # 设置超参数
-    param_grid = {"n_neighbors": [3, 5, 10]}
-    # 网格搜索
-    gs = GridSearchCV(estimator=knc, param_grid=param_grid, cv=4)
+    # 网格搜索与交叉验证,param_grid设定超参数
+    gc = GridSearchCV(estimator=knc, param_grid={"n_neighbors": [3, 5, 10]}, cv=4)
     # 输入训练数据
-    gs.fit(x_train, y_train)
+    gc.fit(x_train, y_train)
     # 预测准确率
-    score = gs.score(x_test, y_test)
+    score = gc.score(x_test, y_test)
     print("预测准确率：%s" % score)
     # 结果分析
-    print("交叉验证中最好的结果：%s" % gs.best_score_)
-    print("最好的参数模型：%s" % gs.best_estimator_)
-    print("每个超参数每次交叉验证的结果：%s" % gs.cv_results_)
+    print("交叉验证中最好的结果：%s" % gc.best_score_)
+    print("最好的估计器模型：%s" % gc.best_estimator_)
+    print("每个超参数每次交叉验证的结果：%s" % gc.cv_results_)
 
 
 def bayes():
@@ -148,7 +149,56 @@ def bayes():
     print("分类模型评估报告：%s" % report)
 
 
+def decision():
+    """
+    决策树：预测泰坦尼克号生死
+    """
+    # 1.原始数据
+    df = pd.read_csv("http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets/titanic.txt")
+    print(df.info())
+
+    # 2.特征工程
+    # 选取特征值(影响大的列)和目标值
+    x = df[["pclass", "age", "sex"]]
+    y = df["survived"]
+    # 缺失值处理
+    x["age"].fillna(value=df["age"].mean(), inplace=True)
+    # 数据集分割
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.25)
+    # 对训练集和测试集的特征值做字典特征抽取,转换成one-hot编码的特征值
+    dv = DictVectorizer(sparse=False)
+    x_train = dv.fit_transform(x_train.to_dict(orient="records"))
+    print(dv.get_feature_names())  # ['age', 'pclass=1st', 'pclass=2nd', 'pclass=3rd', 'sex=female', 'sex=male']
+    x_test = dv.transform(x_test.to_dict(orient="records"))
+
+    # 3.算法预测和模型评估
+    # dec = DecisionTreeClassifier()  # 决策树缺陷：过于复杂可用随机森林代替
+    # # 1).输入训练数据
+    # dec.fit(x_train, y_train)
+    # # 2).预测结果
+    # y_predict = dec.predict(x_test)
+    # print("预测结果：%s" % y_predict)
+    # # 3).预测准确率
+    # score = dec.score(x_test, y_test)
+    # print("预测准确率：%s" % score)
+    # # 4).导出决策树结构图
+    # export_graphviz(dec, "./dec.dot", feature_names=['age', 'pclass=1st', 'pclass=2nd', 'pclass=3rd', '女', '男'])
+
+    # 4.算法调优
+    rf = RandomForestClassifier()
+    # 网格搜索与交叉验证,param_grid设定超参数
+    gc = GridSearchCV(estimator=rf, param_grid={"n_estimators": [120, 200, 300, 500, 800, 1200], "max_depth": [5, 8, 15, 25, 30]}, cv=4)
+    # 输入训练数据
+    gc.fit(x_train, y_train)
+    # 预测准确率
+    score = gc.score(x_test, y_test)
+    print("预测准确率：%s" % score)
+    # 结果分析
+    print("交叉验证中最好的结果：%s" % gc.best_score_)
+    print("选择的参数：%s" % gc.best_params_)
+    print("最好的估计器模型：%s" % gc.best_estimator_)
+    print("每个超参数每次交叉验证的结果：%s" % gc.cv_results_)
 
 
 if __name__ == '__main__':
-    knn()
+    decision()
