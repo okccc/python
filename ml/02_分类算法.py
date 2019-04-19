@@ -118,7 +118,34 @@ def knn():
     print("每个超参数每次交叉验证的结果：%s" % gs.cv_results_)
 
 
+def bayes():
+    """
+    朴素贝叶斯进行文本分类
+    """
+    # 1.原始数据
+    news = fetch_20newsgroups(subset="all")
 
+    # 2.特征工程
+    # 数据集分割
+    x_train, x_test, y_train, y_test = train_test_split(news.data, news.target, test_size=0.25)
+    # 对训练集和测试集的特征值做文本特征抽取
+    tf = TfidfVectorizer()
+    x_train = tf.fit_transform(x_train)
+    x_test = tf.transform(x_test)
+
+    # 3.算法预测和模型评估
+    mlt = MultinomialNB(alpha=1.0)
+    # 1).输入训练数据
+    mlt.fit(x_train, y_train)
+    # 2).预测结果
+    y_predict = mlt.predict(x_test)
+    print("预测结果：%s" % y_predict)
+    # 3).预测准确率
+    score = mlt.score(x_test, y_test)
+    print("预测准确率：%s" % score)
+    # 4).精确率和召回率
+    report = classification_report(y_test, y_predict, target_names=news.target_names)
+    print("分类模型评估报告：%s" % report)
 
 
 
