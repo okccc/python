@@ -78,7 +78,8 @@ np.floor(arr)  # 向下取整
 np.abs(arr)  # 取绝对值
 np.rint(arr)  # 四舍五入
 np.isnan(arr)  # 判断是否为NaN(not a number)
-np.multiply(arr, 10)  # 元素相乘
+np.multiply(arr, 10)  # 数组元素相乘
+np.dot(arr, [[2], [2], [2]])  # 矩阵(二维数组)相乘
 np.divide(arr, 10)  # 元素相除
 np.mean(arr)  # 求全部元素平均值
 np.mean(arr[1][1:3])  # 求指定区间元素平均值
