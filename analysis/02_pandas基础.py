@@ -48,7 +48,7 @@ def dataframe():
     # 通过numpy创建,指定行/列索引
     df = pd.DataFrame(np.random.rand(3, 4), index=["A", "B", "C"], columns=["a", "b", "c", "d"])
     print(df["c"], df["c"].values)
-    # 连续索引(切片索引)：dataframe不好直接切片,需借助loc和iloc且必须先指定行索引
+    # 连续索引(切片索引)：行索引在前,loc(标签索引,包含末尾)和iloc(位置索引)
     print(df.loc["A": "B", "c": "d"])
     print(df.iloc[0:2, 2:4])
     print(df[["a", "c"]])  # 不连续索引
