@@ -14,13 +14,13 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer  # 
 # 2.特征预处理
 from sklearn.preprocessing import MinMaxScaler, StandardScaler  # 归一化和标准化
 from sklearn.impute import SimpleImputer  # 缺失值处理
-# 3.特征降维
+# 3.特征降维(特征选择)
 from sklearn.feature_selection import VarianceThreshold  # 方差过滤
 from sklearn.decomposition import PCA  # 主成分分析
 
 
 def dict_vector():
-    """字典特征抽取：将字典中字符串类型数据转换成one-hot编码的特征值,数值类型不会转换"""
+    """字典特征抽取：将字典中的类别数据(字符串)转换成one-hot编码的特征值,数值类型不会转换"""
     data = [
         {"city": "北京", "temperature": 40},
         {"city": "上海", "temperature": 50},
@@ -73,7 +73,7 @@ def tf_idf():
     print(data.toarray())  # ...
 
 
-def mmscaler():
+def minmax():
     """归一化处理"""
     mms = MinMaxScaler(feature_range=(0, 1))
     # 数据转换：X=ndarray
@@ -81,15 +81,15 @@ def mmscaler():
     # 转换结果
     print(data)  # [[1.  0.  0.  0.  ] [0.  1.  1.  0.83333333] [0.5  0.5  0.6  1.  ]]
 
-def sscaler():
+def standard():
     """标准化缩放"""
-    ss = StandardScaler()
+    std = StandardScaler()
     # 转换数据：X=ndarray
-    data = ss.fit_transform(X=[[1.,-1.,3.], [2.,4.,2.], [4.,6.,-1.]])
+    data = std.fit_transform(X=[[1.,-1.,3.], [2.,4.,2.], [4.,6.,-1.]])
     # 转换结果
     print(data)  # [[-1.06904497 -1.35873244  0.98058068][-0.26726124  0.33968311  0.39223227][ 1.33630621  1.01904933 -1.37281295]]
 
-def imputer():
+def nan():
     """缺失值处理"""
     si = SimpleImputer(missing_values=np.nan, strategy="mean")
     # 转换数据

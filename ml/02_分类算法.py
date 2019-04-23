@@ -11,9 +11,10 @@ from sklearn.feature_extraction import DictVectorizer  # 字典特征抽取
 from sklearn.neighbors import KNeighborsClassifier  # k近邻算法
 from sklearn.model_selection import GridSearchCV  # 网格搜索+交叉验证
 from sklearn.naive_bayes import MultinomialNB  # 朴素贝叶斯算法
-from sklearn.metrics import classification_report  # 分类模型评估报告
 from sklearn.tree import DecisionTreeClassifier, export_graphviz  # 决策树算法, 导出决策树结构图
 from sklearn.ensemble import RandomForestClassifier  # 随机森林算法
+# 分类模型评估报告
+from sklearn.metrics import classification_report
 
 
 def dataset():
@@ -22,7 +23,7 @@ def dataset():
     print(li.DESCR)  # 数据描述
     print(li.data)  # 特征值
     print(li.target)  # 目标值
-    # 数据集划分
+    # 数据集划分：特征值是二维数组,目标值是一维数组
     x_train, x_test, y_train, y_test = train_test_split(li.data, li.target, test_size=0.25)
     # 训练数据集：构建模型
     print("训练集的特征值和目标值：%s, %s" % (x_train, y_train))
@@ -89,10 +90,10 @@ def knn():
     y = df["place_id"]
     # 数据集分割
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.25)
-    # 对训练集和测试集的特征值做标准化缩放(重要,一般预测准确率低时必须做这一步)
-    ss = StandardScaler()
-    x_train = ss.fit_transform(x_train)
-    x_test = ss.transform(x_test)
+    # 对特征值做标准化缩放(重要,一般预测准确率低时必须做这一步)
+    std = StandardScaler()
+    x_train = std.fit_transform(x_train)
+    x_test = std.transform(x_test)
 
     # 4.算法预测和模型评估
     knc = KNeighborsClassifier()
@@ -129,7 +130,7 @@ def bayes():
     # 2.特征工程
     # 数据集分割
     x_train, x_test, y_train, y_test = train_test_split(news.data, news.target, test_size=0.25)
-    # 对训练集和测试集的特征值做文本特征抽取
+    # 对特征值做文本特征抽取
     tf = TfidfVectorizer()
     x_train = tf.fit_transform(x_train)
     x_test = tf.transform(x_test)
@@ -165,7 +166,7 @@ def decision():
     x["age"].fillna(value=df["age"].mean(), inplace=True)
     # 数据集分割
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.25)
-    # 对训练集和测试集的特征值做字典特征抽取,转换成one-hot编码的特征值
+    # 对特征值做字典特征抽取,转换成one-hot编码的特征值
     dv = DictVectorizer(sparse=False)
     x_train = dv.fit_transform(x_train.to_dict(orient="records"))
     print(dv.get_feature_names())  # ['age', 'pclass=1st', 'pclass=2nd', 'pclass=3rd', 'sex=female', 'sex=male']

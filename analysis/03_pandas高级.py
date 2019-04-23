@@ -14,7 +14,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def groupby():
+def groupby01():
     df = pd.DataFrame({
         "data1": np.random.rand(8),
         "data2": np.random.rand(8),
@@ -50,7 +50,7 @@ def groupby():
     df.groupby(level=0, axis=1).sum()
 
 
-def agg():
+def agg01():
     df = pd.DataFrame({
         "key1": ['a', 'b', 'a', 'a', 'b', 'b', 'b', 'a'],
         "key2": ['One', 'Two', 'Two', 'Three', 'Three', 'Two', 'One', 'Three'],
@@ -74,7 +74,7 @@ def agg():
     })
 
 
-def transform():
+def transform01():
     df = pd.DataFrame({
         "key1": ["a", "b", "b", "a", "a", "b"],
         "key2": ["one", "two", "two", "three", " three", "three"],
@@ -91,7 +91,7 @@ def transform():
     df[key1_sum_tf2.columns] = key1_sum_tf2
 
 
-def duplicate():
+def duplicate01():
     # 1.创建series对象
     s1 = pd.Series(np.random.randint(10, 15, 8))
     # 判断series对象每行数据是否是重复数据
@@ -107,7 +107,7 @@ def duplicate():
     df.drop_duplicates("data2")
 
 
-def apply():
+def apply01():
     """
     DataFrame对象分组后直接排序会报错,需借助apply()实现：
     AttributeError: Cannot access callable attribute 'sort_values' of 'DataFrameGroupBy' objects, try using the 'apply' method
@@ -137,7 +137,7 @@ def apply():
     plt.show()
 
 
-def concat():
+def concat01():
     # 1.拼接ndarray: 默认按列拼接
     arr1 = np.random.randint(10, 20, (3, 4))
     arr2 = np.random.randint(10, 20, (3, 4))
@@ -163,7 +163,7 @@ def concat():
     pd.concat([df1, df2], axis=1, join="inner")
 
 
-def merge():
+def merge01():
     df1 = pd.DataFrame({
             "key": ["a", "b", "c", "b", "a", "b", "c"],
             "data1": np.random.randint(low=1, high=10, size=(7,))
