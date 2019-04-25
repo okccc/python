@@ -115,7 +115,7 @@ def func():
     print(ser["a", 10])  # 取出外层索引为a内层索引为10的值
     print(ser[:, 20])  # 取出所有外层索引其内层索引为20的值
     ser.swaplevel()  # 交换分层索引：0最外层、1次外层,只有两层就不用写参数,就是最外层与次外层交换
-    ser.sort_index()  # 按层索引排序：默认level=0最外层、level=1次外层。。。
+    ser.sort_index()  # 按层索引排序：默认level=0最外层、level=1次外层...
     ser.sort_index(level=1)
     ser.swaplevel().sort_index()  # 先交换分层再按索引排序
 

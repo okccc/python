@@ -235,6 +235,7 @@ http://centos02:50070
 http://centos01:8088(mapreduce)  
 测试集群状态：  
 hdfs dfsadmin -report    查看hdfs的各节点状态信息  
+hdfs dfsadmin -refreshNodes    刷新节点    
 hdfs dfsadmin -safemode    查看hdfs是否以安全模式运行  
 hdfs haadmin -getServiceState nn1     获取一个namenode节点的HA状态(active/standby)  
 hdfs haadmin -failover nn1 nn2           切换状态(注意顺序：这里是将nn2变为active)  
