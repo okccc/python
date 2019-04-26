@@ -67,84 +67,51 @@ def variable():
         # print(province)  # 江苏 江苏 安徽 安徽 上海
 
 
-"""
-浅拷贝: 普通赋值操作拷贝的是变量在内存中的引用,指向同一个内存地址,所以a变b也跟着变
-深拷贝: 为了使赋值操作中a的变化不影响b,得重新开辟内存空间,即拷贝时指向不同内存地址
-2种深拷贝:
-deepcopy: 反复拷贝过程中拷贝的是上一层,且与数据类型无关
-copy: 反复拷贝过程中只拷贝第一层,但如果是不可变类型(tuple),就不拷贝而是指向当前这一层的内存地址
-"""
-import copy
+def copy01():
+    """
+    浅拷贝: 普通赋值操作拷贝的是变量在内存中的引用,指向同一个内存地址,所以a变b也跟着变
+    深拷贝: 为了使赋值操作中a的变化不影响b,得重新开辟内存空间,即拷贝时指向不同内存地址
+    """
 
+    from copy import deepcopy
 
-def shallowcopy():
+    # 浅拷贝
     a = [11, 22, 33]
     b = a
-    print(id(a))  # 1561934426952
-    print(id(b))  # 1561934426952
+    print(id(a))  # 2387270740040
+    print(id(b))  # 2387270740040
     a.append(44)
-    print(id(a))  # 1561934426952
-    print(id(b))  # 1561934426952
+    print(id(a))  # 2387270740040
+    print(id(b))  # 2387270740040
     print(a)  # [11, 22, 33, 44]
     print(b)  # [11, 22, 33, 44]
 
-
-def deepcopy01():
+    # 深拷贝
     a = [11, 22, 33]
-    b = [44, 55, 66]
-    c1 = [a, b]
-    c2 = (a, b)
-    print(c1)  # [[11, 22, 33], [44, 55, 66]]
-    print(c2)  # ([11, 22, 33], [44, 55, 66])
-    d1 = copy.deepcopy(c1)
-    d2 = copy.deepcopy(c2)
-    print(id(c1))  # 2135784678856
-    print(id(d1))  # 2135784652360
-    print(id(c2))  # 2136070554120
-    print(id(d2))  # 2135786326920
-    a.append(77)
-    print(c1[0])  # [11, 22, 33, 77]
-    print(d1[0])  # [11, 22, 33]
-    print(c2[0])  # [11, 22, 33, 77]
-    print(d2[0])  # [11, 22, 33]
-
-
-def deepcopy02():
-    a = [11, 22, 33]
-    b = [44, 55, 66]
-    c1 = [a, b]
-    c2 = (a, b)
-    print(c1)  # [[11, 22, 33], [44, 55, 66]]
-    print(c2)  # ([11, 22, 33], [44, 55, 66])
-    d1 = copy.copy(c1)
-    d2 = copy.copy(c2)
-    print(id(c1))  # 2425713124808
-    print(id(d1))  # 2425714771144
-    print(id(c2))  # 2425714883848
-    print(id(d2))  # 2425714883848
-    a.append(77)
-    print(c1[0])  # [11, 22, 33, 77]
-    print(d1[0])  # [11, 22, 33, 77]
-    print(c2[0])  # [11, 22, 33, 77]
-    print(d2[0])  # [11, 22, 33, 77]
-
-
-"""
-python内置属性
-常用属性            说明               触发方式
-__init__          初始化函数          创建实例后赋值时使用,在__new__后面
-__new__           生成实例所需属性     创建实例时
-__class__         实例所在的类        实例.__class__
-__str__           实例字符串表示       print()
-__del__           析构               del删除实例
-__dict__          实例自定义属性       vars(实例.__dict__)
-__doc__           类文档              help(类/实例)
-__getattribute__  属性访问拦截器       访问实例属性时
-__bases__         类的所有父类         类名.__bases__
-"""
-
+    b = deepcopy(a)
+    print(id(a))  # 2473472819528
+    print(id(b))  # 2473472842376
+    a.append(44)
+    print(id(a))  # 2473472819528
+    print(id(b))  # 2473472842376
+    print(a)  # [11, 22, 33, 44]
+    print(b)  # [11, 22, 33]
+copy01()
 
 class Test(object):
+    """
+    python内置属性
+    常用属性            说明               触发方式
+    __init__          初始化函数          创建实例后赋值时使用,在__new__后面
+    __new__           生成实例所需属性     创建实例时
+    __class__         实例所在的类        实例.__class__
+    __str__           实例字符串表示       print()
+    __del__           析构               del删除实例
+    __dict__          实例自定义属性       vars(实例.__dict__)
+    __doc__           类文档              help(类/实例)
+    __getattribute__  属性访问拦截器       访问实例属性时
+    __bases__         类的所有父类         类名.__bases__
+    """
     def __init__(self, param1):
         self.param1 = param1
         self.param2 = "orc"
