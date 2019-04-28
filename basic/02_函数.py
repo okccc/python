@@ -90,4 +90,15 @@ def high_order():
     res6 = list(filter(lambda x: x % 2 == 0, [1, 2, 3, 4]))
     print(res6)  # [2, 4]
 
+def enumerate01():
+    # enumerate()：将可迭代对象(字符串/列表/元组/字典key)组合为索引序列,同时列出数据和下标,一般用在for循环中
+    L = ["aa", "bb", "cc"]
+    for i in L:
+        print(i)  # aa bb cc
+    for i in enumerate(L):
+        print(i)  # (0, 'aa') (1, 'bb') (2, 'cc')
+    # 拆包：将元祖/列表中的数据拆分成多个单独变量
+    for i, l in enumerate(L):
+        print(i, l)  # 0 aa 1 bb 2 cc
+
 
