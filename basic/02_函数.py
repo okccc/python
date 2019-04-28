@@ -101,4 +101,14 @@ def enumerate01():
     for i, l in enumerate(L):
         print(i, l)  # 0 aa 1 bb 2 cc
 
-
+def zip01():
+    names = ["grubby", "moon", "sky"]
+    races = ["orc", "ne", "human"]
+    ages = [18, 19, 20]
+    for index, name in enumerate(names):
+        race = races[index]
+        age = ages[index]
+        print(f'{name} is {race} and {age}')
+    # zip()：将多个可迭代对象中的元素打包成一个个元组可以节约内存,一般用在for循环
+    for name, race, age in zip(names, races, ages):
+        print(f'{name} is {race} and {age}')
