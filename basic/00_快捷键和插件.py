@@ -13,4 +13,24 @@ Ctrl + End：跳到底部
 Pycharm插件
 Statistic：当前项目的统计信息
 Mongo Plugin：mongodb的可视化数据库工具  View --> Tool Windows --> Mongo Explorer
+markdown support/navigation
+
+Chrome插件
+谷歌访问助手：nb
+Octotree：在github左侧显式当前工程目录结构
+Enhanced Github：显式github上文件大小
+Git History：炫酷的展示github中任意文件的修改历史
+Isometric Contributions：渲染github贡献记录的等距像素视图(装X神器)
+Proxy SwitchyOmega：fiddler代理
+JSONView：json格式化
+XPath Helper：xpath助手
+AdBlock：广告拦截
+uBlock Origin：网络请求过滤工具占用极低的内存和CPU
+OneTab：打开网页列表节约内存
+FeHelper：前端助手
+Full Page Screen Capture：全屏滚动截图
+Chromoji：emoj表情
+Clear Cache：清空缓存
+Quick QR：二维码生成器
+Translate Man：翻译侠
 """
