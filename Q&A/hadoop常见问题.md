@@ -49,7 +49,7 @@ lag(salary, 12, 0) over(partition by employeeno order by yearmonth) as prev_12_s
 
 - 两个数组找出相同元素个数的最优算法？二分查找？冒泡排序？
 
-- impala刷新hive数据
+- impala刷新hive(hdfs)数据
 impala-shell -i master2.meihaofenqi.net -q 'invalidate metadata'
 
 - cdh7180端口无法访问(cm界面打不开)  
