@@ -3,18 +3,6 @@ import threading
 import time
 
 
-def test():
-    L = ["aa", "bb", "cc"]
-    for i in L:
-        print(i, end=",")  # aa,bb,cc,
-    # enumerate()：将可遍历对象(字符串/列表/元组/字典key)组合为索引序列,同时列出数据和下标,一般用在for循环中
-    for i in enumerate(L):
-        print(i, end=",")  # (0, 'aa'),(1, 'bb'),(2, 'cc'),
-    # 拆包：将元祖/列表中的数据拆分成多个单独变量
-    for i, l in enumerate(L):
-        print(i, l, end=",")  # 0 aa,1 bb,2 cc,
-
-
 def test01():
     for i in range(5):
         print("---test01---%d" % i)

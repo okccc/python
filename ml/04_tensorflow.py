@@ -50,6 +50,22 @@ ph_new = tf.reshape(ph, shape=[2, 3])
 print(ph_new)  # Tensor("Reshape:0", shape=(2, 3), dtype=float32)
 
 
+# 变量op
+# 1、变量op可以持久化保存,张量op不可以
+# 2、当定义一个变量op的时候,必须在会话当中运行初始化
+a = tf.constant([1,2,3,4])
+var = tf.Variable(initial_value=tf.random_normal(shape=[2, 3], mean=0, stddev=1))
+print(a, var)
+# 显式初始化op
+init_op = tf.global_variables_initializer()
+with tf.Session() as sess:
+    # 必须先运行初始化
+    sess.run(init_op)
+    # 把程序的图结构写入事件文件, graph:把指定的图写进事件文件当中
+    filewriter = tf.summary.FileWriter("./test/", graph=sess.graph)
+    print(sess.run([a, var]))
+
+
 
 
 

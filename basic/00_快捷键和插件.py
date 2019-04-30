@@ -17,6 +17,7 @@ markdown support/navigation
 
 Chrome插件
 谷歌访问助手：nb
+extension manager：插件管理器
 Octotree：在github左侧显式当前工程目录结构
 Enhanced Github：显式github上文件大小
 Git History：炫酷的展示github中任意文件的修改历史

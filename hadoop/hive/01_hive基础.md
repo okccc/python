@@ -8,11 +8,11 @@
 - 添加新字段：alter table test add columns(order_id int comment '订单id')  
 <font color=red>注意：添加新字段后要将原来已经存在的分区先删掉,不然数据加载不进去,如果要调整新字段顺序,可以再用change</font>    
 - 修改表字段：alter table test change column column1 column2 string comment '...' first|after column3  
-- 删除字段：alter table test replace columns(id int,name string)                     
+- 删除字段：alter table test replace columns(id int,name string)  
 只保留需要的列,不需要的列删掉,同时也可以更换列的顺序(万能版)  
 - 删除表分区：  
-alter table test drop partition (dt=20160101)  -- 删除单个分区   
-alter table test drop partition (dt>=20160101,dt<20170101) -- 删除条件范围内的多个分区    
+alter table test drop partition (dt=20160101)  -- 删除单个分区  
+alter table test drop partition (dt>=20160101,dt<20170101) -- 删除条件范围内的多个分区  
 或者直接去hdfs上删除存储数据的目录(表的分区还在,只是没有数据)  
 - 重命名表：alter table table1 rename to table2  
 - 复制表结构：create table empty_table1 like table1  
@@ -21,15 +21,15 @@ alter table test drop partition (dt>=20160101,dt<20170101) -- 删除条件范围
 - set hive.cli.print.header=true;在输出结果最上面一行打印列名  
 - 导出hive数据到本地：hive -e "select * from test;" > /opt/aaa.txt -- (insert overwrite慎用,会覆盖整个目录!)  
 - 往mysql插入大量数据：  
-load data local infile 'c://users/grubby/desktop/test.txt' replace into table test 	-----覆盖  
-load data local infile 'c://users/grubby/desktop/test.txt' into table test          -----追加  
+load data local infile '<c://users/grubby/desktop/test.txt>' replace into table test 	-----覆盖  
+load data local infile '<c://users/grubby/desktop/test.txt>' into table test          -----追加  
 - show functions：查找所有函数  
 - desc function parse_url：查看某个函数  
 - desc function extended parse_url：查看某个函数使用案例  
 - 创建视图：create view view01 as select * from debit_ifno where dt=regexp_replace(date_sub(current_date,1),'-','')  
 - 注册udf：  
 将开发的udf打成jar包,上传到hdfs指定目录,然后创建函数  
-create function default.url_decode as 'com.qbao.udf.decodeurl' using jar 'hdfs:///lib/decodeurl.jar';  
+create function default.url_decode as 'com.qbao.udf.decodeurl' using jar '<hdfs:///lib/decodeurl.jar>';  
 ## hive表数据加载方式
 - 方式一：从本地/hdfs目录加载  
 load data <font color=red>[local]</font> inpath '...' <font color=red>[overwrite]</font> into table t1 <font color=red>[partition(...)]</font>      
@@ -86,7 +86,7 @@ hive是把除select * 以外的所有sql都翻译成mapreduce程序在yarn集群
 hive>create table inner_tab(dt string,websession string,word string,s_seq int,c_seq int,website string) row format delimited fields terminated by '\t' lines terminated by '\n' ;  
 (内部表路径默认存放在hdfs的/user/hive/warehouse下,并且还会生成一个tmp目录)  
 1、从本地加载数据  
-hive>load data local inpath '/home/cq/sogouq2.txt' into table inner_tab;   
+hive>load data local inpath '/home/cq/sogouq2.txt' into table inner_tab;  
 2、从hdfs加载数据(剪切)  
 hive>load data inpath '...' into table inner_tab;  
 写hql查询：(可以通过8088端口查看yarn集群上application的运行情况)  
@@ -212,7 +212,7 @@ hive> select * from test order by id;
 1 2 3 5 6 8 9  
 hive> set mapred.reduce.tasks=2;  
 hive> select * from test sort by id;  
-2 5 6 9 1 3 8       
+2 5 6 9 1 3 8  
 设定了2个reduce,从结果可以看出,在每个reduce内都做了排序,如果reduce数为1,那么两者结果是一样的  
 
 - distribute by和cluster by  

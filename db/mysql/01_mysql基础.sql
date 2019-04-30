@@ -1,27 +1,26 @@
 /**
 e-r模型：当前物理数据库都是按照e-r模型(entry-relationship)进行设计的
-        一个实体对应数据库中的一个表,关系描述两个表之间的对应规则,包括一对一、一对多、多对多
-
-数据库三范式：列不可拆分 --> 唯一标识 --> 主键
-
-约束：主键primary key、惟一unique、非空not null、默认default、外键foreign key
-
+        实体-->表  关系-->描述两个表之间关系(一对一、一对多、多对多)
+数据库：按照数据结构存储和管理数据的仓库
+RDBMS：关系型数据库管理系统
+表：按列和行排列的一组数据,列表示特征行表示条目
+sql：对数据库做增删改查
+三大范式：列不可拆分、唯一标识、引用主键
+五大约束：primary key、unique、not null、default、foreign key
 逻辑删除：对于重要数据并不希望物理删除,删除后无法恢复,可以设置一个isdelete列,类型为bit,默认值0,要逻辑删除的写1,查询的时候查值为0的即可
-
-事务
-    在对数据库做更新操作(insert/update/delete)时要使用事务
-四大特性(acid)
-    原子性(atomicity)：事务中的全部操作不可分割,要么全部完成要么均不执行
-    一致性(consistency)：几个并行执行的事务其执行结果和执行顺序无关
-    隔离性(isolation)：事务的执行不受其他事务的干扰
-    持久性(durability)：已提交事务对数据库的改变是一直生效的
 数据库引擎：innodb是支持事务的;myisam用作全文检索
 修改表的引擎: alter table '表名' engine=innodb;
-事务语句
-    开启: begin;       --其实是在一个内存级的临时表里更新数据,begin之后要么commit要么rollback
-    提交：commit;      --begin后面的所有操作必须commit后才会生效
-    回滚：rollback;    --begin后面的所有操作在rollback后都不会生效
-    
+
+事务：在对数据库做更新操作(insert/update/delete)时要使用事务
+开启: begin;       --其实是在一个内存级的临时表里更新数据,begin之后要么commit要么rollback
+提交：commit;      --begin后面的所有操作必须commit后才会生效
+回滚：rollback;    --begin后面的所有操作在rollback后都不会生效
+事务特性(acid)
+原子性(atomicity)：事务中的全部操作不可分割,要么全部完成要么均不执行
+一致性(consistency)：几个并行执行的事务其执行结果和执行顺序无关
+隔离性(isolation)：事务的执行不受其他事务的干扰
+持久性(durability)：已提交事务对数据库的改变是一直生效的
+
 join
 inner join: 返回关联表中匹配到的值
 left join: 返回左表所有行,右表没有匹配到值为null
@@ -29,9 +28,13 @@ right join: 返回右表所有行,左表没有匹配到值为null
 full join: 会返回左表和右表的所有行,没有匹配到值为null
 union all：会列出所有的值(包括重复值)
 union：只会列出不同的值(相当于去重)
+
+主键：唯一标识一条记录,保证数据完整性,唯一非空
+外键：另一个表的主键,用于关联操作,一个表可以有多个外键
+索引：b树存储,提高查询速度,一个表可以有多个唯一索引
  */
 
--- sql:  structed结构化  query查询  language语言
+-- sql:  structed结构化 query查询 language语言
 -- 查看当前用户
 select user();
 -- 查看当前数据库版本
@@ -44,7 +47,7 @@ select database();
 create database java charset=utf8;
 -- 显示默认创建的字符集
 show create database java;-- create database `java` /*!40100 default character set utf8 */
--- 修改数据库名(不能直接修改,可先备份再删除原先的)
+-- 修改数据库名(不能直接修改,可以先备份再删除原先的)
 /**
 数据备份
     使用超级管理员权限: sudo -s
