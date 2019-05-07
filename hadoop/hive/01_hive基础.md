@@ -17,6 +17,7 @@ alter table test drop partition (dt>=20160101,dt<20170101) -- 删除条件范围
 - 重命名表：alter table table1 rename to table2  
 - 复制表结构：create table empty_table1 like table1  
 - 查看分区信息：show partitions table_name  
+- 查看最小分区：select min(dt) from table_name;
 - 查看执行计划：在sql前面加上explain  
 - set hive.cli.print.header=true;在输出结果最上面一行打印列名  
 - 导出hive数据到本地：hive -e "select * from test;" > /opt/aaa.txt -- (insert overwrite慎用,会覆盖整个目录!)  
@@ -44,9 +45,10 @@ insert overwrite/into table t1 select * from t2;
 -- 解决方法: 先将全量数据导入到temp的临时表(不分区),然后使用动态分区插入到ods层的分区表中
 -- 注意: 动态分区的字段一定位于其他各个字段的最后
 set hive.exec.dynamic.partition=true;
-set hive.exec.dynamic.partition.mode=nonstrict;       -- 设置允许动态分区  
-set hive.exec.max.dynamic.partitions=1000;            -- 总共的最大动态分区数  
-set hive.exec.max.dynamic.partitions.pernode=1000;    -- 每个节点能生成的最大分区数  
+set hive.exec.dynamic.partition.mode=nonstrict;       -- 设置允许动态分区 
+set hive.optimize.sort.dynamic.partition=true;        -- 设置动态分区排序优化 
+set hive.exec.max.dynamic.partitions=10000;            -- 总共的最大动态分区数  
+set hive.exec.max.dynamic.partitions.pernode=10000;    -- 每个节点能生成的最大分区数  
 insert overwrite table ods.tickets_order partition(dt)
 select *,  
        case when create_time >= '2016-01-01' then regexp_replace(substr(create_time,0,10),'-','') else 20151231 end
@@ -233,7 +235,7 @@ cat 000000_0
 cat 000001_0  
 1 3 5 9  
 注意：使用cluster by之后,每个文件中的id都进行了排序,而distribute by没有  
-## 建表语句
+## table
 - hive内部表：
 ```sql
 create table if not exists base.inner(  
