@@ -101,7 +101,7 @@ db.position.find({title:{$regex:'专家$'}})  // 标题以专家结尾
 #### 自定义查询
 - 插入测试数据：for(i=1;i<=100;i++){db.position.insert({_id:i})}  
 - db.position.find().limit(4).skip(5)  // limit和skip不分先后  
-#### 指定字段查询  
+#### 投影(指定字段查询)  
 - <font color=red>db.集合.find({query},{field:1/0})</font>  // 1显示0不显示,_id字段默认显示  
 db.position.find({},{category:1,location:1})  // 如果要选取的字段很少就将需要的字段指定为1  
 db.position.find({},{_id:0,responsibility:0})  // 如果要选取的字段很多就将不需要的字段设为0  
@@ -117,23 +117,18 @@ db.position.count({location:"北京"})
 db.position.distinct('category')  
 db.position.distinct('category',{update_time:{$gte:"2019年05月08日"}})
 ## mongodb聚合操作
-- db.集合.aggregate([{管道:{表达式}}])  
-#### 常用管道  
-$group：将集合中的文档分组统计结果  
-$match：过滤数据  
-$project：修改输入文档的结构,如重命名、增加、删除字段、创建计算结果  
-$sort.md：将输入文档排序后输出  
-$limit：限制聚合管道返回的文档数  
-$skip：跳过指定数量的文档,并返回余下的文档  
-$unwind：将数组类型的字段进行拆分  
-#### 常用表达式  
-$sum：计算总和,$sum:1同count表示计数  
-$avg：计算平均值  
-$min：获取最小值  
-$max：获取最大值  
-$push：在结果文档中插入值到一个数组中  
-$first：根据资源文档的排序获取第一个文档数据  
-$last：根据资源文档的排序获取最后一个文档数据  
+- <font color=red>db.集合.aggregate([{管道:{表达式}}])</font> 
+
+管道|作用|表达式|作用
+:---:|:---:|:---:|:---:
+$group|分组|$sum|求和
+$match|过滤|$avg|平均值
+$project|修改文档结构|$min|最小值
+$sort|排序|$max|最大值
+$limit|限制条数|$push|往一个数组中插入值
+$skip|跳过指定文档条数|$first|排序后第一条文档
+$unwind|拆分数组类型字段|$last|排序后最后一条文档
+ 
 #### $group  
 1、db.position.aggregate([  
     {$group:  
@@ -185,7 +180,7 @@ $last：根据资源文档的排序获取最后一个文档数据
     {$group:{_id:'$gender',counter:{$sum:1}}},  
     {$project:{_id:0,counter:1}}  
 ])：查询男/女生人数,输出人数  
-#### $sort.md  
+#### $sort
 1、db.position.aggregate([{$sort.md:{age:1}}])：按年龄升序排序  
 2、db.position.aggregate([  
     {$group:{_id:'$gender',counter:{$sum:1}}},  
