@@ -52,15 +52,15 @@ primary key|primary key|MongoDB自动将_id字段设置为主键
 - show collections：查看当前数据库所有集合  
 - db.createCollection(name, options)：创建集合  
 - db.createCollection("position")  
-- db.createCollection("sub", {capped : true, size : 10})  
-capped默认false不设置上限,如果为true要指定size大小,当文档达到上限时会将之前的数据覆盖,单位为字节 
+- db.createCollection("sub", {capped : true, size : 10})  // capped默认false不设置上限,true要指定size,文档达到上限会覆盖之前数据 
 - db.集合.drop()：删除集合 
 - db.help()：数据库相关帮助命令
 - db.集合.help()：集合相关帮助命令 
 ## crud 
 #### <font color=gray>增</font>
 - <font color=red>db.集合.insert({})</font>  // insert：_id存在会报错 save：_id存在会更新
-#### <font color=gray>删</font>
+- 造数据：for(i=1;i<=100;i++){db.position.insert({name:"test"+i,age:i})}  
+#### <font color=gray>删(慎用!)</font>
 - <font color=red>db.集合.remove({query}, {justOne:true})</font>  // justOne默认false删除所有,true只删除第一条  
 - db.position.remove({gender:0}, {justOne:true})  
 - db.position.remove({})  # 清空集合
@@ -74,7 +74,7 @@ capped默认false不设置上限,如果为true要指定size大小,当文档达�
 - db.集合.find({query}).pretty()
 - db.集合.find({query}).explain()
 ## mongodb高级查询
-#### 索引
+#### <font color=gray>索引</font>
 - 查看索引：<font color=red>db.集合.getIndexes()</font>
 - 创建单列索引：<font color=red>db.集合.ensureIndex({field:1/-1})</font>  // 1是升序,-1是降序
 - 创建多列索引(复合索引)：db.集合.ensureIndex({field1:1/-1,field2:1/-1})
@@ -82,42 +82,42 @@ capped默认false不设置上限,如果为true要指定size大小,当文档达�
 - 唯一索引：db.集合.ensureIndex({field:-1},{unique:true})
 - 删除单个索引：db.集合.dropIndex({field:1/-1})
 - 删除所有索引：db.集合.dropIndexes()
-#### 比较运算符
+#### <font color=gray>比较运算符</font>
 - <font color=red>默认=, $lt < | $lte <= | $gt > | $gte >= | $ne !=</font>  
 db.position.find({category:"技术"})  // category=技术  
 db.position.find({update_time:{$gte:"2019年05月08日"}})  // 更新时间>=20190508  
-#### 逻辑运算符 
+db.position.find({location:{$ne:null}})  // 地址非空  
+#### <font color=gray>逻辑运算符</font> 
 - <font color=red>默认$and逻辑与,$or表示逻辑或</font>  
 db.position.find({category:"技术",location:"上海"})  // 类别是技术并且地址在上海  
 db.position.find({$or:[{category:"技术"},{location:"上海"}]})  // 类别是技术或者地址在上海  
-db.position.find({$or:[{category:"技术"},{location:"上海"}],update_time:{$gte:"2019年05月08日"}})  // 类别是技术或者地址在上海,并且更新时间>=20190508  
-#### 范围运算符
+db.position.find({$or:[{category:"技术"},{location:"上海"}],update_time:{$gte:"2019年05月08日"}})  // 类别是技术或者地址在上海,并且更新时间>=20190508
+#### <font color=gray>范围运算符</font>
 - <font color=red>使用$in和$nin判断是否在某个范围内</font>  
 db.position.find({category:{$in:["技术","产品"]}})  // 类别属于技术或产品  
-#### 正则表达式 
+#### <font color=gray>正则表达式</font> 
 - <font color=red>使用//或$regex查找</font>  
 db.position.find({title:/算法/})  // 标题中包含"算法"  
 db.position.find({title:{$regex:'专家$'}})  // 标题以专家结尾  
-#### 自定义查询
-- 插入测试数据：for(i=1;i<=100;i++){db.position.insert({_id:i})}  
+#### <font color=gray>自定义查询</font>
 - db.position.find().limit(4).skip(5)  // limit和skip不分先后  
-#### 投影(指定字段查询)  
+#### <font color=gray>投影(指定字段查询)</font>  
 - <font color=red>db.集合.find({query},{field:1/0})</font>  // 1显示0不显示,_id字段默认显示  
 db.position.find({},{category:1,location:1})  // 如果要选取的字段很少就将需要的字段指定为1  
 db.position.find({},{_id:0,responsibility:0})  // 如果要选取的字段很多就将不需要的字段设为0  
-#### 排序
+#### <font color=gray>排序</font>
 - <font color=red>db.集合.find().sort({field:1/-1})</font>  # 1升序-1降序  
 db.position.find().sort({update_time:-1})    
-#### 统计  
+#### <font color=gray>统计</font>  
 - <font color=red>db.集合.find({query}).count() | db.集合.count({query})</font>  
 db.position.find({location:"北京"}).count()  
 db.position.count({location:"北京"})  
-#### 去重  
+#### <font color=gray>去重</font>
 - <font color=red>db.集合.distinct('去重字段',{query})</font>  
 db.position.distinct('category')  
 db.position.distinct('category',{update_time:{$gte:"2019年05月08日"}})
 ## mongodb聚合操作
-- <font color=red>db.集合.aggregate([{管道:{表达式}}])</font> 
+- <font color=red>db.集合.aggregate({管道:{表达式}},{管道:{表达式}}...)</font> 
 
 管道|作用|表达式|作用
 :---:|:---:|:---:|:---:
@@ -129,89 +129,25 @@ $limit|限制条数|$push|往一个数组中插入值
 $skip|跳过指定文档条数|$first|排序后第一条文档
 $unwind|拆分数组类型字段|$last|排序后最后一条文档
  
-#### $group  
-1、db.position.aggregate([  
-    {$group:  
-        {  
-            _id:'$gender',  # _id表示分组依据: 使用某个字段的格式为'$字段'  
-            counter:{$sum:1}  
-        }  
-    }  
-])：统计男/女生总人数  
-2、db.position.aggregate([  
-    {$group:  
-        {  
-            _id:null,  # group by null表示将所有文档分为一组  
-            counter:{$sum:1},  
-            avgAge:{$avg:'$age'}  
-        }  
-    }  
-])：统计所有学生总人数、平均年龄  
-3、db.position.aggregate([  
-    {$group:  
-        {  
-            _id:'$gender',  
-            name:{$push:'$name'}  # 透视数据  
-        }  
-    }  
-])：统计学生性别和姓名  
-4、db.position.aggregate([  
-    {$group:  
-        {  
-            _id:'$gender',  
-            name:{$push:'$$ROOT'}  # 使用$$ROOT可以将文档内容加入到结果集的数组中  
-        }  
-    }  
-])  
-#### $match  
-1、db.position.aggregate([  
-    {$match:{age:{$gt:20}}}  
-])：查询年龄>20的  
-2、db.position.aggregate([  
-    {$match:{age:{$gt:20}}},  
-    {$group:{_id:'$gender',counter:{$sum:1}}}  
-])：查询年龄>20的男/女生人数  
-#### $project  
-修改输入文档的结构: 如重命名、增加、删除字段、创建计算结果  
-1、db.position.aggregate([  
-    {$project:{_id:0,name:1,age:1}}  
-])：查询学生姓名、年龄  
-2、db.position.aggregate([  
-    {$group:{_id:'$gender',counter:{$sum:1}}},  
-    {$project:{_id:0,counter:1}}  
-])：查询男/女生人数,输出人数  
-#### $sort
-1、db.position.aggregate([{$sort.md:{age:1}}])：按年龄升序排序  
-2、db.position.aggregate([  
-    {$group:{_id:'$gender',counter:{$sum:1}}},  
-    {$sort.md:{counter:-1}}  
+#### <font color=gray>$group</font>
+- <font color=red>_id:'$field'指定分组字段,_id:null表示不分组</font>  
+db.position.aggregate({$group:{_id:'$location', sum:{$sum:1}}})  
+db.position.aggregate({$group:{_id:null, min:{$min:'$update_time'},max:{$max:'$update_time'}}}) 
+#### <font color=gray>$match</font>
+- <font color=red>先过滤数据再分组聚合(前面管道的结果交给下一个管道)</font>  
+db.position.aggregate({$match:{update_time:{$gte:"2019年05月08日"}}},{$group:{_id:"$category",sum:{$sum:1}}})  
+#### <font color=gray>$project</font>
+- 先分组再修改文档结构  
+db.position.aggregate({$group:{_id:"$category",sum:{$sum:1}}},{$project:{_id:0,sum:1}})  
+#### <font color=gray>$sort</font>
+- <font color=red>分组聚合后对结果排序</font>  
+db.position.aggregate({$group:{_id:"$category",sum:{$sum:1}}},{$sort:{sum:-1}})
 ])：查询男/女生人数然后降序排序  
-#### $limit、$skip  
-1、db.position.aggregate([{$limit:2}])  
-2、db.position.aggregate([{$skip:2}])  
-3、db.position.aggregate([  
-    {$group:{_id:'$gender',counter:{$sum:1}}},  
-    {$sort.md:{counter:1}},  
-    {$skip:1},  
-    {$limit:1}  
+#### <font color=gray>$limit(skip) </font>
+- 限制条数  
+db.position.aggregate({$group:{_id:"$category",sum:{$sum:1}}},{$sort:{sum:-1}},{$skip:1},{$limit:3}) 
 ])：先统计男/女生人数,升序排序,取第二条数据  
-#### $unwind  
-将文档中某个数组类型的字段拆分成多条,每条包含数组中的一个值  
-语法1：db.集合.aggregate([{$unwind:'$字段名称'}])  
-db.t2.insert({_id:1,item:'t-shirt',size:['S','M','L']})  
-db.t2.aggregate([{$unwind:'$size'}])  
-语法2：db.inventory.aggregate([{  
-    $unwind:{  
-        path:'$字段名称',  
-        preserveNullAndEmptyArrays:<boolean>  # 防止数据丢失  
-    }  
-}])：处理空数组、非数组、无字段、null情况  
-db.t3.insert([  
-{ "_id" : 1, "item" : "a", "size": [ "S", "M", "L"] },  
-{ "_id" : 2, "item" : "b", "size" : [ ] },  
-{ "_id" : 3, "item" : "c", "size": "M" },  
-{ "_id" : 4, "item" : "d" },  
-{ "_id" : 5, "item" : "e", "size" : null }  
-])  
-db.t3.aggregate([{$unwind:'$size'}])  -- 空数组、无字段、null的文档都被丢弃了  
-db.t3.aggregate([{$unwind:{path:'$sizes',preserveNullAndEmptyArrays:true}}])  -- 不丢  
+#### <font color=gray>$unwind</font>
+- <font color=red>将数组类型字段拆分成多条文档</font>  
+db.position.insert({_id:1,title:["开发","产品","销售"]})  
+db.position.aggregate({$match:{_id:1}},{$unwind:'$title'})
