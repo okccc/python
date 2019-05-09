@@ -1,6 +1,7 @@
 # coding=utf-8
 import pymysql
 import pymongo
+import redis
 import csv
 import codecs
 
@@ -88,4 +89,9 @@ def mongodb01():
 
 
 def redis01():
-    pass
+    # 连接redis并选择数据库
+    sr = redis.StrictRedis(host="localhost", port=6379, db=0)
+    # 添加数据
+    sr.set(name="orc", value="grubby")
+    # 获取数据
+    sr.get(name="orc")
