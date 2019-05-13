@@ -40,16 +40,16 @@ sql和nosql区别
 4.性能：nosql不需要维护复杂的表关系性能更好
  */
 
--- sql:  structed结构化 query查询 language语言
+-- sql：structured结构化、query查询、language语言
 -- 查看当前用户
 select user();
--- 查看当前数据库版本
+-- 查看数据库版本
 select version();
--- 查看当前所有数据库
+-- 查看所有数据库
 show databases;
--- 查看当前选择的数据库
+-- 查看当前数据库
 select database();
--- 创建自己的数据库
+-- 创建数据库
 create database java charset=utf8;
 -- 显示默认创建的字符集
 show create database java;-- create database `java` /*!40100 default character set utf8 */
@@ -62,22 +62,19 @@ show create database java;-- create database `java` /*!40100 default character s
 数据恢复
     连接mysql,先创建一个新的数据库,然后往这个新数据库里恢复数据
     退出重新连接: mysql -uroot –p 新创建的数据库 < ~/desktop/bac.sql
- */
+    */
 -- 删除数据库
 drop database java;
 
--- 创建表(先选择库)
-use java;
+-- 1.表结构
+use java; -- (先选择库)
 create table if not exists emp(
-empno int primary key auto_increment,
-ename varchar(20),
-email varchar(20) unique not null
+    empno int primary key auto_increment,
+    ename varchar(20),
+    email varchar(20) unique not null
 );
 -- 插入数据
 insert into emp values(null,'grubby','orc@163.com');
-insert into emp values(null,'moon','hum@163.com');
-insert into emp values(null,'sky','ud@163.com');
-
 -- 添加列
 alter table emp add column job varchar(20) after ename;
 -- 修改字段
@@ -89,10 +86,8 @@ alter table emp change column job job1 varchar(60);
 update emp set job = '保洁',email = 'haha@itcast.cn' where empno = 2;
 -- 删除列
 alter table emp drop column job;
--- 删除所有数据
+-- 删除所有数据(慎用!)
 delete from emp;  -- delete：删除数据表还在,可回滚数据
--- 按照一定条件删除
-delete from emp where empno = 1;
 -- 清空表
 truncate table emp;  -- truncate：直接删除原表然后按表结构重新创建,不能回滚数据
 -- 开启事务
@@ -100,38 +95,22 @@ start transaction;
 -- 回滚数据操作
 rollback;
 
--- 分组和过滤
-drop table if exists products;
-create table if not exists products(
-id int primary key,
-pname varchar(20),
-price double(10,2),
-category varchar(20) --  类别
-);
-insert into products values(1,'电视',900,'电器');
-insert into products values(2,'洗衣机',100,'电器');
-insert into products values(3,'洗衣粉',90,'日用品');
-insert into products values(5,'洗衣粉',90,'日用品');
-insert into products values(4,'桔子',9,'水果');
-
--- 商品归类后,显示每一类商品的总价
-select category,sum(price) as totalprice from products group by category;
---  先分组再过滤
+-- 2.分组
+-- 先分组再过滤
 select category,sum(price) as totalprice from products group by category having totalprice >100;
---  先过滤再分组(效率高)
+-- 先过滤再分组(效率高)
 select category,sum(price) as totalprice from products where price >100 group by category;
--- where 和 having 条件语句的区别？
--- where 是在分组前进行条件过滤,having 是在分组后进行条件过滤
--- where 不可以接组函数和别名因为where在select之前解析,having 可以使用别名因为having在select之后解析
+-- where和having条件语句区别？
+-- where是在分组前进行条件过滤,having是在分组后进行条件过滤
+-- where不可以接组函数和别名因为where在select之前解析,having可以使用别名因为having在select之后解析
+-- select语句书写规则: select(distinct) --> from(join) --> where --> group by --> having --> order by --> limit
+-- mysql数据库解析顺序: from(join) --> where --> group by --> select(distinct) --> having --> order by --> limit
 
--- select语句书写的规则: select (distinct) --> from (join) --> where --> group by --> having --> order by --> limit;
--- mysql数据库解析的顺序: from (join) --> where --> group by --> select (distinct) --> having --> order by --> limit;
-
-
--- 创建索引(有索引的表更新操作会变慢,因为索引本身也需要更新,一般只在经常被搜索的列/表创建索引)
-create index pindex on person (name);       -- 普通索引
-create index pindex on person (name desc);  -- 倒叙索引
-create index pindex on person (name, age);  -- 组合索引
+-- 3.高级部分
+-- 创建索引(索引也是表结构的一部分所以更新操作会变慢,一般只在经常被搜索的列添加索引)
+create index pindex on person (name);         -- 普通索引
+create index pindex on person (name desc);    -- 倒叙索引
+create index pindex on person (name, age);    -- 组合索引
 create unique index pindex on person (name);  -- 唯一索引是指一个索引只能用于一个列
 -- 查看执行时间
 show profiles;
@@ -139,13 +118,7 @@ show profiles;
 show index from person;
 -- 删除索引
 alter table person drop index pindex;
--- 添加主键、索引
-alter table tbl_name add primary key (column_list);              -- 添加主键(唯一且不为null)
-alter table tbl_name add index index_name (column_list);         -- 普通索引
-alter table tbl_name add unique index_name (column_list);        -- 唯一索引
-alter table tbl_name add fulltext index_name (column_list);      -- 全文索引
-
--- 创建视图(对于很复杂的查询sql,经常使用的话维护起来很麻烦,可以定义成视图,视图的本质就是对查询的封装,生成一个新的表)
+-- 创建视图(将复杂的查询sql封装成虚拟表)
 create view view_name as select id,name,age from person where sex='男';
 -- 查看视图
 select * from view_name;
@@ -174,6 +147,7 @@ foreign key(subid) references subjects(id)
 -- no action：什么都不做
 alter table scores add constraint stu_sco foreign key(stuid) references students(id) on delete cascade;
 
+-- 4.mysql监控
 -- 查询数据库有多少张表
 select table_schema,count(*) as tables from information_schema.tables group by table_schema;
 -- 查询表中有多少字段
@@ -182,3 +156,16 @@ select count(*) from information_schema.columns where table_schema = '数据库�
 select count(column_name) from information_schema.columns where table_schema = '数据库名';
 -- 查询数据库中所有表、字段、类型和注释
 select table_name,column_name,data_type,column_comment from information_schema.columns where table_schema = '数据库名';
+
+-- 5.mysql优化
+-- 添加索引：主键、外键(关联字段)、where/order by子句、选择性高的字段
+-- 尽量避免在where子句中使用null值判断,避免使用!=或<>操作符,会导致放弃索引而做全表扫描
+-- 尽量避免在where子句中使用or连接条件,如果一个字段有索引另一个没有就会全表扫描
+-- 避免在where子句的"="左边进行函数、计算表达式等等,查询时尽量将操作移到等式右边甚至去掉函数,否则无法使用索引
+SELECT * from test where substrb(CardNo,1,4) = '5378';                    -- (13秒)
+select * from test where amount/30 < 1000;                                -- (11秒)
+select * from test where to_char(ActionTime, 'yyyymmdd') = '19991201';    -- (10秒)
+-- 由于where子句对列的任何操作都是在sql运行时逐行计算得到的,因此它不得不全表扫描,而没有使用该列的索引
+select * from test where CardNo like '5378%';                             -- (< 1秒)
+select * from test where amount < 1000*30;                                -- (< 1秒)
+select * from test where ActionTime = to_date('19991201', 'yyyymmdd');    -- (< 1秒)
