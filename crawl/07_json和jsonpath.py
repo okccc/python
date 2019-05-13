@@ -25,9 +25,9 @@ XPath    JsonPath       描述
 n/a	        ()	        支持表达式计算
 ()	        n/a	        分组,JsonPath不支持
 
-网页抓包技巧：
-1.很多网站页面在手机版的response返回的是json数据,这样解析起来方便很多
-2.在Network查找真实url时,***?callback=jsonp或者***?callback=jQuery这种格式的请求会返回类似json的数据,去掉callback函数就是json
+抓包技巧：
+1.有些网站pc端数据很难获取(加密、反爬...)可以尝试app端,很多直接返回json数据
+2.在Network查找真实url时,***?callback=jsonp或者***?callback=jQuery这种格式的请求会返回类json数据,去掉callback函数就是json
 url = "https://tousu.sina.com.cn/api/index/s?callback=jQuery&keywords=%E4%B8%8A%E6%B5%B7&page_size=10&page=1&_=1552983689513"
 url = "https://m.douban.com/rexxar/api/v2/subject_collection/movie_showing/items?os=android&for_mobile=1&callback=jsonp2&start=18&count=18&loc_id=108288&_=1552985740409"
 上述url中的callback=jQuery、callback=jsonp2以及末尾的时间戳都可以去掉
