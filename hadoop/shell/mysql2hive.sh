@@ -18,11 +18,11 @@ password='EWQTB512Oikf;'
 log_path=/home/hive/gds/logs/sqoop/input/$YESTERDAY
 watch_path=/home/hive/gds/filewatch/sqoop/input/$YESTERDAY
 
-if [ ! -d ${log_path} ] ; then
+if [[ ! -d ${log_path} ]] ; then
     mkdir ${log_path}
 fi
 
-if [ ! -d ${watch_path} ] ; then
+if [[ ! -d ${watch_path} ]] ; then
     mkdir ${watch_path}
 fi
 
@@ -42,7 +42,7 @@ sqoop import --connect jdbc:mysql://${ip}:${port}/${mysql_db}?tinyInt1isBit=fals
 
 echo "${CURRENT} end" >> ${log_path}/${table}.log
 
-if [ $? -eq 0 ] ; then
+if [[ $? -eq 0 ]] ; then
      echo ${CURRENT} >> ${watch_path/$table}
      echo "sqoop import data succeed!" >> ${log_path}/${table}.log
 else

@@ -217,7 +217,7 @@ class LaGou03(object):
         # # 将source解析为HTML文档
         # html = etree.HTML(source)
 
-        # 获取当前页的所有职位id
+        # 获取当前页所有职位
         li_list = self.driver.find_elements_by_xpath('//ul[@class="item_con_list"]/li')
         for li in li_list:
             item = {

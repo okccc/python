@@ -44,8 +44,8 @@ def recursive(path, suffix):
 
 def test01():
     # 往文件的每一行末尾添加两个空格
-    with open("C://Users/chenqian/Desktop/xixi", encoding="utf8") as f1:
-        with open("C://Users/chenqian/Desktop/haha", "w", encoding="utf8")as f2:
+    with open("C://Users/admin/Desktop/xixi", encoding="utf8") as f1:
+        with open("C://Users/admin/Desktop/haha", "w", encoding="utf8")as f2:
             for line in f1.readlines():
                 # split()可去除空白行
                 if line.split():
@@ -81,7 +81,7 @@ def test04():
 
 if __name__ == "__main__":
     # recursive("D://PycharmProjects/python/", ".jpeg")
-    # test01()
+    test01()
     # test02()
     # test03()
-    test04()
+    # test04()

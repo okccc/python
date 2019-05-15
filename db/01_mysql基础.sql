@@ -169,3 +169,15 @@ select * from test where to_char(ActionTime, 'yyyymmdd') = '19991201';    -- (10
 select * from test where CardNo like '5378%';                             -- (< 1秒)
 select * from test where amount < 1000*30;                                -- (< 1秒)
 select * from test where ActionTime = to_date('19991201', 'yyyymmdd');    -- (< 1秒)
+
+-- 尽可能早地过滤数据,减少每个阶段的数据量
+select * from a join b on a.key = b.key where a.id > 10 and b.id < 10;
+-- 应该改写为
+select * from (select * from a where id > 10) a join (select * from b where id < 10) b on a.key = b.key;
+
+-- 如果union个数大于2,或者每个union数据太大,应该拆成多个insert into
+insert overwrite table t1 partition (dt=20180101) select * from (select * from a union select * from b union select * from c) r;
+-- 应该改写为
+insert into `table` t1 partition (dt=20180101) select * from a;
+insert into `table` t1 partition (dt=20180101) select * from b;
+insert into `table` t1 partition (dt=20180101) select * from c;

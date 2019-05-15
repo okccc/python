@@ -29,7 +29,7 @@ hbase|列存储|结构化和半结构化数据|
 - rpop websites：从右边删除列表值  
 - lrem websites 2 qq.com：删除指定值(count>0从上往下删,count<0从下往上删,count=0删除所有)  
 - lindex websites 1：根据索引求值  
-#### set(去重,无序)  
+#### set(无序)  
 - <font color=red>scard team1</font>：求set长度  
 - sadd team1 kobe：往集合添加元素  
 - <font color=red>smembers team1</font>：遍历set  
@@ -37,7 +37,7 @@ hbase|列存储|结构化和半结构化数据|
 - sinter team1 team2：求两个集合交集  
 - sunion team1 team2：求两个集合并集  
 - sdiff team1 team2：求两个集合差集  
-#### zset(去重,有序)  
+#### zset(有序)  
 - <font color=red>zcard myzset</font>：求zset长度  
 - zadd myzset 10 a 11 b 12 c：往zset添加值和分数,值存在就更新分数,分数可以相同  
 - <font color=red>zrange myzset 0 -1</font>：遍历zset不带分数  

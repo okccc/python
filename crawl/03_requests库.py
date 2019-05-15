@@ -63,7 +63,7 @@ def post():
     print(type(json.loads(response.text)))  # dict
 
 def ajax():
-    # 需求：抓取拉勾网java工程师职位信息(详见demo05)
+    # 需求：抓取拉勾网java工程师职位信息(详见demo06)
 
     # 地址栏url
     # url = "https://www.lagou.com/jobs/list_java?labelWords=&fromSearch=true&suginput="
