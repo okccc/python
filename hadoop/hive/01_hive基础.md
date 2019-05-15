@@ -1,4 +1,4 @@
-[参考文档](http://www.cnblogs.com/hpucode/p/5204871.html)  
+[参考文档1](http://www.cnblogs.com/hpucode/p/5204871.html)、[参考文档2](http://www.cnblogs.com/xd502djj/p/3799432.html)
 ## basic
 - 查看hive版本：hive --version
 - 删除库：drop database test cascade(加cascade可以删除含有表的数据库)
@@ -37,7 +37,7 @@ local表示从linux磁盘复制,否则是从hdfs上剪切;overwrite覆盖/into�
 #### <font color=gray>insert</font>
 - 全量表：hive> insert overwrite/into table t1 select * from t2;
 - 分区表：hive> insert overwrite t1 partition(dt=20160412) select ... from t2 where dt=20160412;  
-注意：不能用select *,因为分区也是一列,一开始建的是空表没数据,会报错column数量不一致 
+注意：不能用select *,因为分区也是一列,刚开始是空表没数据,会报错column数量不一致 
 #### <font color=gray>as</font>
 - hive> create table t2 as select ... from t1 where ...;
 #### <font color=gray>hive命令行</font>
@@ -134,33 +134,33 @@ create table if not exists app_v40_index_localtion_pvuv_sum (
 ```
 ## join 
 ![](images/join.png)  
-#### <font color=gray>内连接</font>
+##### <font color=gray>内连接</font>
 ```sql  
 hive> select * from a join b on(a.id = b.id);  
 3   c   1   1   xxx 2  
 1   a   3   3   zzz 5  
 ```
-#### <font color=gray>左连接</font>  
+##### <font color=gray>左连接</font>  
 ```sql
 hive> select * from a left join b on(a.id = b.id);  
 1   a   3   3   zzz 5  
 2   b   4   null    null    null  
 3   c   1   1   xxx 2  
 ```
-#### <font color=gray>左半开连接：只显示匹配到的左表数据,比左连接快</font>  
+##### <font color=gray>左半开连接：只显示匹配到的左表数据,比左连接快</font>  
 ```sql
 hive> select * from a left semi join b on(a.id = b.id);  
 1   a   3  
 3   c   1  
 ```
-#### <font color=gray>右连接</font>  
+##### <font color=gray>右连接</font>  
 ```sql
 hive> select * from a right join b on(a.id = b.id);  
 3   c   1   1   xxx 2  
 null    null    null    2   yyy 3  
 1   a   3   3   zzz 5  
 ```
-#### <font color=gray>全连接</font>
+##### <font color=gray>全连接</font>
 ```sql  
 hive> select * from a full join b on(a.id = b.id);  
 3   c   1   1   xxx 2  
@@ -168,7 +168,7 @@ null    null    null    2   yyy 3
 1   a   3   3   zzz 5  
 2   b   4   null    null    null  
 ```
-#### <font color=gray>笛卡尔积：m*n</font>  
+##### <font color=gray>笛卡尔积：m*n</font>  
 ```sql
 hive> select * from a join b;  
 1   a   3   1   xxx 2  
@@ -180,4 +180,44 @@ hive> select * from a join b;
 1   a   3   3   zzz 5  
 2   b   4   3   zzz 5  
 3   c   1   3   zzz 5  
+```
+## mapred task
+- map join操作小表放左边,会被加载到内存,在map端做join操作而不是reduce端,可以省去shuffle过程大量io操作  
+- map和reduce数量不是越多越好,启动和初始化很消耗时间和资源;并且有多少个reduce就会有多少个output文件,迭代过程中大量output文件又会成为下个任务的input
+- job会通过input文件产生map任务,map数和文件大小,文件个数,文件块大小(默认128m,set dfs.block.size)有关  
+- 原则：使大数据量利用合适的map/reduce数,使单个map/reduce任务处理合适的数据量
+- 减少map数  
+```sql
+-- inputdir /user/hive/warehouse/test/dt=20170101 共194个文件总大小9g,其中很多<<128m的,正常执行会占用194个map任务,消耗计算资源：slots_millis_maps=623020  
+select count(1) from test where dt=20170101;  
+-- 设置块大小
+set mapred.max.split.size=100000000;  
+set mapred.min.split.size.per.node=100000000;  
+set mapred.min.split.size.per.rack=100000000;  
+-- 合并小文件  
+set hive.input.format=org.apache.hadoop.hive.ql.io.combinehiveinputformat;  
+-- 再执行上面的语句,占用74个map任务,消耗计算资源：slots_millis_maps=333500  
+```
+- 增加map数  
+```sql
+-- 如果a表只有一个文件大小是120m,但只有两三个字段却包含几千万条数据,一个map显然很慢
+select user_id,count(1),sum(case when …),sum(case when …),sum(…) from a group by user_id;
+-- 增加map数
+set mapred.map.tasks=10;  
+create table a1 as select * from a distribute by rand(123);  
+-- 将a表数据随机分散到包含10个文件的a1表,占用10个map,每个map任务处理大于12m(几百万条)的数据速度快很多  
+```
+- 调整reduce数
+```sql
+hive.exec.reducers.bytes.per.reducer;   -- 每个reduce处理的数据量,默认1G
+hive.exec.reducers.max;                 -- 每个任务最大的reduce数,默认为999  
+reducer数 = min(参数2,数据总量/参数1)  
+-- 修改每个reduce处理的数据量  
+set hive.exec.reducers.bytes.per.reducer=500000000;  
+-- 设定reduce个数  
+set mapred.reduce.tasks=15;  
+-- 只有一个reduce的情况  
+1.数据量小于1G 
+2.没有group by和order by操作  
+3.有笛卡尔积
 ```
