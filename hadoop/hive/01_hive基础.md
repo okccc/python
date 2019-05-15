@@ -221,3 +221,36 @@ set mapred.reduce.tasks=15;
 2.没有group by和order by操作  
 3.有笛卡尔积
 ```
+## data skew
+- 空值导致数据倾斜
+```sql  
+-- 方案一  
+select * from users a join orders b on a.user_id is not null and a.user_id = b.user_id  
+union all  
+select * from users a where a.user_id is null;  
+-- 方案二  
+select * from users a left join orders b on case when a.user_id is null then concat('hive',rand()) else a.user_id = b.user_id;  
+-- 方案一是2个job,方案二是1个job且io更少,所以方案二更好  
+```
+- 不同数据类型关联导致数据倾斜
+```sql  
+-- 比如users表是int类型,而orders表是string类型 
+select * from users a left join orders b on a.user_id = cast(b.user_id as int) ;  
+```
+- 参数优化
+```sql  
+-- 1.并发执行  
+set hive.exec.parallel=true;  
+set hive.exec.parallel.thread.number=8;
+-- 2.聚合操作  
+set hive.map.aggr=true; -- 在map中会做部分聚合操作,效率更高但更消耗内存  
+-- 3.数据倾斜(大量key被shuffle到某个reduce)  
+set mapred.reduce.tasks= 200;                    -- 增大reduce个数  
+set hive.optimize.skewjoin=true;                 -- join过程出现倾斜设置为true  
+set hive.groupby.skewindata=true;                -- group by过程出现倾斜设置为true  
+join、group by、count distinct 操作都可能会引起数据倾斜问题  
+-- 生成的查询计划会有两个mrjob,第一个mrjob中map的输出结果会随机分配到reduce,每个reduce做聚合操并输出结果,这样即使相同的groupby key也会被分配到不同的reduce,从而达到负载均衡
+-- 第二个mrjob再根据预处理的数据结果按照groupby key分配到reduce,这个过程可以保证相同的groupby key被分配到同一个reduce,完成最终聚合操作  
+set hive.skewjoin.key=100000;                    -- join的键对应的记录数超过设定值(具体看集群配置)会做分拆  
+set hive.groupby.mapaggr.checkinterval=100000;   -- groupby的键对应的记录数超过设定值会做分拆  
+```
