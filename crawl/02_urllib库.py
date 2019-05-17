@@ -17,7 +17,7 @@ get_header(): 获取一个已有的HTTP报头,注意第一个字母大写,后面
 response方法:
 read(): 读取服务器返回文件的内容
 info(): 返回服务器响应的HTTP报头
-getcode(): 返回HTTP请求的响应码
+getcode(): 返回的响应码
 geturl(): 返回响应实际数据的url,防止重定向问题
 """
 
@@ -211,7 +211,7 @@ def http_handler():
     HTTPHandler处理器
     """
 
-    # 创建httphandler处理器,专门处理http请求
+    # 创建httphandler处理器,专门处理请求
     # debuglevel参数默认0,设为1会自动打开Debug log模式,程序执行时会打印收发包信息,方便调试
     http_handler = urllib.request.HTTPHandler(debuglevel=1)
     # 创建opener对象

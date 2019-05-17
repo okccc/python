@@ -94,7 +94,7 @@ def regex01():
 def regex02():
     # 请求地址
     url = "http://www.neihanpa.com/article/list_5_1.html"
-    # http请求头
+    # 请求头
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.89 Safari/537.36"}
     # 创建请求对象
     request = urllib.request.Request(url, headers=headers)
