@@ -13,12 +13,12 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - 查看工作区/暂存区/仓储区文件的状态：git status  
 - 将暂存区文件提交到版本库形成版本记录：git commit -m '...'(注意：git只会提交暂存区的修改来创建版本,工作区的修改必须先添加到暂存区)  
 - 如果是已经在track的文件可以不用添加直接提交：git commit -am 'all message ...'
-- 查看版本提交记录(commit)：git log (--author "")
-- 查看本地操作记录(commit/reset/pull/merge...)：git reflog
+- <font color=red>查看版本提交记录(commit)：git log (--author "")</font>
+- <font color=red>查看本地操作记录(commit/reset/pull/merge...)：git reflog</font>
 - 配置别名：git config --global alias.lg 'log --graph --pretty=oneline --abbrev-commit'
 - 删除别名：git config --global --unset alias.lg
 - 查看最新提交的更新：git show/git last  
-查看指定提交的更新：<font color=red>git show commitid</font>  
+<font color=red>查看指定提交的更新：git show commitid</font>  
 查看指定提交指定文件的更新：git show commitid filename
 - 删除工作区未track文件  
 git clean -n：提醒你哪些文件会被删除  
