@@ -1,0 +1,32 @@
+## tools
+- [chrome无法添加应用、扩展程序和脚本](https://jingyan.baidu.com/article/f3ad7d0f09436709c3345b0b.html)
+- [chrome安装谷歌访问助手](https://jingyan.baidu.com/article/7e440953191a2b2fc0e2ef0c.html)
+- [chrome固定到任务栏后点击出现两个图标](https://blog.csdn.net/qq_26012495/article/details/80814758)
+- [fiddler设置只代理部分浏览器](https://segmentfault.com/q/1010000007944006)
+- [fiddler手机数据抓包配置](https://www.cnblogs.com/qinyulin/articles/6843829.html)
+- [jupyter代码自动补全](https://www.cnblogs.com/qiuxirufeng/p/9609031.html)
+- [windows安装redis](https://www.jianshu.com/p/e16d23e358c0)
+- [pycharm专业版永久激活](https://blog.csdn.net/weixin_39332299/article/details/79692283)
+- [pycharm远程连接服务器调试代码](https://www.jianshu.com/p/79df9ac88e96)
+- [pycharm删除项目](http://blog.csdn.net/xiaohukun/article/details/75077049)
+- [pycharm导入外部模块](https://jingyan.baidu.com/article/93f9803f5dababe0e46f55fc.html)
+- [pycharm安装black代码格式化](https://blog.csdn.net/u011510825/article/details/82287022)
+#### <font color=gray>配置settings</font>
+![](images/01.png)  
+- pycharm可以export/import默认配置模板(字体、样式等)
+#### <font color=gray>配置Github</font>  
+![](images/02.png)  
+![](images/03.png)  
+#### <font color=gray>配置Interpreter</font>  
+![](images/05.png) 
+#### <font color=gray>check out</font> 
+![](images/04.png)  
+#### <font color=gray>import into</font>  
+![](images/06.png)
+![](images/07.png) 
+#### <font color=gray>公司一般用gitlab</font>  
+![](images/08.png)  
+#### <font color=gray>pycharm运行程序console设置</font>  
+![](images/09.png)
+#### <font color=gray>pycharm终端terminal乱码</font>
+![](images/10.png)
