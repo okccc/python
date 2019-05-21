@@ -14,6 +14,7 @@ Pycharm插件
 Statistic：当前项目的统计信息
 Mongo Plugin：mongodb的可视化数据库工具  View --> Tool Windows --> Mongo Explorer
 markdown support/navigation
+embedded web browser：内嵌浏览器
 
 Chrome插件
 谷歌访问助手：nb
