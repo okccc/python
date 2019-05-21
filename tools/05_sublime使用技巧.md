@@ -1,0 +1,5 @@
+- sublime左侧显示文件夹：直接将文件夹手动拖进来即可  
+- sublime转换大小写：Ctrl+KU、Ctrl+KL
+- sublime多个视图：view --> layout --> single/columns
+- [excel和csv区别](https://blog.csdn.net/weixin_39198406/article/details/78705016)
+- 在某列末尾都加上逗号：B1=A1&","
