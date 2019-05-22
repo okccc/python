@@ -2,9 +2,9 @@
 - 安装：yum install git
 - 安装完配置用户和邮箱：  
 git config --global user.name "okccc"(这样就不用每次同步到github都输密码)  
-git config --global user.email "1573976179@qq.com"(此处email要和github保持一致,不然github上没有小绿块)    
+git config --global user.email "1573976179@qq.com"(此处email要和github保持一致,不然github上没有小绿块)  
 查看配置列表：git config --global --list  
-优先级：--system(系统) < --global(用户) < --local(当前仓库,可单独指定用户邮箱)       
+优先级：--system(系统) < --global(用户) < --local(当前仓库,可单独指定用户邮箱)  
 打开配置文件：git config -e --system(/etc/gitconfig ) --global(~/.gitconfig) --local(/project/.git/config)  
 解决中文乱码：git config --global core.quotepath false
 - 选中某个目录作为仓库：cd mygit

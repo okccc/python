@@ -53,7 +53,7 @@ def urllib01():
     print(type(html))
     # 通过get_header()方法获取一个已有的HTTP报头,注意第一个字母大写,后面全小写
     print(request.get_header("User-agent"))
-    # 输出HTTP响应码
+    # 输出响应码
     print(response.getcode())
     # 输出返回实际数据的url,防止重定向问题
     print(response.geturl())

@@ -2,13 +2,13 @@
 import socket
 
 def server():
-    # 创建socket对象,指定UDP
+    # 1.创建socket对象,指定UDP
     s = socket.socket(type=socket.SOCK_DGRAM)
-    # 绑定ip和端口
+    # 2.绑定ip和端口
     s.bind(("10.16.45.68", 9999))
     # UDP的server不需要监听也不需要建立连接
     while True:
-        # 接收客户端消息,包含客户端地址信息
+        # 3.接收客户端消息,包含客户端地址信息
         msg, addr = s.recvfrom(1024)  # 阻塞直到有客户端发消息过来
         print(msg.decode())
         # print(addr)  # ('10.16.45.68', 56032)

@@ -32,7 +32,7 @@ def get():
     # 追踪重定向：是一个Response对象的列表,为了完成请求而创建了这些对象,对象列表按照从远到近的请求排序
     print(type(response.history))  # <class 'list'>
     print(response.history)  # []  -- 如果是重定向会显示[<Response [302]>, <Response [302]>...]
-    # 使用response.text时,Requests会基于HTTP响应的文本编码自动解码响应内容,大多数Unicode字符集都能被无缝解码
+    # 使用response.text时,Requests会基于响应的文本编码自动解码响应内容,大多数Unicode字符集都能被无缝解码
     print(type(response.text))  # <class 'str'>
     # 使用response.content时,返回的是服务器响应数据的原始二进制字节流,可以用来保存图片等二进制文件
     print(type(response.content))  # <class 'bytes'>

@@ -27,7 +27,7 @@ hive> select nvl('...','-');
 hive> select instr('abcde','c');
 - <font color=red>regexp_replace：替换</font>  
 hive> select regexp_replace('2019-01-01','-','');
-- <font color=red>regexp_extract：正则提取</font>  hive> 
+- <font color=red>regexp_extract：正则提取</font>  
 hive> select regexp_extract('foothebar', 'foo(.*?)(bar)', 1);  
 hive> select regexp_extract('foothebar', 'foo(.*?)(bar)', 2);  
 hive> select regexp_extract('foothebar', 'foo(.*?)(bar)', 0);  
