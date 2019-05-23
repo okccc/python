@@ -69,8 +69,10 @@ hive> select unix_timestamp();
 hive> select from_unixtime(unix_timestamp(dt, 'yyyymmdd'),'yyyy-mm-dd');  
 - to_date  
 hive> select to_date('2011-12-08 10:03:01');  
-- weekofyear：一年中的周数  
-hive> select weekofyear('2016-10-19 12:13:25');  
+- <font color=red>weekofyear：一年中的周数</font>  
+hive> select weekofyear('2016-10-19 12:13:25'); 
+- 上个星期第一天  
+hive> select date_add(trunc(current_date,'year'),(weekofyear(current_date)-2)*7-1);
 - date_add：日期增加  
 hive> select date_add('2016-10-18',10);  
 - date_sub：日期减少  
