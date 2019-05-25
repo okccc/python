@@ -9,17 +9,14 @@ dict()：字典{}存放键值对,key会做hash处理所以唯一,可以做增删
 
 def tuple01():
     T = ("grubby", 33, True, "grubby")
-
     print(T[0])  # grubby
     print(T.index(33))  # 1
     print(T.count("grubby"))  # 2
     print(len(T))  # 4
-
     # 遍历循环元组
     for t in T:
         print(t, end=" ")
     print()
-
     # 元组和列表相互转换
     num_list = [1, 2, 3, 4]
     print(type(num_list))
@@ -29,13 +26,11 @@ def tuple01():
 
 def list01():
     L = ["grubby", "sky", "moon"]
-
     # 获取数据
     print(L[1])
     print(L.index("sky"))  # 1
     print(len(L))  # 3
     print(L.count("grubby"))  # 1
-
     # 添加数据
     L.append("fly")
     L.insert(1, "ted")
@@ -43,17 +38,14 @@ def list01():
     temp_list = ["faker", "pawn"]
     L.extend(temp_list)
     print(L)  # ['grubby', 'ted', 'sky', 'moon', 'fly', 'faker', 'pawn']
-
     # 修改数据
     L[1] = "uzi"
     print(L)  # ['grubby', 'uzi', 'sky', 'moon', 'fly', 'faker', 'pawn']
-
     # 排序
     L.sort()
     print(L)  # ['faker', 'fly', 'grubby', 'moon', 'pawn', 'sky', 'uzi']
     L.sort(reverse=True)
     print(L)  # ['uzi', 'sky', 'pawn', 'moon', 'grubby', 'fly', 'faker']
-
     # 删除数据
     L.remove("uzi")
     L.pop()
@@ -65,7 +57,6 @@ def list01():
 
 def dict01():
     D = {"name": "grubby", "age": 18, "gender": True}
-
     # 获取
     print(D["name"])  # grubby
     print(D.get("name"))  # grubby
@@ -73,20 +64,16 @@ def dict01():
     print(D.keys())  # dict_keys(['age', 'gender', 'name'])
     print(D.values())  # dict_values([18, True, 'grubby'])
     print(len(D))  # 3
-
     # 添加/修改
     D["age"] = 19  # key存在就修改对应value,不存在就添加键值对
-
-    # 删除
+    # 删除key
     D.pop("gender")
     D.popitem()  # 随机弹出一个元素并在字典中删除
     print(D)  # {'age': 19}
-
     # 合并字典
     temp = {"score": 90, "age": 20}
     D.update(temp)  # 键相同值覆盖
     print(D)  # {'score': 90, 'age': 20}
-
     # 清空字典
     D.clear()  # clear(): 清空字典中所有键值对
     print(D)  # {}
@@ -185,8 +172,8 @@ def list05():
 if __name__ == '__main__':
     # tuple01()
     # list01()
-    # dict01()
+    dict01()
     # list02()
     # list03()
     # list04()
-    list05()
+    # list05()
