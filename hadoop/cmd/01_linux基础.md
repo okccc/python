@@ -66,43 +66,51 @@ Access time(atime)：读取操作 cat、cp、grep、sed、more、less、tail、h
 Modify time(mtime)：修改操作 vim、ll 会改变此时间  
 Change time(ctime)：修改文件属性或位置 chmod、chown、mv 会改变此时间  
  
-- 进程相关  
-nohup ./aaa.sh &: 将该脚本放在后台执行,即使关闭当前终端也能继续运行  
-jobs: 只能查看当前终端的后台运行任务jobnum,jobs -l可显示PID,jobs状态包括running/stopped/Terminated  +是当前任务/-是后一个任务    
-ps -aux: 查看当前所有进程,a显示所有程序/u以用户为主的格式来显示/x显示所有程序不以终端机来区分  
-kill %jobnum/%PID: 杀掉进程  
-fg %jobnum: 将后台程序调至前台运行
-ctrl + z: 暂停某个前台运行的命令并放到后台
-bg %jobnum: 调出暂停的后台命令继续执行   
+#### 进程相关  
+- nohup ./aaa.sh &: 将该脚本放在后台执行,即使关闭当前终端也能继续运行  
+- jobs: 只能查看当前终端的后台运行任务jobnum,jobs -l可显示PID,jobs状态包括running/stopped/Terminated  +是当前任务/-是后一个任务    
+- ps -aux: 查看当前所有进程,a显示所有程序/u以用户为主的格式来显示/x显示所有程序不以终端机来区分  
+- kill %jobnum/%PID: 杀掉进程  
+- fg %jobnum: 将后台程序调至前台运行
+- ctrl + z: 暂停某个前台运行的命令并放到后台
+- bg %jobnum: 调出暂停的后台命令继续执行   
 
-- 网络
-ifconfig  显示网络设备  
-ifconfig eth0 up  启用eth0网卡  
-ifconfig eth1 down  停用eth1网卡  
-ps -ef/aux|grep java：查看进程中的Java程序  
-netstat -an|grep 22：查看22端口占用情况  
-netstat -rn：查看路由表  
+#### 网络
+- ifconfig  显示网络设备  
+- ifconfig eth0 up  启用eth0网卡  
+- ifconfig eth1 down  停用eth1网卡  
+- ps -ef/aux|grep java：查看进程中的Java程序  
+- netstat -an|grep 22：查看22端口占用情况  
+- netstat -rn：查看路由表  
 
-- 系统管理  
-cal：显示日历 cal 2015 ：显示指定年份的日历  
-date：显示当前系统时间  
-date -R：显示时区  
-date -s "2018-08-01 15:25:30"：设置系统时间  
-hwclock -w：同步硬件时间  
-ntpdate us.pool.ntp.org：使用ntp从时间服务器同步  
-df -h：查看磁盘容量(-h表示系统自动调节合适的单位)  
-du -h/-sh：查看当前目录下所有文件大小/目录总大小
-du -h --max-depth=0,1,2：查看不同深度目录大小,=0就相当于du -sh  
-显示磁盘信息：fdisk -l /dev/vda1  
-查看物理cpu个数：cat /proc/cpuinfo|grep "physical id"|sort|uniq|wc -l   
-查看每个cpu核数：cat /proc/cpuinfo|grep "cpu cores"|uniq
-who：显示当前用户登陆时间
-显示本机信息：uname -a  
-显示主机名：hostname、修改主机名：vim /etc/sysconfig/network  
-查看操作系统：cat /etc/issue、cat /etc/redhat-release  
-查看系统位数：getconf LONG_BIT  
-
-- <font color=red>top/htop：进程管理监控工具</font>  
+#### 系统管理  
+- cal：显示日历 cal 2015 ：显示指定年份的日历  
+- date：显示当前系统时间  
+- date -R：显示时区  
+- date -s "2018-08-01 15:25:30"：设置系统时间  
+- hwclock -w：同步硬件时间  
+- ntpdate us.pool.ntp.org：使用ntp从时间服务器同步  
+- df -h：查看磁盘容量(-h表示系统自动调节合适的单位)  
+- du -h/-sh：查看当前目录下所有文件大小/目录总大小
+- du -h --max-depth=0,1,2：查看不同深度目录大小,=0就相当于du -sh  
+- 显示磁盘信息：fdisk -l /dev/vda1  
+- 查看物理cpu个数：cat /proc/cpuinfo|grep "physical id"|sort|uniq|wc -l   
+- 查看每个cpu核数：cat /proc/cpuinfo|grep "cpu cores"|uniq
+- who：显示当前用户登陆时间
+- 显示本机信息：uname -a  
+- 显示主机名：hostname、修改主机名：vim /etc/sysconfig/network  
+- 查看操作系统：cat /etc/issue、cat /etc/redhat-release  
+- 查看系统位数：getconf LONG_BIT  
+- free -m：查看内存使用情况  
+```bash
+[root@master1 ~]# free -m
+              total        used        free      shared  buff/cache   available
+Mem(物理内存):          32013       13996       13302        2281        4714       15413
+Swap(交换空间):           511           0         511
+```
+- swapon -s：查看交换空间使用情况  
+- swapoff/swapon -a：关闭/开启swap
+#### <font color=red>top/htop：进程管理监控工具</font>  
 第一行：系统时间 + 系统运行时间 + 用户数 + 1/5/15分钟系统平均负载  
 第二行：总进程数(total) + 正在运行进程数(running) + 睡眠进程数(sleeping) + 停止的进程数(stopped) + 僵尸进程数(zombie)  
 第三行：用户空间CPU占比(us) + 内核空间CPU占比(sy) + CPU空置率(id)  
