@@ -58,3 +58,9 @@ service cloudera-scm-server status
 service cloudera-scm-server restart  
 service cloudera-scm-agent status  
 service cloudera-scm-agent restart
+
+- <font color=red>the server is temporarily unable to service your request due to maintenance downtime or capacity problem</font>  
+原因：cdh集群master1节点的交换空间满了512Mib/512Mib,导致cloudera挂掉,cm/hive/hue/impala等组件均无法连接使用  
+swapon -s 查看交换空间使用情况  
+swapoff -a 关闭交换空间  
+swapon -a 开启交换空间
