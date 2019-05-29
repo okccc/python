@@ -110,6 +110,8 @@ Swap(交换空间):           511           0         511
 ```
 - swapon -s：查看交换空间使用情况  
 - swapoff/swapon -a：关闭/开启swap
+- 增加swap空间大小：dd if=/dev/zero of=/var/swapfile bs=1M count=2048 (bs*count)  
+chmod 600 /var/swapfile & mkswap /var/swapfile & swapon /var/swapfile & swapoff /swapfile
 #### <font color=red>top/htop：进程管理监控工具</font>  
 第一行：系统时间 + 系统运行时间 + 用户数 + 1/5/15分钟系统平均负载  
 第二行：总进程数(total) + 正在运行进程数(running) + 睡眠进程数(sleeping) + 停止的进程数(stopped) + 僵尸进程数(zombie)  
