@@ -2,21 +2,24 @@
 import socket
 import re
 import multiprocessing
-from communication.dynamic import application
+import sys
+import importlib
 
 class WSGIServer(object):
-    def __init__(self):
+    def __init__(self, port, application, static_path):
         # 1.创建socket对象,socket默认是阻塞的
         self.server_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
         # 设置允许重复使用端口,因为四次挥手后客户端(服务器)资源不会立马消失而是保持2~4分钟,如果服务器先挂了客户端再访问就会报错：端口已被占用
         self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         # 2.绑定地址
-        self.server_socket.bind(("localhost", 8888))
+        self.server_socket.bind(("192.168.152.11", port))
         # 3.开启监听
         self.server_socket.listen(128)
 
-    @staticmethod
-    def service(new_socket):
+        self.application = application
+        self.static_path = static_path
+
+    def service(self, new_socket):
         """为该客户端服务(短连接)"""
 
         # 1.接收请求：请求的html文件里可能包含<img src=""></img>等超链接,每个超链接都会发送一个请求
@@ -34,13 +37,18 @@ class WSGIServer(object):
             if filename == "/":
                 filename = "/index.html"
         # 2.响应请求
-        # 静态资源部分
+        # a).静态资源部分
         if not filename.endswith(".py"):
             try:
-                # 此处可能读不到文件,需要try/except
-                with open('./html' + filename, 'rb') as f:
-                    # 读取url对应的html内容作为响应体返回
-                    response_body = f.read()
+                if filename.endswith(".html"):
+                    with open(self.static_path + "/html" + filename, 'rb') as f:
+                        # 读取url对应的html内容作为响应体返回
+                        response_body = f.read()
+                else:
+                    # 此处可能读不到文件,需要try/except
+                    with open(self.static_path + filename, 'rb') as f:
+                        # 读取url对应的html内容作为响应体返回
+                        response_body = f.read()
             except Exception as e:
                 print(e)
                 # 请求失败
@@ -51,16 +59,29 @@ class WSGIServer(object):
                 response_head = "HTTP/1.1 200 ok\r\n" + "\r\n"
                 new_socket.send(response_head.encode())
                 new_socket.send(response_body)
-        # 动态资源部分
+        # b).动态资源部分
         else:
-            response_head = "HTTP/1.1 200 ok\r\n" + "\r\n"
-            response_body = application(filename)
-            new_socket.send(response_head.encode())
-            new_socket.send(response_body.encode("gbk"))
+            # 向application函数传递的字典信息
+            env = dict()
+            env["PATH"] = filename
+            # body部分
+            response_body = self.application(env, self.start_response)
+            # header部分
+            response_head = "HTTP/1.1 %s\r\n" % self.status
+            for each in self.headers:
+                response_head += "%s:%s\r\n" % (each[0], each[1])
+            response_head += "\r\n"
+            # 拼接head和body返回
+            response = response_head + response_body
+            new_socket.send(response.encode())
         # 关闭连接(四次挥手)
         new_socket.close()
 
-    def main(self):
+    def start_response(self, status, headers):
+        self.status = status
+        self.headers = headers
+
+    def run_forever(self):
         """使用进程实现并发http服务器(效率很低)"""
         while True:
             # 4.接收连接(三次握手)
@@ -75,6 +96,34 @@ class WSGIServer(object):
             new_socket.close()
 
 
+def main():
+    if len(sys.argv) == 3:
+        # 参数2是端口
+        port = int(sys.argv[1])
+        # 参数3是模块:函数
+        frame_app = sys.argv[2]  # mini_frame:application
+        # 正则匹配frame_app
+        res = re.match('([^:]+):(.*)', frame_app)
+        if res:
+            frame_name = res.group(1)
+            app_name = res.group(2)
+            # 动态加载mini_frame模块,而不是import写死
+            with open("./web_server.conf") as f:
+                conf_info = eval(f.read())
+            # 将存放mini_frame模块的路径dynamic加载到sys.path
+            sys.path.append(conf_info['dynamic_path'])
+            # frame = __import__(frame_name)
+            frame = importlib.import_module(frame_name)
+            # 获取模块中的属性
+            application = getattr(frame, app_name)
+            wsgi = WSGIServer(port, application, conf_info['static_path'])
+            wsgi.run_forever()
+        else:
+            print("参数错误,请参照如下格式：python3 xxx.py 9999 mini_frame:application")
+    else:
+        print("参数错误,请参照如下格式：python3 xxx.py 9999 mini_frame:application")
+
+
 if __name__ == '__main__':
-    wsgi = WSGIServer()
-    wsgi.main()
+    main()
+
