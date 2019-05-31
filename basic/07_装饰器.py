@@ -1,7 +1,7 @@
 # coding=utf-8
 """
 开闭原则：对函数开放扩展功能封闭已有功能
-装饰器(decorator)：装饰器本质上也是函数,用来装饰被装饰函数从而扩展其功能而不改变已有代码
+装饰器(decorator)：装饰器本质上也是函数,用来装饰某个函数从而在不改变代码的情况下扩展其功能
 格式：@deco 等价于 f = deco(f) -->用函数本身接收装饰后的函数
 多装饰器：装饰时由内往外,调用时由外往内
 应用：插入日志、性能测试、事务处理、缓存、权限校验等有切面需求的场景
@@ -39,20 +39,13 @@ def deco02(func):
 def f1():
     print("hello python")
 
-# f1()
-"""
-正在装饰2
-正在装饰1
-正在验证权限1
-正在验证权限2
-hello python
-"""
+f1()  # 正在装饰2  正在装饰1  正在验证权限1  正在验证权限2  hello python
 
 
 # 2.装饰器装饰带参函数
 def deco03(func):
     print("正在装饰3")
-    def inner(*args, **kwargs):  # 内置函数的传参和返回值类型要和被装饰函数保持一致
+    def inner(*args, **kwargs):  # 内置函数的传参方式要和被装饰函数保持一致
         print("正在验证权限3")
         func(*args, **kwargs)
     return inner
@@ -61,12 +54,7 @@ def deco03(func):
 def f2(a, b):
     print("a=%d&b=%d" % (a, b))
 
-f2(10, 20)
-"""
-正在装饰3
-正在验证权限3
-a=10&b=20
-"""
+f2(10, 20)  # 正在装饰3  正在验证权限3  a=10&b=20
 
 
 # 3.装饰器装饰有返回值函数
@@ -74,21 +62,15 @@ def deco04(func):
     print("正在装饰4")
     def inner():
         print("正在验证权限4")
-        ret = func()
-        return ret
+        return func()  # 内置函数的返回值类型要和被装饰函数保持一致
     return inner
 
 @deco04  # f3 = deco04(f3)
 def f3():
     return "lol"
 
-res = f3()
-print("the return value is %s" % res)
-"""
-正在装饰4
-正在验证权限4
-the return value is lol
-"""
+res = f3()  # 正在装饰4  正在验证权限4
+print(res)  # lol
 
 
 # 4.万能装饰器(不管有没有参数和返回值)
@@ -96,8 +78,7 @@ def deco0(func):
     print("正在装饰")
     def inner(*args, **kwargs):
         print("正在验证权限")
-        ret = func(*args, **kwargs)
-        return ret
+        return func(*args, **kwargs)
     return inner
 
 
@@ -120,24 +101,13 @@ def deco05_arg(arg):
 def f4():
     print("---f4---")
 
-f4()
-"""
-正在装饰
-正在验证权限
----f4---
-"""
+f4()  # 正在装饰  正在验证权限  ---f4---
 
 @deco05_arg("moon")  # f5 = deco05_arg(f5)
 def f5():
     print("---f5---")
 
-f5()
-"""
-正在装饰
-正在验证权限
----f5---
----f5---
-"""
+f5()  # 正在装饰  正在验证权限  ---f5---  ---f5---
 
 
 # 类装饰器: 用类装饰函数,先创建对象并执行__init__()函数初始化
@@ -157,10 +127,4 @@ class Test(object):
 def test():
     print("---test---")
 
-test()
-"""
----正在初始化---
-func name is test
----正在装饰---
----test---
-"""
+test()  # ---正在初始化---  func name is test  ---正在装饰---  ---test---
