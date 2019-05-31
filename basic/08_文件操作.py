@@ -44,13 +44,13 @@ def recursive(path, suffix):
 def test01():
     """往文件的每一行末尾添加两个空格"""
 
-    with open("C://Users/admin/Desktop/xixi", encoding="utf8") as f1:
-        with open("C://Users/admin/Desktop/haha", "w", encoding="utf8")as f2:
+    with open("C://Users/admin/Desktop/other/hive/hqls/crontab_bac.sh", encoding="utf8") as f1:
+        with open("C://Users/admin/Desktop/other/hive/hqls/crontab.sh", "w", encoding="utf8")as f2:
             for line in f1.readlines():
                 # split()可去除空白行
                 if line.split():
                     # 由于读完每一行会自动换行,所以索引取到-1
-                    line_new = line[:-1] + "  " + "\n"
+                    line_new = line[:-1] + ";" + "\n"
                     f2.write(line_new)
 
 def test02():
@@ -97,7 +97,7 @@ def test04():
 
 if __name__ == "__main__":
     # recursive("D://PycharmProjects/python/", ".jpeg")
-    # test01()
-    test02()
+    test01()
+    # test02()
     # test03()
     # test04()

@@ -3,7 +3,7 @@
 card_main: 主程序
 """
 
-from projects.cardmanager import card_tools
+from other.cardmanager import card_tools
 
 # 定义无限循环,让程序自己选择何时退出
 while True:
