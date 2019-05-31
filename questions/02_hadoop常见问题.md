@@ -68,3 +68,5 @@ swapon -a 开启交换空间
 - <font color=red>Permission denied: user=yarn, access=EXECUTE, inode="/data":hdfs:supergroup:d-wx------</font>  
 原因：yarn用户没有hdfs的/data目录的执行权限  
 hadoop fs -chmod -R 755 /data
+
+- 夜间批处理调度时间尽量错开,不然连接数超限会导致集群挂掉
