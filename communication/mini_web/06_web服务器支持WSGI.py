@@ -38,17 +38,11 @@ class WSGIServer(object):
                 filename = "/index.html"
         # 2.响应请求
         # a).静态资源部分
-        if not filename.endswith(".py"):
+        if not filename.endswith(".html"):
             try:
-                if filename.endswith(".html"):
-                    with open(self.static_path + "/html" + filename, 'rb') as f:
-                        # 读取url对应的html内容作为响应体返回
-                        response_body = f.read()
-                else:
-                    # 此处可能读不到文件,需要try/except
-                    with open(self.static_path + filename, 'rb') as f:
-                        # 读取url对应的html内容作为响应体返回
-                        response_body = f.read()
+                with open(self.static_path + filename, 'rb') as f:
+                    # 读取url对应的html内容作为响应体返回
+                    response_body = f.read()
             except Exception as e:
                 print(e)
                 # 请求失败
