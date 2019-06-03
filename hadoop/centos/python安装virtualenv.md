@@ -1,5 +1,5 @@
-## python安装virtualenv
 #### [参考文档](https://www.zhuxiongxian.cc/2017/09/28/python-install-virtualenv-and-virtualenvwrapper/)
+- <font color=red>不同项目使用的包版本可能不一样,最好每个项目单独使用一个虚拟环境,是真实python环境的复制版本</font>
 - pip常用命令  
 安装：pip install aaa  
 升级：pip install -upgrade aaa  
@@ -25,7 +25,6 @@ mkvirtualenv --help
 进入：workon test  
 退出：deactivate  
 查看所有：lsvirtualenv  
-查看单个：showvirtualenv
 - 安装django  
 pip install django==1.8.2
 - 查看版本  
