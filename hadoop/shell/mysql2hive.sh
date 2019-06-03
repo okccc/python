@@ -13,7 +13,7 @@ table=$4
 column=$5
 
 username=eadmin
-password='EWQTB512Oikf;'
+password='EWQTB512Oikf;'  # 密码字符串最好加''防止有$等特殊字符导致access denied
 
 log_path=/home/hive/gds/logs/sqoop/input/$YESTERDAY
 watch_path=/home/hive/gds/filewatch/sqoop/input/$YESTERDAY
