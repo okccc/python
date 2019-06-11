@@ -23,6 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # 项目
 SECRET_KEY = 'bka+a+!(c6iu$j_m-d44^!l+_9$2w*galc0+*aj*0_c0z%x030'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# 开发时开启debug,项目上线后要关闭,让404/500等页面展示对应模板内容而不是直接将错误暴露在浏览器
 DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.152.11']
@@ -45,7 +46,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -128,3 +129,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+# 设置静态文件目录
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]

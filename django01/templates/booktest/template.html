@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load filters %}
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .red {
+            background-color: red;
+        }
+        .yellow {
+            background-color: yellow;
+        }
+        .blue {
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+<h1>模板变量</h1>
+<ul>
+    字典：{{dict_data.title}}<br>
+    对象：{{object_data.title}}<br>
+    列表：{{list_data.1}}
+</ul>
+<h1>标签</h1>
+<ul>
+    {% for book in books %}
+        {% if book.id == 1 %}
+            <li class="red">{{ forloop.counter }} - {{ book.title }}</li>
+        {% elif book.id > 1 and book.id < 3 %}
+            <li class="yellow">{{ forloop.counter }} - {{ book.title }}</li>
+        {% else %}
+            <li class="blue">{{ forloop.counter }} - {{ book.title }}</li>
+        {% endif %}
+    {% endfor %}
+</ul>
+<h1>过滤器</h1>
+<ul>
+    {% for book in books %}
+        {# {% if book.id <= 2 %} #}
+        {# {% if book.id|mod %} #}
+        {% if book.id|mod_val:3 %}
+            <li class="red">{{ book.title }} - {{ book.title|length }} - {{ book.pub_date }}</li>
+        {% else %}
+            <li class="blue">{{ book.title }} - {{ book.pub_date|date:'Y年-m月-d日' }}</li>
+        {% endif %}
+    {% endfor %}
+    <li>{{ content|default:'hello' }}</li>
+</ul>
+<h1>注释</h1>
+</body>
+</html>

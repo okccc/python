@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}父模板文件{% endblock title%}</title>
+</head>
+<body>
+<h1>头部信息</h1>
+{% block content1 %}
+    <h1>代码块1</h1>
+{% endblock content1 %}
+
+{% block content2 %}
+    <h1>代码块2</h1>
+{% endblock content2 %}
+<h1>底部信息</h1>
+</body>
+</html>

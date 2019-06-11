@@ -4,22 +4,23 @@ Django提供了admin.ModelAdmin类,通过定义其子类来自定义模型在adm
 
 """
 from django.contrib import admin
-from .models import BookInfo, HeroInfo
+from .models import BookInfo, HeroInfo, AreaInfo
 
 # 自定义模型管理类
 class BookInfoAdmin(admin.ModelAdmin):
-    """图书模型管理类"""
-
     # list_display：显示字段(可调整字段顺序且字段可排序)
-    list_display = ['id', 'btitle', 'bpub_date']
+    list_display = ['id', 'title', 'pub_date']
 
 
 class HeroInfoAdmin(admin.ModelAdmin):
-    """英雄模型管理类"""
+    list_display = ['id', 'name', 'introduce']
 
-    list_display = ['id', 'hname', 'hcomment', 'hbook']
+
+class AreaInfoAdmin(admin.ModelAdmin):
+    list_display = ['id', 'title', 'parent']
 
 
 # 注册模型到admin
 admin.site.register(BookInfo, BookInfoAdmin)
 admin.site.register(HeroInfo, HeroInfoAdmin)
+admin.site.register(AreaInfo, AreaInfoAdmin)

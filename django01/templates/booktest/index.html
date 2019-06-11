@@ -6,10 +6,12 @@
 </head>
 <body>
     <h1>图书列表</h1>
+    {# 注意：path前面加/是绝对路径 <--> http://ip:port/booktest/add  不加/是相对路径 <--> http://ip:port/index/booktest/add #}
+    <a href="/booktest/add">新增</a>
     <ul>
         {% for book in books %}
         <li>
-            <a href="{{ book.id }}">{{ book.btitle }} - {{ book.bpub_date }}</a>
+            <a href="{{book.id}}">{{book.title}}</a> - {{book.pub_date}} - <a href="/booktest/delete{{book.id}}">删除</a>
         </li>
         {% endfor %}
     </ul>
