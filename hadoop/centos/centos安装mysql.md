@@ -21,8 +21,8 @@ mysql> flush privileges;
 mysql> quit  
 - 创建新用户并赋权  
 mysql> create user 'hive'@'%' identified by 'hive';  
-mysql> grant all privileges on *.* to 'hive'@'%' identified by 'hive' with grant option;  
-<font color=red>参数解析：'hive'：账户名   @：赋权 '%'：随便一台机器  '10.2.35.%'：10.2.35集群的某个节点</font>  
+mysql> grant all privileges on django.* to 'hive'@'%' identified by 'hive' with grant option;  
+<font color=red>参数解析：django:数据库名  'hive':账户名  @:赋权 '%':服务器ip  '10.2.35.%':10.2.35集群上的节点</font>  
 mysql> show grants for hive@'10.2.35.%' ;  
 mysql> flush privileges;  
 mysql> quit;
