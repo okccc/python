@@ -100,6 +100,7 @@ git clean -df：删除当前目录下所有未track文件(夹)
 #### git remote
 - a、将已有远程库克隆到本地：git clone git@github.com:okccc/python.git
 - b、如果是先有本地仓库,可以在远程github创建一个新仓库(空的,不包含readme.md和.gitignore)  
+初始化本地仓库：git init  
 关联远程库：git remote add origin git@github.com:okccc/python.git  
 查看远程主机地址：git remote -v  
 查看远程主机详细信息：git remote show <主机名>  
