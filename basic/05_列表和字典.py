@@ -103,11 +103,7 @@ def list02():
 
 
 def list03():
-    """
-    range()使用风险:
-    python2的range(a,b)返回的是包含所有值的list,如果list足够长会占用大量内存空间,可能会MemoryError
-    python3的range(a,b)返回的不是list而是迭代器,相当于python2的xrange()
-    """
+    """列表生成式"""
     a = [i for i in range(1, 10)]  # for语句控制循环次数,每循环一次都会执行i
     print(a)  # [1, 2, 3, 4, 5, 6, 7, 8, 9]
     a = [i for i in range(1, 10, 2)]  # 第三个参数表示步长
@@ -134,9 +130,7 @@ def list03():
 
 
 def list04():
-    """
-    需求：列表中的字典排序
-    """
+    """需求：列表中的字典排序"""
     L = [{"name": "grubby", "age": 18}, {"name": "moon", "age": 19}, {"name": "fly", "age": 20}]
     # L.sort()  # TypeError: unorderable types: dict() < dict()  -- 字典无法直接排序
     L.sort(key=lambda x: x["name"])
