@@ -6,6 +6,7 @@ import threading
 from queue import Queue
 import logging
 import time
+import difflib
 from fake_useragent import UserAgent
 
 logging.basicConfig(
@@ -198,8 +199,7 @@ class BaiDu02(object):
                         real_link = response.headers["Location"]
                         # print(real_link)
                 for word in self.negative_words:
-                    if word in title:
-                        # print(word)
+                    if word in title and ('医院' in title or '美好' in title):
                         # 有word符合就添加数据
                         data = {"title": title, "link": real_link}
                         print(data)
@@ -210,15 +210,24 @@ class BaiDu02(object):
             self.soup_queue.task_done()
 
     def filter_data(self):
-        print(self.datas)
-        data_new = []
-        for data in self.datas:
-            for word in ["美好", "医院"]:
-                if word in data["title"]:
-                    data_new.append(data)
-                    break
-        print([dict(t) for t in {tuple(d.items()) for d in data_new}])
-        # return [dict(t) for t in {tuple(d.items()) for d in data_new}]
+        # 先去除列表中完全一样的重复值
+        data_list = [dict(t) for t in {tuple(d.items()) for d in self.datas}]
+        # 再去除列表中相似度较高的值(借用选择排序思想两两比较)
+        index, data_list_new = [], []
+        n = len(data_list)
+        # 外循环控制循环次数
+        for i in range(n - 1):
+            # 内循环控制每次循环要比较的次数
+            for j in range(i + 1, n):
+                # difflib可以比对两个字符串的相似度
+                similar = difflib.SequenceMatcher('', data_list[i]['title'], data_list[j]['title']).quick_ratio()
+                # 相似度>75%就从列表中删除
+                if similar > 0.75:
+                    index.append(j)
+        for i in range(n):
+            if i not in set(index):
+                data_list_new.append(data_list[i])
+        return data_list_new
 
     def main(self):
         # 1.获取所有关键字

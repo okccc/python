@@ -91,8 +91,8 @@ if __name__ == "__main__":
     # 排序
     L1 = [33, 99, 22, 55, 44, 77, 11, 88]
     # bubble_sort(L1)
-    # select_sort(L1)
-    quick_sort(L1, 0, len(L1)-1)
+    select_sort(L1)
+    # quick_sort(L1, 0, len(L1)-1)
     print(L1)  # [11, 22, 33, 44, 55, 77, 88, 99]
 
     # 搜索
