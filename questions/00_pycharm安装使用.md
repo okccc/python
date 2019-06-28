@@ -4,6 +4,7 @@
 - [chrome固定到任务栏后点击出现两个图标](https://blog.csdn.net/qq_26012495/article/details/80814758)
 - [fiddler设置只代理部分浏览器](https://segmentfault.com/q/1010000007944006)
 - [fiddler手机数据抓包配置](https://www.cnblogs.com/qinyulin/articles/6843829.html)
+- [fiddler设置代理后iphone有些app打不开](https://www.cnblogs.com/KK3228911/archive/2018/11/01/9890211.html)
 - [jupyter代码自动补全](https://www.cnblogs.com/qiuxirufeng/p/9609031.html)
 - [windows安装redis](https://www.jianshu.com/p/e16d23e358c0)
 - [pycharm专业版永久激活](https://blog.csdn.net/weixin_39332299/article/details/79692283)
