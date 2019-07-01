@@ -13,8 +13,9 @@ ChromeDriver镜像下载地址 --> https://npm.taobao.org/
 查看网页源代码(view-source)：服务器发送到浏览器的原始内容
 检查(F12)：elements是经过浏览器渲染执行js动态生成的内容elements=html+js+css+img
 判断页面是否是动态html：
-在view-source查找页面上的数据信息,有说明是正常页面,当前url地址即真实请求地址(直接抓源码即可)
-没有说明页面数据是调用了其它接口,F12-->Network-->Headers或者fiddler抓包(抓请求接口或者selenium模拟浏览器操作)
+1.在view-source查找页面上的数据信息,有说明是正常页面,地址栏url就是真实请求地址(直接抓源码即可)
+2.没有说明页面是ajax动态加载的,F12-->Network-->Headers或者fiddler抓包(抓ajax请求地址或者selenium模拟浏览器操作)
+
 
 tesseract是一个将图像翻译成文字的OCR库(optical character recognition) --> 识别验证码效果一般,还是用云打码平台吧
 from PIL import Image
@@ -43,6 +44,7 @@ class Selenium01(object):
         self.driver = webdriver.Chrome(executable_path="D://chromedriver/chromedriver.exe", options=options)
 
     def introduce(self):
+        """基本操作"""
         # 打开百度页面
         self.driver.get("https://www.baidu.com")
         # 设置窗口最大化
@@ -83,6 +85,7 @@ class Selenium01(object):
         self.driver.quit()
 
     def chains(self):
+        """鼠标行为链"""
         # 打开百度页面
         self.driver.get("https://www.baidu.com")
         # 获取输入框标签和提交标签
@@ -101,26 +104,8 @@ class Selenium01(object):
         # 退出浏览器
         self.driver.quit()
 
-    def wait(self):
-        # 注意：selenium的显式等待和隐式等待没什么用,建议直接强制等待time.sleep(5)
-        self.driver.get("https://www.baidu.com")
-        try:
-            # 显式等待：设置等待时长并指定条件(常用) ---> 循环页面5秒直到id="xxx"出现
-            element = WebDriverWait(self.driver, 5).until(
-                # EC后面接指定条件 --> expected_conditions.py模块包含各种内置等待条件
-                EC.presence_of_element_located((By.ID, "abc"))
-            )
-            print(element)
-        except Exception as e:
-            print(e)
-        finally:
-            self.driver.quit()
-
-        # 隐式等待：只设置等待时长(等同于time.sleep)
-        # driver.implicitly_wait(5)
-        # driver.find_element_by_id("hehe")
-
     def windows(self):
+        """打开新窗口"""
         # 先打开百度页面
         self.driver.get("https://www.baidu.com")
         # 再打开另一个网页
@@ -142,6 +127,52 @@ class Selenium01(object):
         self.driver.switch_to_window(windows[0])
         # 退出浏览器
         self.driver.quit()
+
+    def scroll(self):
+        """控制滚动条"""
+        # 打开页面
+        self.driver.get("https://i.meituan.com/cosmetology/wiki.html?tagid=2")
+        # 获取body对象高度的js
+        js1 = 'return document.body.scrollHeight'
+        # 下拉滚动条的js
+        js2 = 'window.scrollTo(0, document.body.scrollHeight)'
+        # 先手动往下拉一下,不然while循环条件不成立
+        self.driver.execute_script(js2)
+        time.sleep(3)
+        # 记录初始高度和循环次数
+        old_scroll_height, count = 0, 0
+        # 只要往下拉body高度发生变化说明还没到底
+        while self.driver.execute_script(js1) > old_scroll_height:
+            # 给高度重新赋值
+            old_scroll_height = self.driver.execute_script(js1)
+            print(old_scroll_height)
+            # 继续往下拉
+            self.driver.execute_script(js2)
+            time.sleep(1)
+            count += 1
+        # 统计下拉次数
+        print(count)
+        # 退出浏览器
+        self.driver.quit()
+
+    def wait(self):
+        # 注意：selenium的显式等待和隐式等待没什么用,建议直接强制等待time.sleep(5)
+        self.driver.get("https://www.baidu.com")
+        try:
+            # 显式等待：设置等待时长并指定条件(常用) ---> 循环页面5秒直到id="xxx"出现
+            element = WebDriverWait(self.driver, 5).until(
+                # EC后面接指定条件 --> expected_conditions.py模块包含各种内置等待条件
+                EC.presence_of_element_located((By.ID, "abc"))
+            )
+            print(element)
+        except Exception as e:
+            print(e)
+        finally:
+            self.driver.quit()
+
+        # 隐式等待：只设置等待时长(等同于time.sleep)
+        # driver.implicitly_wait(5)
+        # driver.find_element_by_id("hehe")
 
     @staticmethod
     def proxy():
@@ -172,7 +203,8 @@ if __name__ == '__main__':
     s = Selenium01()
     # s.introduce()
     # s.chains()
-    # s.wait()
     # s.windows()
+    s.scroll()
+    # s.wait()
     # s.proxy()
-    s.cookie()
+    # s.cookie()
