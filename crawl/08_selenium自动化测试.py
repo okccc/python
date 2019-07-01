@@ -15,7 +15,13 @@ ChromeDriver镜像下载地址 --> https://npm.taobao.org/
 判断页面是否是动态html：
 1.在view-source查找页面上的数据信息,有说明是正常页面,地址栏url就是真实请求地址(直接抓源码即可)
 2.没有说明页面是ajax动态加载的,F12-->Network-->Headers或者fiddler抓包(抓ajax请求地址或者selenium模拟浏览器操作)
-
+抓包技巧：
+1.有些网站pc端数据很难获取(加密、反爬...)可以尝试app端(Toggle device toolbar),很多直接返回json数据
+2.在Network查找ajax请求地址时,类似get***?或者***?callback=jsonp/jQuery这种格式的请求会返回json数据
+url = "https://i.meituan.com/beauty/medical/channel/shop/ajax/getshops?cityid=1&pageno=3&tagid=1&..."
+url = "https://tousu.sina.com.cn/api/index/s?callback=jQuery&keywords=%E4%B8%8A%E6%B5%B7&page_size=10&page=1&..."
+url = "https://m.douban.com/movie_showing/items?os=android&for_mobile=1&callback=jsonp2&start=18&count=18&..."
+上述url中的callback=jQuery/jsonp2、末尾的时间戳、类似&...这些参数都可以直接去掉,一般只留几个必须参数
 
 tesseract是一个将图像翻译成文字的OCR库(optical character recognition) --> 识别验证码效果一般,还是用云打码平台吧
 from PIL import Image
