@@ -31,5 +31,8 @@ mysql> show variables like 'general%';
 mysql> set global general_log='on';  
 mysql> set global general_log_file='/var/log/mysqld.log';  
 tail -f /var/log/mysqld.log
+- 查看mysql连接数  
+mysql> show variables like '%max_connections%';  
+mysql> show status like 'Thread%';
 - 批量插入数据  
 mysql> source area.sql;
