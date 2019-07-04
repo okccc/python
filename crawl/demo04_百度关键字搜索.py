@@ -246,7 +246,7 @@ class BaiDu02(object):
             t_parse = threading.Thread(target=self.parse_data)
             threads.append(t_parse)
         for t in threads:
-            # 由于该子线程是死循环,需要在调用start()之前将其设置为守护线程,表示该线程不重要,当主线程结束时不用等待该子线程直接退出
+            # 由于子线程是死循环,需要在调用start()之前将其设置为守护线程,表示该线程不重要,当主线程结束时不用等待该子线程直接退出
             t.setDaemon(daemonic=True)
             t.start()
         for q in (self.url_queue, self.soup_queue):

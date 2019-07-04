@@ -1,6 +1,7 @@
 # coding=utf-8
 """
-Selenium是一个Web自动化测试工具,会按指定的命令自动操作,可以结合第三方浏览器做网络爬虫,模拟登录操作
+Selenium是一个自动化测试工具,能够驱动浏览器模拟 输入/点击/跳转/下拉 等操作来拿到网页渲染之后的结果
+可以解决requests无法直接执行JS的问题,有些反爬很变态的网站也可以考虑使用selenium + chromedriver
 Selenium很慢：因为requests只会请求当前url,而Selenium会请求当前url+js+css+img所有这些资源,可以设置chrome不加载图片提升速度
 ChromeDriver镜像下载地址 --> https://npm.taobao.org/
 注意事项：
@@ -12,9 +13,9 @@ ChromeDriver镜像下载地址 --> https://npm.taobao.org/
 
 查看网页源代码(view-source)：服务器发送到浏览器的原始内容
 检查(F12)：elements是经过浏览器渲染执行js动态生成的内容elements=html+js+css+img
-判断页面是否是动态html：
-1.在view-source查找页面上的数据信息,有说明是正常页面,地址栏url就是真实请求地址(直接抓源码即可)
-2.没有说明页面是ajax动态加载的,F12-->Network-->Headers或者fiddler抓包(抓ajax请求地址或者selenium模拟浏览器操作)
+爬虫分两种：
+1.爬源码：在view-source查找页面上的数据,有说明是静态html页面,地址栏url就是真实请求地址(抓源码)
+2.爬接口：没有说明是js/ajax实现的动态html页面,F12-->Network-->Headers或者fiddler抓包(抓ajax请求或者selenium模拟浏览器)
 抓包技巧：
 1.有些网站pc端数据很难获取(加密、反爬...)可以尝试app端(Toggle device toolbar),很多直接返回json数据
 2.在Network查找ajax请求地址时,类似get***?或者***?callback=jsonp/jQuery这种格式的请求会返回json数据
@@ -43,9 +44,7 @@ class Selenium01(object):
     def __init__(self):
         # 设置chrome不加载图片,不然打开页面速度有点慢(可选)
         options = webdriver.ChromeOptions()
-        prefs = {"profile.managed_default_content_settings.images": 2}
-        options.add_experimental_option("prefs", prefs)
-
+        options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
         # 创建浏览器对象
         self.driver = webdriver.Chrome(executable_path="D://chromedriver/chromedriver.exe", options=options)
 
@@ -138,6 +137,7 @@ class Selenium01(object):
         """控制滚动条"""
         # 打开页面
         self.driver.get("https://i.meituan.com/cosmetology/wiki.html?tagid=2")
+        time.sleep(3)
         # 获取body对象高度的js
         js1 = 'return document.body.scrollHeight'
         # 下拉滚动条的js

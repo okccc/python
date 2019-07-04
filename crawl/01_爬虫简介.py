@@ -82,7 +82,7 @@ In [1]:(此处调试代码)
 Selectors选择器:
 内置XPath和CSS Selector表达式,Selector有四个基本的方法,最常用的还是xpath
 xpath()：传入xpath表达式,返回该表达式对应所有节点的selector list列表
-extract()：序列化该节点为Unicode字符串并返回list -->  extract()==getall()  extract()[0]==get()
+extract()：序列化该节点为Unicode字符串并返回list -->  extract()==getall()  extract_first()==get()
 css()：传入CSS表达式,返回对应的所有节点的selector list列表,语法同BeautifulSoup4
 re()：根据传入的正则表达式对数据进行提取,返回Unicode字符串list列表
 """

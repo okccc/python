@@ -171,6 +171,7 @@ def xpath03():
     params = {"wd": "美好分期", "pn": 10}
     response = requests.get(url, params=params, headers=headers)
     html = etree.HTML(response.text)
+    # contains()模糊查询: 第一个参数是要匹配的标签, 第二个参数是标签名的部分内容
     items = html.xpath("//div[@id='content_left']/div[contains(@class, 'result')]/h3/a")
     for each in items:
         # text被<br>分成了好几段导致xpath无法直接获取,可用remove_tags去除碍事标签直接获取文本

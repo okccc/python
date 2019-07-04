@@ -103,16 +103,21 @@ Change time(ctime)：修改文件属性或位置 chmod、chown、mv 会改变此
 - 查看操作系统：cat /etc/issue、cat /etc/redhat-release  
 - 查看系统位数：getconf LONG_BIT  
 - free -m：查看内存使用情况  
+- swapon -s：查看交换空间使用情况 
 ```bash
 [root@master1 ~]# free -m
-              total        used        free      shared  buff/cache   available
+                       total        used        free      shared    buff/cache   available
 Mem(物理内存):          32013       13996       13302        2281        4714       15413
 Swap(交换空间):           511           0         511
+[root@master1 /]# swapon -s
+Filename               Type         Size    Used    Priority
+/swapfile              file         511     0       -1
 ```
-- swapon -s：查看交换空间使用情况  
-- swapoff/swapon -a：关闭/开启swap
-- 增加swap空间大小：dd if=/dev/zero of=/var/swapfile bs=1M count=2048 (bs*count)  
-chmod 600 /var/swapfile & mkswap /var/swapfile & swapon /var/swapfile & swapoff /swapfile
+- 重新设置swap空间：dd if=/dev/zero of=/data/swap/swapfile bs=1M count=2048 (bs*count)  
+- 修改权限：chmod 600 /data/swap/swapfile 
+- 指定swap文件：mkswap /data/swap/swapfile 
+- 激活新的swap：swapon /data/swap/swapfile 
+- 关闭旧的swap：swapoff /swapfile
 #### <font color=red>top/htop：进程管理监控工具</font>  
 第一行：系统时间 + 系统运行时间 + 用户数 + 1/5/15分钟系统平均负载  
 第二行：总进程数(total) + 正在运行进程数(running) + 睡眠进程数(sleeping) + 停止的进程数(stopped) + 僵尸进程数(zombie)  

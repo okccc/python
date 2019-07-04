@@ -82,6 +82,7 @@ class DouYu01(object):
         threads = []
         # 1.获取url列表
         self.get_url()
+        # 此时主线程可以打印url_queue长度,但是room_queue和item_queue长度都是0,因为子线程还没开始
         print(self.url_queue.qsize())
         # 2.发送请求,获取响应
         for i in range(10):

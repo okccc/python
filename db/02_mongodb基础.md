@@ -43,7 +43,7 @@ primary key|primary key|MongoDB自动将_id字段设置为主键
 ## db  
 - db：当前数据库名称  
 - show dbs：查看所有数据库  
-- use test：切换- 数据库(如果数据库不存在则指向数据库但不创建,直到插入数据或创建集合时数据库才被创建)  
+- use test：切换数据库(如果数据库不存在则指向数据库但不创建,直到插入数据或创建集合时数据库才被创建)  
 - db.version()：当前数据库版本  
 - <font color=red>db.stats()</font>：当前数据库信息  
 - db.dropDatabase()：删除当前数据库  
