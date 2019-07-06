@@ -8,7 +8,7 @@ ChromeDriver镜像下载地址 --> https://npm.taobao.org/
 1.selenium获取的页面数据是浏览器渲染过的elements
 2.selenium获取标签文本不是tag/text()而是tag.text,获取标签属性不是tag/@href而是tag.get_attribute()
 3.find_element()返回第一个标签,没有值会报错,find_elements()返回标签列表,没有值就是空列表 --> 判断下一页用find_elements()
-4.如果页面中包含frame/iframe,需要先调用driver.switch_to_frame方法切换到frame中才能定位元素
+4.如果页面中包含frame/iframe,需要先调用driver.switch_to_frame(0)切换到frame中才能定位元素
 5.selenium在提交表单或点击下一页等操作时必须等待页面加载完才能获取数据,不然报错：element is not attached to the page document
 
 查看网页源代码(view-source)：服务器发送到浏览器的原始内容
@@ -23,12 +23,6 @@ url = "https://i.meituan.com/beauty/medical/channel/shop/ajax/getshops?cityid=1&
 url = "https://tousu.sina.com.cn/api/index/s?callback=jQuery&keywords=%E4%B8%8A%E6%B5%B7&page_size=10&page=1&..."
 url = "https://m.douban.com/movie_showing/items?os=android&for_mobile=1&callback=jsonp2&start=18&count=18&..."
 上述url中的callback=jQuery/jsonp2、末尾的时间戳、类似&...这些参数都可以直接去掉,一般只留几个必须参数
-
-tesseract是一个将图像翻译成文字的OCR库(optical character recognition) --> 识别验证码效果一般,还是用云打码平台吧
-from PIL import Image
-import pytesseract
-img = Image.open("./test.jpg")
-print(pytesseract.image_to_string(img))
 """
 
 from selenium import webdriver  # 导入webdriver
@@ -56,7 +50,7 @@ class Selenium01(object):
         self.driver.maximize_window()
         # 截屏
         self.driver.save_screenshot("./screen.png")
-        # 注意：百度首页加载是很快的,但是有些网页加载缓慢,必须等待页面加载完才能获取到数据,此处可能需要强制等待一下
+        # 有些网站页面加载缓慢,强制等待一下不然获取不到数据
         time.sleep(3)
         # 获取输入框的input标签 --> webdriver.py模块包含各种定位元素方法
         tag = self.driver.find_element_by_id("kw")
@@ -161,8 +155,29 @@ class Selenium01(object):
         # 退出浏览器
         self.driver.quit()
 
+    def login(self):
+        """模拟登录"""
+        # 打开豆瓣
+        self.driver.get('https://www.douban.com/')
+        time.sleep(3)
+        # 登录表单是在iframe框架里面,先切换到iframe框架,不然无法定位元素  Unable to locate element: {...}
+        self.driver.switch_to.frame(0)
+        # 切换到密码登录
+        self.driver.find_element_by_class_name('account-tab-account').click()
+        time.sleep(1)
+        # 输入用户名密码
+        self.driver.find_element_by_id('username').send_keys('***')
+        self.driver.find_element_by_id('password').send_keys('***')
+        # 点击登录按钮
+        self.driver.find_element_by_xpath('//a[contains(@class, "btn")]').click()
+        time.sleep(3)
+        # 截屏看是否登录成功
+        self.driver.save_screenshot('./aaa.png')
+        # 退出浏览器
+        self.driver.quit()
+
     def wait(self):
-        # 注意：selenium的显式等待和隐式等待没什么用,建议直接强制等待time.sleep(5)
+        # selenium的显式等待和隐式等待没什么用,建议直接强制等待time.sleep(5)
         self.driver.get("https://www.baidu.com")
         try:
             # 显式等待：设置等待时长并指定条件(常用) ---> 循环页面5秒直到id="xxx"出现
@@ -210,7 +225,8 @@ if __name__ == '__main__':
     # s.introduce()
     # s.chains()
     # s.windows()
-    s.scroll()
+    # s.scroll()
+    s.login()
     # s.wait()
     # s.proxy()
     # s.cookie()

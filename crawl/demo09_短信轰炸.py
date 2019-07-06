@@ -1,100 +1,104 @@
-# coding=utf-8
+"""
+验证码识别
+1.简单的图像文字可以用tesseract或CNN神经网络训练数据集预测,再不行就云打码平台
+2.极验(滑动)验证码要先计算窗口偏移量大小然后selenium模拟拖动按钮
+tesseract是一个将图像翻译成文字的OCR库(optical character recognition) --> 识别验证码效果一般,还是用云打码平台吧
+windows安装tesseract-ocr并配置环境变量
+from PIL import Image
+import pytesseract
+img = Image.open("./test.jpg")
+# 此处可能需要做降噪和二值化处理,去除干扰线等
+print(pytesseract.image_to_string(img))
+"""
 import requests
-from bs4 import BeautifulSoup
-import pymysql
-import threading
-from queue import Queue
 import json
-import re
-import logging
-import time
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    datefmt="%m/%d/%Y %H:%M:%S %p"
-)
+from aip import AipOcr
+from lxml import etree
+import base64
+import urllib.request
+import urllib.parse
+from PIL import Image
 
 
-class Api01(object):
-    # 多线程
+class GetCode(object):
+
     def __init__(self):
-        self.url = "https://www.baidu.com/s?wd={}&pn={}&gpc={}"
+        # 创建应用生成的API_Key和Secret_Key
+        self.API_Key = "s8GHTluI1Xy1OvM7UU0wx4wl"
+        self.Secret_Key = "lnUFZRN05rMYshbmRGcZvYsrZnMbtXro"
+        # 获取access_token的url
+        self.url = 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id={}&client_secret={}'
+        # 识别验证码的url
+        self.api = "https://aip.baidubce.com/rest/2.0/ocr/v1/webimage?access_token={}"
         self.headers = {
-            "User-Agent": "Chrome Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+            "Content-Type": 'application/x-www-form-urlencoded'
         }
-        self.flag = False
-        self.datas = []
-        # 构造url队列、请求队列
-        self.url_queue = Queue()
-        self.soup_queue = Queue()
 
-    def get_url(self, words):
-        if self.flag:
-            # return [self.url.format(word, (i-1)*10, "") for word in words for i in range(1, 20)]
-            for word in words:
-                for i in range(1, 20):
-                    self.url_queue.put(self.url.format(word, (i - 1) * 10, ""))
-        else:
-            gpc = "stf=%.3f,%.3f|stftype=1" % (time.time() - 86400, time.time())
-            # return [self.url.format(word, (i-1)*10, gpc) for word in words for i in range(1, 3)]
-            for word in words:
-                for i in range(1, 2):
-                    self.url_queue.put(self.url.format(word, (i - 1) * 10, gpc))
+    def get_access_token(self):
+        """获取access_token"""
+        response = requests.post(self.url.format(self.API_Key, self.Secret_Key), headers=self.headers)
+        access_token = json.loads(response.text)['access_token']
+        return access_token
 
-    def get_data(self):
-        while True:
-            url = self.url_queue.get()
-            # print(url)
-            response = requests.get(url, headers=self.headers)
-            # return BeautifulSoup(response.text, "lxml")
-            self.soup_queue.put(BeautifulSoup(response.text, "lxml"))
-            self.url_queue.task_done()
+    def get_img_src(self):
+        # 网站注册地址
+        url = 'https://id.ifeng.com/user/register/'
+        response = requests.get(url, headers=self.headers)
+        html = etree.HTML(response.text)
+        # 图片链接
+        img_src = html.xpath('//img[@id="js-mobile-reg-code-pic"]/@src')[0]
+        urllib.request.urlretrieve(img_src, './code.jpg')
+        return img_src
 
-    def parse_data(self):
-        while True:
-            soup = self.soup_queue.get()
-            for tag in soup.select("h3 > a"):
-                title = tag.text
-                link = tag.attrs["href"]
-                # 百度搜索的条目都是www.baidu.com域名的地址,点击后会重定向到真实地址,所以需要再次发送请求获取搜索结果的真实url
-                real_link = ""
-                if link.startswith("http"):
-                    response = requests.get(
-                        link, headers=self.headers, allow_redirects=False
-                    )
-                    if response.status_code < 400:
-                        # 禁用后status_code是302,通过response.headers["Location"]获取重定向的url
-                        real_link = response.headers["Location"]
-                        # print(real_link)
-                data = {"title": title, "link": real_link}
-                print(data)
-                self.datas.append(data)
-            self.soup_queue.task_done()
+    def init_table(self, threshold=155):
+        table = []
+        for i in range(256):
+            if i < threshold:
+                table.append(0)
+            else:
+                table.append(1)
+        return table
 
-    def data(self):
-        # 1.获取所有关键字
-        words = input("输入查询关键字：")
-        threads = []
-        # 2.获取url列表
-        t_url = threading.Thread(target=self.get_url, args=(words,))
-        threads.append(t_url)
-        for i in range(1, 30):
-            # 3.发送请求,获取响应
-            t_get = threading.Thread(target=self.get_data)
-            threads.append(t_get)
-        for i in range(1, 30):
-            # 4.解析数据
-            t_parse = threading.Thread(target=self.parse_data)
-            threads.append(t_parse)
-        for t in threads:
-            t.setDaemon(True)
-            t.start()
-        for q in (self.url_queue, self.soup_queue):
-            q.join()
-        return self.datas
+    def opt_image(self):
+        im = Image.open("./code.jpg")
+        im = im.convert('L')
+        im = im.point(self.init_table(), '1')
+        im.save('./code1.jpg')
+        return "./code1.jpg"
+
+    def get_file_content(self, file_path):
+        with open(file_path, 'rb') as f:
+            base64_data = base64.b64encode(f.read())
+            data = {'image': base64_data.decode()}
+            decoded_data = urllib.parse.urlencode(data)
+            return decoded_data
+
+    def show_code(self):
+        image = self.get_file_content(self.opt_image())
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        res = requests.post(self.api.format(self.get_access_token()), headers=headers, data=image)
+        print(res.text)
+
+    # def main(self):
+    #     APP_ID = '16721750'
+    #     API_KEY = 's8GHTluI1Xy1OvM7UU0wx4wl'
+    #     SECRET_KEY = 'lnUFZRN05rMYshbmRGcZvYsrZnMbtXro'
+    #     client = AipOcr(APP_ID, API_KEY, SECRET_KEY)
+    #     url = 'https://id.ifeng.com/public/authcode'
+    #     # 可选参数
+    #     options = {
+    #         "language_type": "CHN_ENG",
+    #         "detect_direction": "true",
+    #     }
+    #     # 调用通用文字识别
+    #     # code = client.webImage(self.get_file_content(), options)
+    #     code = client.enhancedGeneralUrl(self.get_img_src(), options)
+    #     print(code)
 
 
-if __name__ == "__main__":
-    res = Api01()
-    print(res.data())
+if __name__ == '__main__':
+    gc = GetCode()
+    gc.get_img_src()
+    gc.show_code()
