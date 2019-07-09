@@ -22,7 +22,7 @@ ChromeDriver镜像下载地址 --> https://npm.taobao.org/
 url = "https://i.meituan.com/beauty/medical/channel/shop/ajax/getshops?cityid=1&pageno=3&tagid=1&..."
 url = "https://tousu.sina.com.cn/api/index/s?callback=jQuery&keywords=%E4%B8%8A%E6%B5%B7&page_size=10&page=1&..."
 url = "https://m.douban.com/movie_showing/items?os=android&for_mobile=1&callback=jsonp2&start=18&count=18&..."
-上述url中的callback=jQuery/jsonp2、末尾的时间戳、类似&...这些参数都可以直接去掉,一般只留几个必须参数
+上述url中的callback=jQuery/jsonp2、末尾的时间戳、类似&...这些参数都可以忽略(参考Network-->Headers-->Query String Parameters)
 """
 
 from selenium import webdriver  # 导入webdriver
