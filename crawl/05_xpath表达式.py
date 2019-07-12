@@ -38,7 +38,7 @@ bookstore//book: 选择属于bookstore元素后代的所有book元素,而不管�
 /bookstore/book[last()-1]: 选取属于bookstore子元素的倒数第二个book元素
 /bookstore/book[position()<3]: 选取属于bookstore子元素的前两个book元素
 //title[@lang]: 选取所有具有lang属性的title元素
-//title[@lang=’eng’]: 选取所有lang属性值为eng的title元素
+//title[@lang='eng']: 选取所有lang属性值为eng的title元素
 /bookstore/book[price>35.00]: 选取bookstore元素下的book元素,且其中的price元素>35.00
 /bookstore/book[price>35.00]/title: 选取bookstore元素下的book元素下的title元素,且book元素的price元素>35.00
 

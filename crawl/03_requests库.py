@@ -46,12 +46,12 @@ def post():
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.1; rv2.0.1) Gecko/20100101 Firefox/4.0.1"}
     # 请求数据
     kw = input("输入翻译内容: ")
-    formdata = {
+    form_data = {
         "i": kw,
         "doctype": "json"
     }
     # 发送post请求(data是请求数据)
-    response = requests.post(url, data=formdata, headers=headers)
+    response = requests.post(url, data=form_data, headers=headers)
     # 查看响应数据
     print(response.text)
     # {"type": "EN2ZH_CN", "errorCode": 0, "elapsedTime": 1, "translateResult": [[{"src": "hello", "tgt": "你好"}]]}

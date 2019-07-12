@@ -79,7 +79,7 @@ class DouYu01(object):
             self.item_queue.task_done()
 
     def main(self):
-        threads = []
+        thread_list = []
         # 1.获取url列表
         self.get_url()
         # 此时主线程可以打印url_queue长度,但是room_queue和item_queue长度都是0,因为子线程还没开始
@@ -87,16 +87,16 @@ class DouYu01(object):
         # 2.发送请求,获取响应
         for i in range(10):
             t1 = threading.Thread(target=self.get_data)
-            threads.append(t1)
+            thread_list.append(t1)
         # 3.解析数据
         for i in range(10):
             t2 = threading.Thread(target=self.parse_data)
-            threads.append(t2)
+            thread_list.append(t2)
         # 4.保存数据
         for i in range(10):
             t3 = threading.Thread(target=self.save_data)
-            threads.append(t3)
-        for t in threads:
+            thread_list.append(t3)
+        for t in thread_list:
             # 由于该子线程是死循环,需要在调用start()之前将其设置为守护线程,表示该线程不重要,当主线程结束时不用等待该子线程直接退出
             t.setDaemon(daemonic=True)
             t.start()

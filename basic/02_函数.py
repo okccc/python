@@ -105,10 +105,11 @@ def zip01():
     names = ["grubby", "moon", "sky"]
     races = ["orc", "ne", "human"]
     ages = [18, 19, 20]
+    # enumerate()
     for index, name in enumerate(names):
         race = races[index]
         age = ages[index]
-        print(f'{name} is {race} and {age}')
-    # zip()：将多个可迭代对象中的元素打包成一个个元组可以节约内存,一般用在for循环
+        print((name, race, age))
+    # zip()：将一系列可迭代对象中的元素打包成一个个tuple,并返回由这些tuple组成的list
     for name, race, age in zip(names, races, ages):
-        print(f'{name} is {race} and {age}')
+        print((name, race, age))

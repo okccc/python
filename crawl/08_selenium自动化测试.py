@@ -38,6 +38,7 @@ class Selenium01(object):
     def __init__(self):
         # 设置chrome不加载图片,不然打开页面速度有点慢(可选)
         options = webdriver.ChromeOptions()
+        # 1: 允许加载全部图片  2: 禁止加载全部图片  3: 禁止加载第三方图片
         options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
         # 创建浏览器对象
         self.driver = webdriver.Chrome(executable_path="D://chromedriver/chromedriver.exe", options=options)

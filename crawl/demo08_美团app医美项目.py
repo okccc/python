@@ -41,7 +41,7 @@ class MT(object):
         self.item_queue = Queue()
 
     def scroll(self):
-        """控制滚动条"""
+        """控制滚动条统计每个cityid的tagid对应的下拉次数count(pageno)"""
         # 创建Chrome对象
         options = webdriver.ChromeOptions()
         options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
@@ -72,6 +72,7 @@ class MT(object):
                     old_scroll_height = driver.execute_script(js1)
                     # 继续往下拉
                     driver.execute_script(js2)
+                    # 等待刷新完成(这个时间根据实际情况设定)
                     time.sleep(0.5)
                     count += 1
                 # 统计每个cityid的tagid对应的下拉次数count
@@ -82,7 +83,7 @@ class MT(object):
         return metas
 
     def get_url(self, metas):
-        """获取url"""
+        """获取所有url"""
         for meta in metas:
             for i in range(1, meta[2]):
                 url = self.ajax_url.format(meta[0], meta[1], i)
@@ -95,7 +96,7 @@ class MT(object):
             # 从url_queue取出url
             url = self.url_queue.get()
             response = requests.get(url, headers=self.headers)
-            dict_data = json.loads(response.text)
+            dict_data = response.json()
             shops = dict_data['data']['shops']
             # 将shops放入data_queue
             if len(shops) > 0:
@@ -164,26 +165,27 @@ class MT(object):
                 self.item_queue.task_done()
 
     def main(self):
-        threads = []
+        # 线程列表
+        thread_list = []
         # 1.下拉滚动条获取(cityid, tagid, count)
         metas = self.scroll()
         # 2.获取url列表
         t_url = threading.Thread(target=self.get_url, args=(metas,))
-        threads.append(t_url)
+        thread_list.append(t_url)
         print(self.url_queue.qsize())
         for i in range(20):
             # 3.发送请求,获取响应
             t_get = threading.Thread(target=self.get_data)
-            threads.append(t_get)
+            thread_list.append(t_get)
         for i in range(10):
             # 4.解析数据
             t_parse = threading.Thread(target=self.parse_data)
-            threads.append(t_parse)
+            thread_list.append(t_parse)
         for i in range(10):
             # 5.保存数据
             t_save = threading.Thread(target=self.save_data)
-            threads.append(t_save)
-        for t in threads:
+            thread_list.append(t_save)
+        for t in thread_list:
             # 将死循环的子线程设置成守护线程
             t.setDaemon(daemonic=True)
             t.start()

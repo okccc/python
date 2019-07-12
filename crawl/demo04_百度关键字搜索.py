@@ -230,27 +230,28 @@ class BaiDu02(object):
         return data_list_new
 
     def main(self):
+        # 线程列表
+        thread_list = []
         # 1.获取所有关键字
         words = self.get_hospital()
         print(len(words))
-        threads = []
         # 2.获取url列表
         t_url = threading.Thread(target=self.get_url, args=(words,))
-        threads.append(t_url)
+        thread_list.append(t_url)
         for i in range(1, 20):
             # 3.发送请求,获取响应
             t_html = threading.Thread(target=self.get_data)
-            threads.append(t_html)
+            thread_list.append(t_html)
         for i in range(1, 20):
             # 4.解析数据
             t_parse = threading.Thread(target=self.parse_data)
-            threads.append(t_parse)
-        for t in threads:
-            # 由于子线程是死循环,需要在调用start()之前将其设置为守护线程,表示该线程不重要,当主线程结束时不用等待该子线程直接退出
+            thread_list.append(t_parse)
+        for t in thread_list:
+            # 由于子线程是死循环,要在开启之前将其设为守护线程表示该线程不重要,当主线程结束时不用等待子线程直接退出
             t.setDaemon(daemonic=True)
             t.start()
         for q in (self.url_queue, self.soup_queue):
-            # 让主线程block,等待queue中的items全部处理完
+            # 让主线程在此处block,等待queue中的items全部处理完
             q.join()
         # 5.处理最终结果
         self.filter_data()

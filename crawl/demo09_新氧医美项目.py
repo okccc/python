@@ -3,8 +3,8 @@ import requests
 from lxml import etree
 from selenium import webdriver
 from queue import Queue
-import time
 import json
+import time
 import pymysql
 import threading
 import logging
@@ -53,7 +53,7 @@ class SY(object):
             "charset": "utf8",
             "cursorclass": pymysql.cursors.DictCursor  # 以dict格式返回数据
         }
-        # 构造url队列、form_data队列、请求响应队列、数据队列
+        # 构造队列
         self.district_menu1_queue = Queue()  # ((district_name, district_id) (menu1_name, menu1_id))
         self.meta_queue = Queue()  # (district_id, menu1_id, count)
         self.data_queue = Queue()
@@ -100,7 +100,7 @@ class SY(object):
                 # 打开页面
                 driver.get(self.addr_url.format(district[0], menu1[0]))
                 # 新页面刷新很慢,等待3秒
-                time.sleep(5)
+                time.sleep(3)
                 # 获取body对象高度的js
                 js1 = 'return document.body.scrollHeight'
                 # 下拉滚动条的js
@@ -146,11 +146,14 @@ class SY(object):
                 print(form_data)
                 # 发送post请求
                 response = requests.post(self.ajax_url, data=form_data, headers=self.headers)
-                if response.text:
-                    dict_data = json.loads(response.text)
+                try:
+                    dict_data = response.json()
                     products = dict_data['responseData']['product_info']
-                    # 将products放入data_queue
-                    self.data_queue.put(products)
+                    if len(products) > 0:
+                        # 将products放入data_queue
+                        self.data_queue.put(products)
+                except json.decoder.JSONDecodeError:
+                    continue
             # 将处理完的form_data标记为task_done
             self.meta_queue.task_done()
 
@@ -170,8 +173,9 @@ class SY(object):
                 item = [hospital_id, hospital_name, product_id, product_title, price, order_cnt,
                         time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]
                 items.append(item)
-            # 将items放入item_queue
-            self.item_queue.put(items)
+            if len(items) > 0:
+                # 将items放入item_queue
+                self.item_queue.put(items)
             # 将处理完的data_queue标记为task_done
             self.data_queue.task_done()
 
@@ -180,6 +184,7 @@ class SY(object):
         while True:
             # 从item_queue取出items
             items = self.item_queue.get()
+            print(items)
             conn = pymysql.connect(**self.config)
             cur = conn.cursor()
             try:
