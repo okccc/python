@@ -3,7 +3,6 @@ import requests
 from selenium import webdriver
 from queue import Queue
 import time
-import json
 import pymysql
 import threading
 import logging
