@@ -8,7 +8,7 @@ import threading
 import logging
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="%(asctime)s - %(levelname)s - %(message)s",
     datefmt="%m/%d/%Y %H:%M:%S %p"
 )
@@ -34,10 +34,25 @@ class MT(object):
             "charset": "utf8",
             "cursorclass": pymysql.cursors.DictCursor  # 以dict格式返回数据
         }
-        # 构造url队列、请求响应队列、数据队列
+        # 构造meta队列、url队列、请求响应队列、数据队列
+        self.city_tag_queue = Queue()  # (cityid, tagid)
+        self.meta_queue = Queue()  # (cityid, tagid, count)
         self.url_queue = Queue()
         self.data_queue = Queue()
         self.item_queue = Queue()
+
+    def get_city_tag(self):
+        """获取城市和类目信息"""
+        # 城市编号
+        cityids = [1, 10, 20, 30, 40, 42, 44, 45, 50, 51, 52, 55, 56, 57, 59, 60, 62, 65, 66, 70, 73, 76, 80, 82, 83, 89, 91,]
+        # cityids = [1]
+        # 医学美容分类编号
+        tagids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 54, 123, 156, 157, 158]
+        # tagids = [1, 2]
+        for cityid in cityids:
+            for tagid in tagids:
+                # 将所有(cityid, tagid)组合放入city_tag_queue
+                self.city_tag_queue.put((cityid, tagid))
 
     def scroll(self):
         """控制滚动条统计每个cityid的tagid对应的下拉次数count(pageno)"""
@@ -45,17 +60,14 @@ class MT(object):
         options = webdriver.ChromeOptions()
         options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
         driver = webdriver.Chrome(executable_path="D://chromedriver/chromedriver.exe", options=options)
-        # 城市编号
-        cityids = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90]
-        # 医学美容分类编号
-        tagids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 54, 123, 156, 157, 158]
-        metas = []
-        for cityid in cityids:
-            for tagid in tagids:
+        while True:
+            if not self.city_tag_queue.empty():
+                # 从city_tag_queue取出元组(cityid, tagid)并拆包
+                cityid, tagid = self.city_tag_queue.get()
                 # 打开页面
                 driver.get(self.addr_url.format(cityid, tagid))
                 # 新页面刷新很慢,等待3秒
-                time.sleep(3)
+                time.sleep(5)
                 # 获取body对象高度的js
                 js1 = 'return document.body.scrollHeight'
                 # 下拉滚动条的js
@@ -72,22 +84,29 @@ class MT(object):
                     # 继续往下拉
                     driver.execute_script(js2)
                     # 等待刷新完成(这个时间根据实际情况设定)
-                    time.sleep(0.5)
+                    time.sleep(1)
                     count += 1
                 # 统计每个cityid的tagid对应的下拉次数count
-                metas.append((cityid, tagid, count))
+                self.meta_queue.put((cityid, tagid, count))
+                # 将处理完的city_tag_queue标记为task_done
+                self.city_tag_queue.task_done()
                 time.sleep(0.5)
+            else:
+                break
         # 退出浏览器
         driver.quit()
-        return metas
 
-    def get_url(self, metas):
-        """获取所有url"""
-        for meta in metas:
-            for i in range(1, meta[2]):
-                url = self.ajax_url.format(meta[0], meta[1], i)
+    def get_url(self):
+        while True:
+            """获取所有url"""
+            # 从meta_queue取出元组(city, tag, count)并拆包
+            cityid, tagid, count = self.meta_queue.get()
+            for i in range(1, count):
+                url = self.ajax_url.format(cityid, tagid, i)
                 # 将url放入url_queue
                 self.url_queue.put(url)
+            # 将处理完的meta_queue标记为task_done
+            self.meta_queue.task_done()
 
     def get_data(self):
         """请求数据"""
@@ -117,26 +136,23 @@ class MT(object):
                 if ext_infos:
                     for info in ext_infos:
                         info_id = info['id']
-                        info_link = info['linkUrl']
                         info_title = info['title']
-                        info_price = info['price']
-                        info_saled = info['saledTimeDesc'] if info['saledTimeDesc'] else '已售0'
-                        item = [shop_id, shop_name, info_id, info_link, info_title, info_price, info_saled,
+                        price = info['price']
+                        saled = info['saledTimeDesc'] if info['saledTimeDesc'] else '已售0'
+                        item = [shop_id, shop_name, info_id, info_title, price, saled,
                                 time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]
                         items.append(item)
                 elif product_infos:
                     for info in product_infos:
                         info_id = info['infoId']
-                        info_link = info['linkUrl']
                         info_title = info['title']
-                        info_price = info['currentPrice']
-                        info_saled = info['saledTimeDesc'] if info['saledTimeDesc'] else '已售0'
-                        item = [shop_id, shop_name, info_id, info_link, info_title, info_price, info_saled,
+                        price = info['currentPrice']
+                        saled = info['saledTimeDesc'] if info['saledTimeDesc'] else '已售0'
+                        item = [shop_id, shop_name, info_id, info_title, price, saled,
                                 time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]
                         items.append(item)
                 else:
                     continue
-            print(items)
             # 将items放入item_queue
             if len(items) > 0:
                 self.item_queue.put(items)
@@ -148,11 +164,12 @@ class MT(object):
         while True:
             # 从item_queue取出items
             items = self.item_queue.get()
+            print(items)
             conn = pymysql.connect(**self.config)
             cur = conn.cursor()
             try:
                 # 往数据库写数据(覆盖)
-                sql = "replace into dw_meituan_info values(%s,%s,%s,%s,%s,%s,%s,%s)"
+                sql = "replace into dw_meituan_info values(%s,%s,%s,%s,%s,%s,%s)"
                 cur.executemany(sql, items)
                 conn.commit()
             except Exception as e:
@@ -164,15 +181,21 @@ class MT(object):
                 self.item_queue.task_done()
 
     def main(self):
+        # 先获取城市和类目信息
+        self.get_city_tag()
+        print(self.city_tag_queue.qsize())
         # 线程列表
         thread_list = []
-        # 1.下拉滚动条获取(cityid, tagid, count)
-        metas = self.scroll()
-        # 2.获取url列表
-        t_url = threading.Thread(target=self.get_url, args=(metas,))
-        thread_list.append(t_url)
-        print(self.url_queue.qsize())
-        for i in range(20):
+        # 多线程操作部分
+        for i in range(10):
+            # 1.下拉滚动条获取(cityid, tagid, count)
+            t_scroll = threading.Thread(target=self.scroll)
+            thread_list.append(t_scroll)
+        for i in range(5):
+            # 2.获取url列表
+            t_url = threading.Thread(target=self.get_url)
+            thread_list.append(t_url)
+        for i in range(10):
             # 3.发送请求,获取响应
             t_get = threading.Thread(target=self.get_data)
             thread_list.append(t_get)
@@ -188,7 +211,8 @@ class MT(object):
             # 将死循环的子线程设置成守护线程
             t.setDaemon(daemonic=True)
             t.start()
-        for q in (self.url_queue, self.data_queue, self.item_queue):
+            time.sleep(0.5)
+        for q in (self.city_tag_queue, self.meta_queue, self.url_queue, self.data_queue, self.item_queue):
             q.join()
 
 

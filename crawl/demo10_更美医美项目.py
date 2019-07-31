@@ -136,7 +136,7 @@ class GM(object):
             # 3.请求详情页数据
             t_detail = threading.Thread(target=self.get_detail_data)
             thread_list.append(t_detail)
-        for i in range(10):
+        for i in range(20):
             # 4.保存数据
             t_save = threading.Thread(target=self.save_data)
             thread_list.append(t_save)

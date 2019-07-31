@@ -1,4 +1,4 @@
-#### <font color=gray>字符串</font>
+## string
 - length：长度  
 hive> select length('abcedfg');
 - reverse：反序  
@@ -58,7 +58,7 @@ hive> select lpad('abc',10,'td');
 hive> select rpad('abc',10,'td');  
 - <font color=red>split：将字符串切割成数组</font>  
 hive> select split('abtcdtef','t');  
-#### <font color=gray>时间日期</font>
+## time
 - year/month/day/hour/minute/second  
 hive> select year('2016-10-19 16:23:08');  
 - current_timestamp：当前时间戳  
@@ -89,7 +89,7 @@ hive> select last_day('2018-05-12');
 - 上个月的第一天/最后一天  
 hive> select trunc(add_months(current_date,-1),'MM');  
 hive> select last_day(add_months(current_date,-1));  
-#### <font color=gray>数学运算</font>
+## math
 - <font color=red>round：四舍五入</font>  
 hive> select round(3.5);  
 hive> select round(3.1415926,4);  

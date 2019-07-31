@@ -54,7 +54,7 @@ class SY(object):
             "cursorclass": pymysql.cursors.DictCursor  # 以dict格式返回数据
         }
         # 构造队列
-        self.district_menu1_queue = Queue()  # ((district_name, district_id) (menu1_name, menu1_id))
+        self.district_menu1_queue = Queue()  # ((district_name, district_id), (menu1_name, menu1_id))
         self.meta_queue = Queue()  # (district_id, menu1_id, count)
         self.data_queue = Queue()
         self.item_queue = Queue()
@@ -77,13 +77,11 @@ class SY(object):
         menu1_ids = html.xpath('//div[@class="menu-box menu1"]//a/@data-menu1')[1:]
         for menu1_name, menu1_id in zip(menu1_names, menu1_ids):
             menu1s.append((menu1_name, menu1_id))
-        # 返回结果
-        return districts, menu1s
-
-    def get_district_menu1(self, districts, menu1s):
+        # 遍历区域和类目
         for district in districts:
             for menu1 in menu1s:
                 # 将所有(district, menu1)组合放入district_menu1_queue
+                print((district, menu1))
                 self.district_menu1_queue.put((district, menu1))
 
     def scroll(self):
@@ -94,7 +92,7 @@ class SY(object):
         driver = webdriver.Chrome(executable_path="D://chromedriver/chromedriver.exe", options=options)
         while True:
             if not self.district_menu1_queue.empty():
-                # 从url_queue取出元组(district, menu1)并拆包
+                # 从district_menu1_queue取出元组(district, menu1)并拆包
                 district, menu1 = self.district_menu1_queue.get()
                 print(district, menu1)
                 # 打开页面
@@ -201,13 +199,11 @@ class SY(object):
                 self.item_queue.task_done()
 
     def main(self):
+        # 先获取省份和类目信息
+        self.get_district_menu()
+        print(self.district_menu1_queue.qsize())
         # 线程列表
         thread_list = []
-        # 先获取省份和类目信息
-        districts, menu1s = self.get_district_menu()
-        print(districts, menu1s)
-        self.get_district_menu1(districts, menu1s)
-        print(self.district_menu1_queue.qsize())
         # 多线程操作部分
         for i in range(10):
             # 1.下拉滚动条获取(district_id, menu1_id, index)
