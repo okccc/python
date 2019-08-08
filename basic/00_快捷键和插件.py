@@ -18,6 +18,7 @@ embedded web browser：内嵌浏览器
 
 Chrome插件
 谷歌访问助手：nb
+Smallpdf：pdf各种转换
 extension manager：插件管理器
 Octotree：在github左侧显式当前工程目录结构
 Enhanced Github：显式github上文件大小
