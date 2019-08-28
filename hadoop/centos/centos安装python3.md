@@ -5,7 +5,7 @@
 ![](images/001.png)  
 ![](images/002.png)  
 
-- 依赖环境    
+- 安装依赖  
 centos6.5：yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc make  
 centos7：yum groupinstall development  
 
@@ -15,7 +15,7 @@ wget https://www.python.org/ftp/python/3.6.2/Python-3.6.2.tar.xz
 - 解压  
 tar -xvf Python-3.6.2.tar.xz
 
-- 切换进入  
+- 进入python目录  
 cd Python-3.6.2
 
 - 编译安装  
