@@ -69,7 +69,7 @@ class GetCode(object):
     def get_file_content(self, file_path):
         with open(file_path, 'rb') as f:
             base64_data = base64.b64encode(f.read())
-            data = {'image': base64_data.decode()}
+            data = {'images': base64_data.decode()}
             decoded_data = urllib.parse.urlencode(data)
             return decoded_data
 

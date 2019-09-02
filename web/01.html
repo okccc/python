@@ -1,0 +1,178 @@
+<!--文档类型指定html版本-->
+<!DOCTYPE html>
+<!--html标签是所有html标签的根节点-->
+<html lang="en">
+<!--head标签用于存放title,meta,base,style,script,link-->
+<head>
+    <!--设置字符集-->
+    <meta charset="UTF-8">
+    <!--标题-->
+    <title>我的HTML页面</title>
+    <!--base标签统一设置链接打开方式-->
+    <base target="_blank">
+</head>
+<!--body标签是页面主体,用于存放所有html标签-->
+<body>
+    <!--段落标签<p>: 段落中的文本会根据浏览器窗口大小自动换行-->
+    <!--水平线标签<hr />: 将段落与段落之间隔开-->
+    <!--强制换行标签<br />-->
+    <!--网页布局盒子标签<div><span>-->
+    <!--文本格式化标签-->
+    <strong>粗体</strong><br>
+    <em>斜体</em><br>
+    <del>加删除线</del><br>
+    <ins>加下划线</ins><br>
+    <!--图像标签-->
+    <img src="图像路径" alt="图像无法显示时的替换文本" title="鼠标悬停时显示的内容" width="宽度" border="边框"/><br>
+    <!--链接标签-->
+    <a href="跳转目标,#表示空链接" target="目标窗口的弹出方式_self/_blank">文本/图像/音频/视频</a>
+    <!--锚点href="#id名"可以快速定位当前页面目标内容-->
+    <a href="#movie" target="_self">演艺经历</a><br>
+    <h3 id="movie">演艺经历</h3>
+    <!--无序列表,ul标签只能放li标签,li标签可以放其它标签-->
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <!--有序列表-->
+    <ol>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ol>
+    <!--自定义列表-->
+    <dl>
+        <dt>服务支持</dt>
+        <dd>售后政策</dd>
+        <dd>自助服务</dd>
+    </dl>
+    <!--表格标签: 宽度、高度、边框像素值、单元格之间距离、单元格内容与边框距离、表格在网页中的水平对齐方式-->
+    <table width="300" border="1" cellspacing="0" cellpadding="0" align="center">
+        <!--caption标签定义表格标题-->
+        <caption>火影忍者演员表</caption>
+        <!--thead定义表格头部,一般包含网页logo和导航等头部信息-->
+        <thead>
+        <!--tr表示行,td表示一行有多少列,一般第一行/列是表头用th代替td,tr只能嵌套td,td能放所有元素-->
+        <tr>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>年龄</th>
+        </tr>
+        </thead>
+        <!--tbody定义表格主体,一般包含除头部和底部外的内容-->
+        <tbody>
+        <tr>
+            <td>鸣人</td>
+            <td>男</td>
+            <td>18</td>
+        </tr>
+        <tr>
+            <td>鸡田</td>
+            <td>女</td>
+            <td>16</td>
+        </tr>
+        <tr>
+            <td>大蛇</td>
+            <!--rowspan合并行,colspan合并列-->
+            <td colspan="2" align="center">19</td>
+        </tr>
+        </tbody>
+    </table>
+    <!--表单标签-->
+    <!--表单域form标签: <form action="url地址" method="提交方式" name="表单名称">各种表单控件</form>-->
+    <!--input控件: type,name,value,size,checked,maxlength-->
+    <!--label标签: 通过for属性绑定input标签,当点击label标签的时候,被绑定的表单元素就会获得输入焦点-->
+    <form action="#" method="post" name="登录">
+        <label>用户名: <input type="text" name="username" value="grubby"></label><br>
+        <label>密码: <input type="password" name="password" value=""></label><br>
+        性别: <input type="radio" name="sex" value="" checked="checked">女
+             <input type="radio" name="sex" value="">男<br>
+        爱好: <input type="checkbox" name="hobby" checked="checked">篮球
+             <input type="checkbox" name="hobby">足球
+             <input type="checkbox" name="hobby">排球<br>
+        <input type="button" value="搜索"><br>
+        <input type="submit" value="提交">
+        <input type="reset" value="重置"><br>
+        <input type="image" src=""><br><!--图像按钮-->
+        <input type="file"><br><!--上传文件-->
+    </form>
+    <!--textarea控件: 文本域-->
+    <!--下拉菜单select/option-->
+    <select>
+        <option>点击选择您的籍贯</option>
+        <option selected="selected">江苏</option>
+        <option>安徽</option>
+        <option>山东</option>
+    </select>
+    <select>
+        <option>点击选择您的城市</option>
+        <option selected="selected">南京</option>
+        <option>苏州</option>
+        <option>无锡</option>
+        <option>常州</option>
+    </select>
+    <!--html5新增标签-->
+    <header>定义页面的头部,页眉</header>
+    <nav>定义导航栏</nav>
+    <footer>定义页面底部,页脚</footer>
+    <article>定义文章</article>
+    <section>定义区域</section>
+    <aside>定义其所处内容之外的内容,侧边</aside>
+    <!--datalist通过id配合input使用-->
+    <label><input type="text" value="" list="star"/></label>
+    <datalist id="star">
+        <option>刘德华</option>
+        <option>周润发</option>
+        <option>张学友</option>
+    </datalist><br>
+    <!--fieldset和legend搭配使用,将表单内的相关元素分组打包-->
+    <fieldset>
+        <legend>用户登录</legend>
+        <label>用户名: <input type="text"></label><br>
+        <label>密&nbsp;码: <input type="password"></label>
+    </fieldset>
+    <!--html5新增input type属性值-->
+    <fieldset>
+    	<legend>HTML5新增的input type类型</legend>
+    	<form action="#">
+            邮箱: <input type="email" />  <!--aa@aa.com-->  <br />
+            手机: <input type="tel" />  <!--手机格式-->  <br />
+            数字: <input type="number" />  <!--只能是数字-->  <br />
+            url: <input type="url" />  <!--网址格式的-->  <br />
+            搜索: <input type="search" />  <!--搜索思密达-->  <br />
+            区域: <input type="range" />  <!--区域滑块-->  <br />
+            时间: <input type="time" />  <!--小时分钟-->  <br />
+            年月日: <input type="date" />  <!--获得年月日-->  <br />
+            月份: <input type="month" />  <!--获得月份-->  <br />
+            星期: <input type="week" />  <!--获得周-->  <br />
+            颜色: <input type="color" />  <!--颜色-->  <br />
+    		<input type="submit" />
+    	</form>
+    </fieldset>
+    <!--html5新增表单属性-->
+    <!--placeholder是占位符,当用户输入的时候里面的文字消失,删除所有文字自动返回-->
+    <!--autofocus规定当页面加载时,input控件自动获得焦点-->
+    用户名: <input type="text"  placeholder="请输入用户名" autofocus/><br>
+    <!--multiple多文件上传-->
+    <input type="file" multiple/><br>
+    <form action="" name="登录">
+        <!--autocomplete规定表单是否启用自动完成功能-->
+        姓名: <input type="text" autocomplete="on" name="userName"/><br>
+        <!--required表示不能为空,accesskey设定元素获得焦点的快捷键,比如Alt + s-->
+        <input type="text" required accesskey="s" />
+        <input type="submit"/><br>
+    </form>
+    <!--多媒体标签：embed,audio,video-->
+    <!--插入多媒体-->
+    <embed src='' allowFullScreen='true' quality='high' width='480' height='400' align='middle' allowScriptAccess='always' type='application/x-shockwave-flash'></embed>
+    <!--插入音频-->
+    <audio controls autoplay>
+    	<source  src="" />
+    </audio>
+    <!--插入视频-->
+    <video controls autoplay>
+    	<source src=""/>
+    </video>
+</body>
+</html>
