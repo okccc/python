@@ -44,6 +44,7 @@ ls | wc -l：查看某个目录下有多少文件
 rm -rf /*：自杀  
 find ./ -inum 123 -delete：可以删除rm删不掉的文件(i是文件索引)  
 cp a.txt b.txt：将a.txt 复制为b.txt  
+scp a.txt root@python:~/a.txt：远程拷贝文件  
 cp -r dir1 dir2：-r表示递归  
 mv a.txt ../：将a.txt移动(剪切)到上一层目录  
 mv a.txt b.txt：将a.txt重命名为b.txt  
