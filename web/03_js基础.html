@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>js基础语法</title>
+    <script>
+        /*
+        * 1.变量
+        * js代码必须写在script标签内
+        * js一行语句以;结束
+        * js是弱类型语言,声明变量时不需要指定数据类型
+        * js所有变量都通过var关键字声明
+        * js变量的数据类型随着值的而改变而改变
+        * */
+        var a;
+        a = 'okc';  // string
+        a = 11;  // number
+        a = true;  // boolean
+        a = null;  // object
+        alert(typeof a);
+
+        /*
+        * 2.函数
+        * js函数通过function关键字声明
+        * js创建匿名函数时需要使用变量接收函数引用
+        * js函数调用时不会检查传入参数个数和数据类型
+        * */
+        // 匿名无参无返回值函数
+        var func = function() {
+            alert('这是一个匿名函数')
+        };
+        func();
+        // 有函数名有参有返回值函数
+        function sum(a,b,c) {
+            return a+b+c
+        }
+        res = sum(1,2,3);  // 6
+        res = sum(1,2,3,4);  // 6          传入参数过多会自动从左往右匹配
+        res = sum(1,2);  // NaN            传入参数不够会NaN
+        res = sum(1,2,'hehe');  // 3hehe   如果有字符串会自动拼接
+        res = sum(1,2,false);  // 3        true当做1,,false当做0
+        alert(res)
+
+        /*
+        * 3.对象
+        *
+        * */
+    </script>
+</head>
+<body>
+
+</body>
+</html>
