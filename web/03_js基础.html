@@ -11,6 +11,7 @@
         * js是弱类型语言,声明变量时不需要指定数据类型
         * js所有变量都通过var关键字声明
         * js变量的数据类型随着值的而改变而改变
+        * alert()函数作用：弹出消息框显示括号里的内容
         * */
         var a;
         a = 'okc';  // string
@@ -27,9 +28,11 @@
         * */
         // 匿名无参无返回值函数
         var func = function() {
-            alert('这是一个匿名函数')
+            alert('hello')
         };
-        func();
+        alert(func);  // function(){alert('hello')}
+        func();  // hello
+        alert(func());  // hello undefined
         // 有函数名有参有返回值函数
         function sum(a,b,c) {
             return a+b+c
@@ -38,13 +41,27 @@
         res = sum(1,2,3,4);  // 6          传入参数过多会自动从左往右匹配
         res = sum(1,2);  // NaN            传入参数不够会NaN
         res = sum(1,2,'hehe');  // 3hehe   如果有字符串会自动拼接
-        res = sum(1,2,false);  // 3        true当做1,,false当做0
-        alert(res)
+        res = sum(1,2,false);  // 3        true当做1,false当做0
+        alert(res);
 
         /*
         * 3.对象
-        *
+        * js将所有对象都看作是Object类的实例
+        * js方法中的this关键字表示当前对象,谁调用方法就代表谁
         * */
+        function introduce() {
+            alert('我叫' + this.name + '年龄' + this.age);
+        }
+        // 创建对象,设置属性,绑定函数
+        var user = {
+            name: 'grubby',
+            age: 19,
+            // 函数可以作为对象的属性接收
+            func:introduce
+        };
+        user.func();
+        alert(user.func);
+        alert(introduce)
     </script>
 </head>
 <body>
