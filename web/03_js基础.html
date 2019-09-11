@@ -11,7 +11,7 @@
         * js是弱类型语言,声明变量时不需要指定数据类型
         * js所有变量都通过var关键字声明
         * js变量的数据类型随着值的而改变而改变
-        * alert()函数作用：弹出消息框显示括号里的内容
+        * alert()：弹出警告框显示括号里的内容
         * */
         var a;
         a = 'okc';  // string
@@ -56,15 +56,32 @@
         var user = {
             name: 'grubby',
             age: 19,
-            // 函数可以作为对象的属性接收
-            func:introduce
+            // 函数的引用可以作为对象的属性接收
+            func: introduce
         };
         user.func();
         alert(user.func);
-        alert(introduce)
+        alert(introduce);
+
+        /*
+        * 4.事件驱动
+        * js将系统行为和用户行为封装为事件,与函数配合使用,通过发生的事件驱动函数执行
+        * */
+        // window.onload是系统事件,表示页面加载完后执行该代码块
+        window.onload = function () {
+            // 1.造地雷(创建js函数)
+            function dilei() {
+                alert('boom!!!')
+            }
+            // 2.选择埋雷地点(在html文档中查找绑定函数的标签)
+            var btn = document.getElementById('btnId');
+            // 3.埋地雷(将函数的引用交给按钮的onclick属性接收)
+            btn.onclick = dilei;
+            // 4.等待用户踩地雷(当用户单击按钮时,js引擎会调用btn按钮的onclick()函数给用户反馈)
+        }
     </script>
 </head>
 <body>
-
+    <button id="btnId">点我</button>
 </body>
 </html>
