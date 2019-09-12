@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>js基础语法</title>
-    <script>
+    <script type="text/javascript">
         /*
         * 1.变量
         * js代码必须写在script标签内
@@ -65,9 +65,10 @@
 
         /*
         * 4.事件驱动
-        * js将系统行为和用户行为封装为事件,与函数配合使用,通过发生的事件驱动函数执行
+        * js将系统/用户行为封装为事件,与函数配合使用,通过发生的事件驱动相应的函数执行
+        * 由于html文档是从上往下加载,从文档中查找标签时button按钮还没有被加载到内存,所以要使用window.onload系统事件
         * */
-        // window.onload是系统事件,表示页面加载完后执行该代码块
+        // window.onload是系统事件,表示等待页面加载完后执行该函数,此时页面中所有标签都已加载完毕
         window.onload = function () {
             // 1.造地雷(创建js函数)
             function dilei() {
@@ -78,8 +79,32 @@
             // 3.埋地雷(将函数的引用交给按钮的onclick属性接收)
             btn.onclick = dilei;
             // 4.等待用户踩地雷(当用户单击按钮时,js引擎会调用btn按钮的onclick()函数给用户反馈)
+        };
+
+        /*
+        * 5.js代码嵌入方式
+        * 方式一：js代码推荐写在head标签内部
+        * 方式二：引入外部js文件(一般是封装了通用的工具方法)
+        * */
+        window.onload = function () {
+            // 查找button标签
+            var btn = document.getElementById("btnId");
+            // 给button标签赋予功能属性
+            btn.onclick = function () {
+                alert("hello")
+            }
         }
     </script>
+   <!-- &lt;!&ndash;引入外部js文件&ndash;&gt;
+    <script type="text/javascript" src="script.js"></script>
+    &lt;!&ndash;引入外部js文件和script编写的标签要分开&ndash;&gt;
+    <script type="text/javascript">
+        window.onload = function(){
+            $("btnId", function(){
+                alert("工具方法真好用啊！！！");
+            });
+        };
+    </script>-->
 </head>
 <body>
     <button id="btnId">点我</button>
