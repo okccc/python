@@ -75,7 +75,7 @@
                 alert('boom!!!')
             }
             // 2.选择埋雷地点(在html文档中查找绑定函数的标签)
-            var btn = document.getElementById('btnId');
+            var btn = document.getElementById('btn01');
             // 3.埋地雷(将函数的引用交给按钮的onclick属性接收)
             btn.onclick = dilei;
             // 4.等待用户踩地雷(当用户单击按钮时,js引擎会调用btn按钮的onclick()函数给用户反馈)
@@ -88,25 +88,60 @@
         * */
         window.onload = function () {
             // 查找button标签
-            var btn = document.getElementById("btnId");
+            var btn = document.getElementById("btn01");
             // 给button标签赋予功能属性
             btn.onclick = function () {
                 alert("hello")
             }
-        }
-    </script>
-   <!-- &lt;!&ndash;引入外部js文件&ndash;&gt;
-    <script type="text/javascript" src="script.js"></script>
-    &lt;!&ndash;引入外部js文件和script编写的标签要分开&ndash;&gt;
-    <script type="text/javascript">
-        window.onload = function(){
-            $("btnId", function(){
-                alert("工具方法真好用啊！！！");
-            });
         };
-    </script>-->
+    </script>
+
+    <!--引入外部jquery文件-->
+    <script type="text/javascript" src="script/jquery-1.7.2.js"></script>
+    <script type="text/javascript">
+        /*
+        * 6.dom和jquery
+        * 页面被浏览器加载后会生成document对象,dom定义了访问和处理html文档的标准方法
+        * 获取dom对象3个方法
+        * document.getElementById() 根据id属性查找唯一标签
+	    * document.getElementsByName() 根据name属性查找一组标签
+		* document.getElementsByTagName() 根据标签名查找一组标签
+		* tag.innerHTML 获取dom对象内部文本
+		*
+        * jquery是一个轻量级的js框架,功能强大
+        * 开发使用未压缩版jquery-1.7.2.js,上线使用压缩版jquery-1.7.2.min.js
+        * dom对象：通过js原生的HTMLDOM标准查找的对象
+        * jquery对象：通过jquery的$()函数创建或包装的对象
+        * jquery所有功能都通过$()函数实现,$()根据传入参数不同有4个作用
+        * $(tag).text() 获取jquery对象内部文本
+        *
+        * 注意：dom对象和jquery对象只能调用各自对象的方法
+        * 相互转换：
+        * dom对象转jquery对象：$(dom对象)
+        * jquery对象转dom对象：jquery对象[i]
+        * */
+        // 1.$()传入函数：在文档加载完成后执行,相当于 window.onload = function(){};
+        $(function () {
+            alert('文档加载完执行该函数');
+            // 2.$()传入html标签：查找或创建元素节点
+            $('body').append('<a href="#">点我</a>');  // 将创建的标签追加到body标签内部最后位置
+            // 3.$()传入选择器：查找元素节点
+            var $btn = $('#btn01');  // 为了区分jquery对象和dom对象,jquery对象推荐以$开头
+            alert($btn.text());
+            // 4.$()传入dom对象：将DOM对象包装为jQuery对象返回
+            var btn = document.getElementById('btn01');
+            alert('dom对象：' + btn);  // [object HTMLButtonElement]
+            alert('jquery对象：' + $(btn));  // [object Object]
+            // jquery对象依赖dom对象,jquery对象本质上是dom对象的集合
+            var buttons = $('button');
+            for(var i=0;i< buttons.length;i++){
+                alert(buttons[i].innerHTML)
+            }
+        });
+    </script>
 </head>
 <body>
-    <button id="btnId">点我</button>
+    <div><button id="btn01">按钮1</button></div>
+    <div><button id="btn02">按钮2</button></div>
 </body>
 </html>
