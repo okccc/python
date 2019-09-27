@@ -161,6 +161,7 @@ def word_cloud():
     wc = WordCloud(title="绘制词云图", width=1000, height=500)
     wc.add("程序员", attr, value, word_size_range=[20, 100])  # word_size_range：单词字体大小范围
     wc.render(path="D://PycharmProjects/python/analysis/csv/wordcloud.html")
+word_cloud()
 
 def heat_map():
     # 热力图HeatMap

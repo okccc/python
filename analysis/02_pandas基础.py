@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 pandas数据结构
 Series：类似一维数组的对象,由数据和索引组成,索引是自动创建的
@@ -7,6 +8,7 @@ DataFrame：类似excel的表格型数据结构,每列数据可以是不同类�
 
 import numpy as np
 import pandas as pd
+import pymysql
 
 
 def series():
@@ -19,11 +21,11 @@ def series():
     ser.head(), ser.tail(), ser.head(2)  # 默认查看对象的前/后5条数据,也可以指定条数
 
     # 通过list创建,指定行索引
-    ser = pd.Series(range(10, 15), index=["a", "b", "c", "d", "e"])
+    ser = pd.Series(range(10, 15), index=['a', 'b', 'c', 'd', 'e'])
     print(ser.index, ser.values)
-    print(ser[2], ser["c"])  # 索引分标签索引(label)和位置索引(pos)
-    print(ser[1:3], ser["b":"d"])  # 连续索引(切片索引)：标签索引会包含末尾位置
-    print(ser[[0, 2]], ser[["a", "c"]])  # 不连续索引
+    print(ser['c'], ser[2])  # 单个索引：分为标签索引和位置索引
+    print(ser['b':'d'], ser[1:3])  # 连续索引：标签索引会包含末尾位置,位置索引不包含末尾位置
+    print(ser[[0, 2]], ser[['a', 'c']])  # 不连续索引
 
     # series合并
     s1 = pd.Series(range(10, 15))
@@ -32,7 +34,7 @@ def series():
     s1.add(s2, fill_value=0)  # 两个Series对象合并,先将缺失值以0填充再参与运算
 
     # 2.通过dict创建(key是行索引)
-    pd.Series({"a": 11.1, "b": 22.2, "c": 33.3})
+    pd.Series({'a': 11.1, 'b': 22.2, 'c': 33.3})
 
 
 def dataframe():
@@ -46,12 +48,11 @@ def dataframe():
     df.head(2)  # 指定行数取值
 
     # 通过numpy创建,指定行/列索引
-    df = pd.DataFrame(np.random.rand(3, 4), index=["A", "B", "C"], columns=["a", "b", "c", "d"])
-    print(df["c"], df["c"].values)
-    # 连续索引(切片索引)：loc标签索引[]、iloc位置索引[)
-    print(df.loc["A": "B", "c": "d"])
+    df = pd.DataFrame(np.random.rand(3, 4), index=['A', 'B', 'C'], columns=['a', 'b', 'c', 'd'])
+    print(df['c'], df['c'].values)  # 单个索引
+    print(df.loc['A': 'B', 'c': 'd'])  # 连续索引：标签索引loc、位置索引iloc
     print(df.iloc[0:2, 2:4])
-    print(df[["a", "c"]])  # 不连续索引
+    print(df[['a', 'c']])  # 不连续索引
 
     # dataframe合并
     df1 = pd.DataFrame(np.random.rand(2, 3))
@@ -61,58 +62,67 @@ def dataframe():
 
     # 2.通过dict创建(key是列索引,行索引默认是自增int类型)
     df = pd.DataFrame({
-            "A": 1.0,  # float
-            "B": pd.to_datetime("20170625"),  # timestamp
-            "C": pd.Series(range(10, 14)),  # Series
-            "D": ["python", "C", "C++", "Java"],  # list
-            "E": np.array([10] * 4),  # ndarray
-            "F": "orc"  # str
+            'A': 1.0,  # float
+            'B': pd.to_datetime('20170625'),  # timestamp
+            'C': pd.Series(range(10, 14)),  # Series
+            'D': ['python', 'C', 'C++', 'Java'],  # list
+            'E': np.array([10] * 4),  # ndarray
+            'F': 'orc'  # str
         })
-    print(df["D"])  # 查找指定列
-    print(df["D"][3])  # 查找指定列的指定行
-    df["G"] = df["C"] * 2  # 添加列
-    del(df["F"])  # 删除列
+    print(df['D'])  # 查找指定列
+    print(df['D'][3])  # 查找指定列的指定行
+    df['G'] = df['C'] * 2  # 添加列
+    del(df['F'])  # 删除列
 
 
 def func():
-    # describe()
+    # 数据统计
     ser = pd.Series(range(10, 15))
     ser.sum()
     ser.describe()  # 统计描述
     df = pd.DataFrame(np.random.rand(3, 4))
     df.sum()  # 默认axis=0按列计算
-    df.sum(axis=1, skipna=False)  # 可以指定axis=1按行计算,skipna是否排除缺失值
+    df.sum(axis=1, skipna=False)  # 指定axis=1按行计算,skipna是否排除缺失值
     df.describe()
 
     # df.apply(func): 作用于指定的行/列,func可以是内置函数也可以是自定义函数
     df.max(), df.apply(lambda x: x.max())  # 默认按列计算
     df.max(axis=1), df.apply(lambda x: x.max(), axis=1)  # 按行计算
     # df.applymap(func): 作用于每一个元素
-    df.applymap(lambda x: "%.2f" % x)  # 将每个元素保留两位小数
+    df.applymap(lambda x: '%.2f' % x)  # 将每个元素保留两位小数
+    # 将手机号中间四位隐藏起来
+    df.tel = df.tel.apply(lambda x: x.replace(x[3:7], '****'))
+    # 取出邮箱的域名
+    df['email_domain'] = df.email.apply(lambda x: x.split('@')[1])
 
-    # 排序
+    # 空值和重复值
+    df = pd.DataFrame([np.random.randn(4), [10., np.nan, 20., np.nan], [30., np.nan, np.nan, 40.]])
+    df.isna()  # 判断是否是缺失值
+    df.dropna()  # 丢弃缺失数据的行/列(默认axis=0按行处理,how='any'只要有nan值就删除所在行/列)
+    df.dropna(axis=1, how='all')  # 指定how='all'只有全部为nan时才删除该行/列
+    df.fillna(50)  # 填充缺失值
+    df.drop()  # 删除变量或某些行
+    df.duplicated()  # 判断数据是否存在重复值
+    df.drop_duplicates()  # 删除重复值
+    df.rename()  # 重命名
+    df.reset_index()  # 重置索引
+
+    # 数据排序
     ser = pd.Series(range(10, 15), index=[np.random.randint(low=1, high=20, size=(5,))])
     ser.sort_index(), ser.sort_index(ascending=False)  # 按索引排序(默认升序)
     ser.sort_values(), ser.sort_values(ascending=False)  # 按值排序(默认升序)
-    df = pd.DataFrame(np.random.rand(3, 4), index=["A", "C", "B"], columns=["b", "d", "a", "c"])
-    df.sort_index()   # 默认axis=0按行索引升序排序(此处axis特殊)
+    df = pd.DataFrame(np.random.rand(3, 4), index=['A', 'C', 'B'], columns=['b', 'd', 'a', 'c'])
+    df.sort_index()   # 默认axis=0按行索引处理,升序
     df.sort_index(axis=1, ascending=False)
-    df.sort_values(by="c")  # 按值排序：by=列名,默认升序
-    df.sort_values(by="c", ascending=False)
-
-    # nan值
-    df = pd.DataFrame([np.random.randn(4), [10., np.nan, 20., np.nan], [30., np.nan, np.nan, 40.]])
-    df.isna()  # 判断是否是缺失值
-    df.dropna()  # 丢弃缺失数据的行/列(默认axis=0按行处理,how="any"只要有nan值就删除所在行/列)
-    df.dropna(axis=1, how="all")  # 指定how="all"只有全部为nan时才删除该行/列
-    df.fillna(50)  # 填充缺失值
+    df.sort_values(by='c')  # 按值排序：by=列名,默认升序
+    df.sort_values(by='c', ascending=False)
 
     # 多层索引
-    ser = pd.Series(range(10, 15), index=[["a", "a", "b", "c", "c"], [10, 20, 30, 10, 20]])
+    ser = pd.Series(range(10, 15), index=[['a', 'a', 'b', 'c', 'c'], [10, 20, 30, 10, 20]])
     type(ser.index)  # 查看索引类型
     print(ser.index)  # 查看索引
-    print(ser["b"])  # 根据外层索引取值
-    print(ser["a", 10])  # 取出外层索引为a内层索引为10的值
+    print(ser['b'])  # 根据外层索引取值
+    print(ser['a', 10])  # 取出外层索引为a内层索引为10的值
     print(ser[:, 20])  # 取出所有外层索引其内层索引为20的值
     ser.swaplevel()  # 交换分层索引：0最外层、1次外层,只有两层就不用写参数,就是最外层与次外层交换
     ser.sort_index()  # 按层索引排序：默认level=0最外层、level=1次外层...
@@ -127,24 +137,48 @@ def func():
 
 def time_series():
     # 1.pandas时间序列
-    pd.date_range(start="20190101", end="20190131", freq="D")    # D是每天
-    pd.date_range(start="20190101", end="20190501", freq="10D")  # 10D是每10天
-    pd.date_range(start="20190101", end="20190131", freq="B")    # B是每工作日
-    pd.date_range(start="20190101", periods=10, freq="H")        # H是每小时
-    pd.date_range(start="20190101", periods=10, freq="MS")       # MS是每月第一天
-    pd.date_range(start="20190101", periods=10, freq="M")        # M是每月最后一天
-    pd.date_range(start="20190101", periods=10, freq="BMS")      # BMS是每月第一个工作日
-    pd.date_range(start="20190101", periods=10, freq="BM")       # BM是每月最后一个工作日
+    pd.date_range(start='20190101', end='20190131', freq='D')    # D是每天
+    pd.date_range(start='20190101', end='20190501', freq='10D')  # 10D是每10天
+    pd.date_range(start='20190101', end='20190131', freq='B')    # B是每工作日
+    pd.date_range(start='20190101', periods=10, freq='H')        # H是每小时
+    pd.date_range(start='20190101', periods=10, freq='MS')       # MS是每月第一天
+    pd.date_range(start='20190101', periods=10, freq='M')        # M是每月最后一天
+    pd.date_range(start='20190101', periods=10, freq='BMS')      # BMS是每月第一个工作日
+    pd.date_range(start='20190101', periods=10, freq='BM')       # BM是每月最后一个工作日
 
     # 2.pandas时间戳 --> 将字符串转换为时间类型
-    df = pd.DataFrame({"timestamp": "2017-06-25 10:12:23", "C": pd.Series(range(5))})
-    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df = pd.DataFrame({'timestamp': '2017-06-25 10:12:23', 'C': pd.Series(range(5))})
+    df['timestamp'] = pd.to_datetime(df['timestamp'])
     # 将该时间列设置为索引,inplace表示原地替换
-    df.set_index("timestamp", inplace=True)
-    # pandas重采样 --> 将时间序列从一个频率转化为另一个频率处理,比如 2019-01-01 10:00:00 ~ 2019-01-01
-    df["timestamp"] = df.resample("M")
+    df.set_index('timestamp', inplace=True)
+    # pandas重采样 --> 将时间序列从一个频率转化为另一个频率,比如 2019-01-01 10:00:00 ~ 2019-01-01
+    df['timestamp'] = df.resample('M')
 
     # 3.pandas时间段
-    data = pd.DataFrame({"year": 2019, "month": 3, "day": range(10, 20)})
-    period = pd.PeriodIndex(year=data["year"], month=data["month"], day=data["day"], freq="D")
-    data.set_index(period).resample("2D").mean()
+    data = pd.DataFrame({'year': 2019, 'month': 3, 'day': range(10, 20)})
+    period = pd.PeriodIndex(year=data['year'], month=data['month'], day=data['day'], freq='D')
+    data.set_index(period).resample('2D').mean()
+
+
+def data():
+    """
+    pandas数据读写
+    pd.read_csv(): 读取文本文件      df.to_csv(): 写入文本文件
+    pd.read_excel(): 读取电子表格    df.to_excel(): 写入电子表格
+    pd.read_sql(): 读取数据库表      df.to_sql(): 写入数据库表
+    """
+    config = {
+        "host": "localhost",
+        "port": 3306,
+        "user": "root",
+        "password": "root",
+        "db": "test",
+        "charset": "utf8",
+        "cursorclass": pymysql.cursors.DictCursor  # 以dict格式返回数据
+    }
+
+    # 连接数据库
+    conn = pymysql.connect(**config)
+    # 读取数据
+    res = pd.read_sql(sql='', con=conn)
+    conn.close()
