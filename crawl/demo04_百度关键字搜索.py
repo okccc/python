@@ -132,6 +132,8 @@ class BaiDu02(object):
         }
         self.negative_words = ["110网", "骗", "忽悠", "合法", "合理", "征信", "名声", "跑路", "违约", "不还", "起诉", "法院", "律师", "法律",
                                "正规", "违规", "暴力", "轰炸", "威胁", "后悔", "反悔", "恐吓", "服务费", "传销", "退款", "套路", "虚假", "逾期"]
+        self.shield_addrs = ['lieju', 'fsqmx', 'zjk', '531jd', 'lfljq', 'zhengyao88', 'dongdongliu', 'hypnosicn',
+                             'facai518']
         self.flag = False
         self.datas = []
         # 构造url队列、请求响应队列
@@ -176,12 +178,18 @@ class BaiDu02(object):
         while True:
             # 从url_queue取出url
             url = self.url_queue.get()
-            response = requests.get(url, headers={"User-Agent": self.ua.random})
-            # return BeautifulSoup(response.text, "lxml")
-            # 将html源码放入soup_queue
-            self.soup_queue.put(BeautifulSoup(response.text, "lxml"))
-            # 将处理完的url标记为task_done,此时url_queue.qsize - 1
-            self.url_queue.task_done()
+            try:
+                response = requests.get(url, headers={"User-Agent": self.ua.random})
+                # return BeautifulSoup(response.text, "lxml")
+                # 将html源码放入soup_queue
+                self.soup_queue.put(BeautifulSoup(response.text, "lxml"))
+                # 将处理完的url标记为task_done,此时url_queue.qsize - 1
+                self.url_queue.task_done()
+            # except (OSError, TimeoutError):
+            #     continue
+            except Exception as e:
+                print(e)
+                continue
 
     def parse_data(self):
         while True:
@@ -193,17 +201,28 @@ class BaiDu02(object):
                 # 百度搜索的条目都是www.baidu.com域名的地址,点击后会重定向到真实地址,所以需要再次发送请求获取搜索结果的真实url
                 real_link = ""
                 if link.startswith("http"):
-                    response = requests.get(link, headers={"User-Agent": self.ua.random}, allow_redirects=False)
-                    if response.status_code < 400:
+                    try:
+                        response = requests.get(link, headers={"User-Agent": self.ua.random}, allow_redirects=False)
                         # 禁用后status_code是302,通过response.headers["Location"]获取重定向的url
                         real_link = response.headers["Location"]
                         # print(real_link)
+                    # except (OSError, TimeoutError):
+                    #     continue
+                    except Exception as e:
+                        print(e)
+                        continue
                 for word in self.negative_words:
                     if word in title and ('医院' in title or '美好' in title):
-                        # 有word符合就添加数据
-                        data = {"title": title, "link": real_link}
-                        print(data)
-                        self.datas.append(data)
+                        flag = True
+                        for addr in self.shield_addrs:
+                            if addr in real_link:
+                                flag = False
+                                break
+                        if flag:
+                            # 有word符合就添加数据
+                            data = {"title": title, "link": real_link}
+                            print(data)
+                            self.datas.append(data)
                         # 结束循环防止一个title多个word重复添加
                         break
             # 将处理完的soup标记为task_done,此时soup_queue.qsize - 1
@@ -238,11 +257,11 @@ class BaiDu02(object):
         # 2.获取url列表
         t_url = threading.Thread(target=self.get_url, args=(words,))
         thread_list.append(t_url)
-        for i in range(1, 20):
+        for i in range(10):
             # 3.发送请求,获取响应
             t_html = threading.Thread(target=self.get_data)
             thread_list.append(t_html)
-        for i in range(1, 20):
+        for i in range(30):
             # 4.解析数据
             t_parse = threading.Thread(target=self.parse_data)
             thread_list.append(t_parse)
