@@ -8,6 +8,7 @@ DataFrame：类似excel的表格型数据结构,每列数据可以是不同类�
 
 import numpy as np
 import pandas as pd
+import pandas_profiling
 import pymysql
 
 
@@ -160,7 +161,7 @@ def time_series():
     data.set_index(period).resample('2D').mean()
 
 
-def data():
+def read():
     """
     pandas数据读写
     pd.read_csv(): 读取文本文件      df.to_csv(): 写入文本文件
@@ -177,8 +178,16 @@ def data():
         "cursorclass": pymysql.cursors.DictCursor  # 以dict格式返回数据
     }
 
-    # 连接数据库
-    conn = pymysql.connect(**config)
-    # 读取数据
-    res = pd.read_sql(sql='', con=conn)
-    conn.close()
+    # # 连接数据库
+    # conn = pymysql.connect(**config)
+    # # 读取数据
+    # res = pd.read_sql(sql='', con=conn)
+    # conn.close()
+
+    data = pd.read_csv('https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv')
+    print(data.describe())
+    # 一键生成详细数据分析报告
+    profile = data.profile_report(title='Titanic Dataset')
+    # 保存为html文件
+    profile.to_file('titanic.html')
+
