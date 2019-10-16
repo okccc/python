@@ -1,4 +1,3 @@
-## hadoop常见问题
 - <font color=red>运行mr涉及join操作时：container is running beyond physical memory limits</font>
 map join：默认情况下,hive会自动将小表加到distributecache中,然后在map扫描大表的时候,去和distributecache中的小表做join  
 set hive.auto.convert.join=false; 关闭自动转化mapjoin,默认为true;  
@@ -70,3 +69,7 @@ swapon -a 开启交换空间
 hadoop fs -chmod -R 755 /data
 
 - 夜间批处理调度时间尽量错开,不然连接数超限会导致集群挂掉
+
+- <font color=red>master1.meihaofenqi.net: Memory Overcommit Validation Threshold</font>  
+原因：当为该节点上的服务分配的内存大于该节点可用的总内存(默认内存的20%留给系统使用)  
+解决：主机 - 所有主机 - 选择报警的主机 - 资源(检查相应角色的内存分配,在配置搜索'memory'或'heap'进行相应更改并重启生效)
