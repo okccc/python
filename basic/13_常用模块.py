@@ -48,64 +48,24 @@ def argparse01():
 
 
 def logging01():
-    """
-    python日志处理(logging模块):
-    http://www.cnblogs.com/yyds/p/6901864.html
-    http://yshblog.com/blog/125
+    import logging
+    from logging.handlers import RotatingFileHandler  # 日志记录器
 
-    两种日志记录方式:
-    1、使用logging提供的模块级别的函数
-    logging.basicConfig(**kwargs)
-
-    2、使用logging日志系统的四大组件
-    日志器(Logger): 提供了应用程序可一直使用的接口
-    处理器(Handler): 将logger创建的日志记录发送到合适的目的输出
-    过滤器(Filter): 提供了更细粒度的控制工具来决定输出哪条日志记录，丢弃哪条日志记录
-    格式器(Formatter): 决定日志记录的最终输出格式
-    """
-
-    import logging.handlers
-
-    # 方式一：使用logging函数
-    # 1.输出在控制台
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format="%(asctime)s - %(levelname)s - %(message)s",
-        datefmt="%m/%d/%Y %H:%M:%S %p"
-    )
-
-    # 2.输出到文件
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format="%(asctime)s - %(levelname)s - %(message)s",
-        datefmt="%m/%d/%Y %H:%M:%S %p",
-        filename="./log/error.log",
-        filemode="a"
-    )
-
-    # 方式二：使用logging四大组件
-    # 1.创建logger对象
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
-    # 2.创建一个handler用于输出日志到控制台
-    sh = logging.StreamHandler()
-    sh.setLevel(logging.DEBUG)
-    # 3.创建一个handler用于写入日志到文件
-    fh = logging.FileHandler(filename='./err.log', mode='a', encoding='utf8')
-    fh.setLevel(logging.ERROR)
-    # 4.定义handler输出格式
-    formatter = logging.Formatter("%(asctime)s - %(filename)s[:%(lineno)d] - %(levelname)s - %(message)s")
-    sh.setFormatter(formatter)
-    fh.setFormatter(formatter)
-    # 5.将handler添加到logger
-    logger.addHandler(sh)
-    logger.addHandler(fh)
-
-    logger.debug('debug message')
-    logger.info('info message')
-    logger.warning('warning message')
-    logger.error('error message')
-    logger.critical('critical message')
+    # 设置日志级别
+    logging.basicConfig(level=logging.DEBUG)
+    # 创建日志记录器：指明日志保存路径,每个日志文件的最大大小,保存的日志文件个数上限
+    log_handler = RotatingFileHandler(".log", maxBytes=1024, backupCount=10, encoding='utf8')
+    # 创建日志记录格式：级别 文件:行号 信息
+    formatter = logging.Formatter('%(levelname)s %(filename)s:%(lineno)d %(message)s')
+    # 给日志记录器设置日志格式
+    log_handler.setFormatter(formatter)
+    # 为全局日志工具对象添加日志记录器
+    logging.getLogger().addHandler(log_handler)
+    # 测试数据
+    logging.debug('debug message')
+    logging.info('info message')
+    logging.warning('warning message')
+    logging.error('error message')
 
 
 def openpyxl01():
@@ -128,5 +88,5 @@ def openpyxl01():
 
 
 if __name__ == '__main__':
-    hashlib01()
+    logging01()
 
