@@ -71,7 +71,11 @@ Change time(ctime)：修改文件属性或位置 chmod、chown、mv 会改变此
 #### 进程相关  
 - nohup ./aaa.sh &: 将该脚本放在后台执行,即使关闭当前终端也能继续运行  
 - jobs: 只能查看当前终端的后台运行任务jobnum,jobs -l可显示PID,jobs状态包括running/stopped/Terminated  +是当前任务/-是后一个任务    
-- ps -aux: 查看当前所有进程,a显示所有程序/u以用户为主的格式来显示/x显示所有程序不以终端机来区分  
+- ps -aux | more: 查看当前所有进程,a显示所有程序/u以用户为主的格式来显示/x显示所有程序不以终端机来区分  
+```bash
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.0  19364  1544 ?        Ss   Oct08   0:03 /sbin/init  
+```
 - kill %jobnum/%PID: 杀掉进程  
 - fg %jobnum: 将后台程序调至前台运行
 - ctrl + z: 暂停某个前台运行的命令并放到后台
@@ -96,7 +100,7 @@ Change time(ctime)：修改文件属性或位置 chmod、chown、mv 会改变此
 - du -h/-sh：查看当前目录下所有文件大小/目录总大小
 - du -h --max-depth=0,1,2：查看不同深度目录大小,=0就相当于du -sh  
 - 显示磁盘信息：fdisk -l /dev/vda1  
-- 查看物理cpu个数：cat /proc/cpuinfo|grep "physical id"|sort|uniq|wc -l   
+- <font color=red>查看物理cpu个数：cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l</font>   
 - 查看每个cpu核数：cat /proc/cpuinfo|grep "cpu cores"|uniq
 - who：显示当前用户登陆时间
 - 显示本机信息：uname -a  
@@ -210,20 +214,22 @@ $- 显示shell使用的当前选项,与set命令功能相同
 -V  --version                打印程序版本号  
 示例：iconv -f utf-8 -c -t gbk aaa.csv > bbb.csv  
 
-- rpm  
--q, --query                      查询  
--a, --all                        所有  
--i, --install                    install package(s)  
--v, --verbose                    provide more detailed output  
--h, --hash                       print hash marks as package installs (good with -v)  
--e, --erase                      erase (uninstall) package  
--U, --upgrade=<packagefile>+     upgrade package(s)  
---test                           安装测试,并不实际安装  
---nodeps                         忽略软件包的依赖关系强行安装/删除  
---force                          忽略软件包及文件的冲突  
-示例：  
-rpm -qa|grep -i mysql                              (查询,-i忽略大小写)  
-rpm -ev MySQL-server-5.6.21-1.el6.x86_64           (删除)  
-rpm -ev --nodeps mysql-libs-5.1.71-1.el6.x86_64    (忽略依赖关系强行删除)  
-rpm -ivh file.rpm                                  (显示安装进度)  
-rpm -Uvh file.rpm                                  (升级安装包)  
+- rpm包管理工具  
+```sql
+-q, --query       查询  
+-a, --all         所有  
+-i, --install     install package(s)  
+-v, --verbose     provide more detailed output  
+-h, --hash        print hash marks as package installs (good with -v)  
+-e, --erase       erase (uninstall) package  
+-U, --upgrade     upgrade package(s)  
+--test            安装测试,并不实际安装  
+--nodeps          忽略软件包的依赖关系强行安装/删除  
+--force           忽略软件包及文件的冲突  
+-- 案例
+rpm -qa|grep -i mysql                              -- 查询 
+rpm -ev MySQL-server-5.6.21-1.el6.x86_64           -- 删除  
+rpm -ev --nodeps mysql-libs-5.1.71-1.el6.x86_64    -- 忽略依赖关系强行删除  
+rpm -ivh file.rpm                                  -- 显示安装进度
+rpm -Uvh file.rpm                                  -- 升级安装包  
+```
