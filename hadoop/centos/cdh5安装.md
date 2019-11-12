@@ -1,6 +1,6 @@
-- [虚拟机安装文档](http://www.cnblogs.com/shishanyuan/p/4701510.html)  
-- [cdh5安装文档1](https://www.zybuluo.com/sasaki/note/242142)  
-- [cdh5安装文档2](http://www.jianshu.com/p/57179e03795f)    
+[虚拟机安装文档、](http://www.cnblogs.com/shishanyuan/p/4701510.html)
+[cdh5安装文档1、](https://www.zybuluo.com/sasaki/note/242142)
+[cdh5安装文档2](http://www.jianshu.com/p/57179e03795f)    
 
 ## environment
 - 修改ip地址  

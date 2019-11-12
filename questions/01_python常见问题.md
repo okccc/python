@@ -32,4 +32,11 @@ cursor.executemany("INSERT INTO para5(name,age) VALUES(%s,%s);", [('次牛444', 
 - 31、python2和python3的区别？
 - 32、你觉得python2的项目如果迁移到python3，困难会在哪里？- 
 
+- <font color=red>python内存管理机制</font>  
+Python 的内存管理是由私有 heap 空间管理的。所有的 Python 对象和数据结构都在一个
+私有 heap 中。程序员没有访问该 heap 的权限，只有解释器才能对它进行操作。
+为 Python 的 heap 空间分配内存是由 Python 的内存管理模块进行的，其核心 API 会提供
+一些访问该模块的方法供程序员使用。
+Python 有自带的垃圾回收系统，回收并释放没有被使用的内存给别的程序使用
+
 

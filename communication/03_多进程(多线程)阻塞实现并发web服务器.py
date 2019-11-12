@@ -5,7 +5,7 @@ get是从服务器上获取数据,post是向服务器传送数据
 get请求：参数显式的写在浏览器的url中,例如：http://www.baidu.com/s?wd=Chinese
 post请求：参数在请求体当中,以隐式的方式发送,请求的参数包含在"Content-Type"消息头里,指明该消息体的媒体类型和编码 ---> 表单提交、大文本传输
 
-http请求：请求行,请求头(9~18),空行,请求体
+http请求：请求行,请求头(10~19),空行,请求体
 GET / HTTP/1.1                                                   ---> 请求行(请求方法+url+协议版本)
 Host: fanyi.youdao.com                                           ---> 主机和端口号
 Connection: keep-alive                                           ---> 连接类型为长连接
