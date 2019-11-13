@@ -253,12 +253,14 @@ yarn application -kill ***                 杀掉yarn进程
 在hdfs上移动文件：hadoop fs -mv /aaa/*  /bbb/  
 删除hdfs文件：hadoop fs -rm /aaa/angela.txt  
 删除hdfs文件夹：hadoop fs -rm -r /aaa  
-查看hdfs总空间大小：hadoop fs -df -h /  
+hdfs总空间大小：hadoop fs -df -h /  
 ![](images/hdfs总空间.png)  
-查看hdfs某个目录大小：hadoop fs -du -s -h /user/hive/warehouse  
-![](images/hdfs某个目录.png)    
-查看hdfs某个目录下所有文件大小：hadoop fs -du -h /user/root/.Trash/Current/user/hive/warehouse  
-![](images/hdfs目录下文件大小.png)      
+hdfs某个目录大小：hadoop fs -du -s -h /user/hive/warehouse  
+![](images/hdfs某个目录.png)  
+hdfs某个目录下所有文件大小：hadoop fs -du -h /user/root/.Trash/Current/user/hive/warehouse  
+![](images/hdfs目录下文件大小.png)  
+hdfs文件大小并排序：hadoop fs -du /user/hive/warehouse/ods.db | awk '{print int($1/1024/1024/1024) "G",int($2/1024/1024/1024) "G",$3}' OFS="  " | sort -nr  
+![](images/hdfs文件大小排序.png)
 ## <font color=red>Trash</font>   
 hadoop的回收站trash默认是关闭的，还是打开比较好，防止误删数据  
 修改core-site.xml  

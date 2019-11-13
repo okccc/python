@@ -17,8 +17,8 @@ cat /etc/passwd | head -5 | cut -d ':' -f -2：按冒号切割取前两个字段
 -b：忽略最前面的空格符  
 -f：忽略大小写  
 -M：以月份排序  
--n：以数字排序  
--r：反向排序  
+<font color=red>-n：以数字排序(默认是以字符串排序)</font>  
+<font color=red>-r：反向排序</font>  
 -t：分隔符  
 -k：以指定列排序  
 -u：去重  

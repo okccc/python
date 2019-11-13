@@ -57,9 +57,9 @@ yum -y install chkconfig python bind-utils psmisc libxslt zlib sqlite cyrus-sasl
 ## Cloudera Manager  
 [CM下载地址、](http://archive.cloudera.com/cm5/cm/5/)
 [离线库下载地址](http://archive.cloudera.com/cdh5/parcels)  
-![](images/cm安装包.png) 
+![](images/cm安装包.png)  
  
-- cm安装包  
+- cm安装包(el6 -> centos6)  
 tar -zxvf /opt/software/cloudera-manager-el6-cm5.12.1_x86_64.tar.gz -C /opt  
 
 - parcel包(包含hadoop、hdfs等)  

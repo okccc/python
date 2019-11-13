@@ -27,4 +27,4 @@ chkconfig mongod on/off/--list
 service mongod status/start/stop/restart  
 
 - Mongo shell
-![](images/012.png)  
+![](images/启动mongo.png)  

@@ -25,6 +25,6 @@ sort -u: 去重
 安装了pymysql但是导入错误,是因为安装路径不是python的执行路径,找到安装路径复制过去即可    
 cp -r /usr/lib64/python2.7/site-packagespymysql /usr/lib/python2.7/site-packages/
 
-- SecureCRT无法连接centos虚拟机
-windows-->网络连接-->VMvare VMnet8-->IPv4地址  
+- SecureCRT无法连接centos虚拟机  
+VMWare->编辑->虚拟网络编辑器->VMnet8->NAT模式  
 [解决方案](https://blog.csdn.net/r1142/article/details/81000966)

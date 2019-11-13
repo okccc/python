@@ -2,8 +2,7 @@
 [参考文档](http://www.cnblogs.com/JahanGu/p/7452527.html)
 ***
 - 查看系统已有python版本和执行路径  
-![](images/001.png)  
-![](images/002.png)  
+![](images/安装python3.png)  
 
 - 安装依赖  
 centos6.5：yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc make  
@@ -28,11 +27,8 @@ ln -s /usr/local/python3/bin/python3 /usr/bin/python
 - python3自带pip3给pip添加软连接  
 ln -s /usr/local/python3/bin/pip3 /usr/bin/pip
 
-- 测试是否安装成功  
-![](images/003.png)
-
 - 由于执行yum需要python2所以要修改下yum配置  
 vim /usr/bin/yum  
 将#! /usr/bin/python 修改为 #! /usr/bin/python2
 
-- **以后使用pip安装的包都在/usr/local/python3/bin目录下，可以添加软连接**
+- **以后使用pip安装的包都在/usr/local/python3/bin目录下,可以添加软连接**
