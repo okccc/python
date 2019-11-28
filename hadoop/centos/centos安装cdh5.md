@@ -3,22 +3,24 @@
 [cdh5安装文档2](http://www.jianshu.com/p/57179e03795f)    
 
 ## environment
-- 修改ip地址  
-System - Preferences - Network Connection - service network restart  
-![](images/设置虚拟机IP地址.png)  
-
 - 放弃图形化界面  
 vim /etc/inittab - id选3 (多用户模式即linux界面) - reboot  
 
 - sudo  
 vim /etc/sudoers 添加一行 hadoop ALL(ALL) ALL
 
+- 修改ip地址  
+vim /etc/sysconfig/network-scripts/ifcfg-eth0  
+修改ip并删除UUID和HWADDR这两行
+
 - 修改主机名  
 vim /etc/sysconfig/network - hostname master  
 
 - 修改ip和主机名映射关系  
 vim /etc/hosts  
-![](images/ip和主机名映射关系.png)  
+192.168.152.11  centos01  
+192.168.152.12  centos02  
+192.168.152.13  centos03
 
 - 禁用selinux  
 vim /etc/sysconfig/selinux - SELINUX=disabled  
@@ -39,9 +41,10 @@ hue：create database hue DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
 
 - 安装jdk和scala  
 vim /etc/profile  
-export JAVA_HOME=/usr/java/jdk1.8.0_65  
+export JAVA_HOME=/home/project/jdk1.8  
 export PATH=$PATH:$JAVA_HOME/bin  
 刷新配置：source /etc/profile  
+添加软连接：ln -s /home/project/jdk1.8/bin/java /usr/bin/java  
 查看版本：java -version  
 查看jdk安装目录：echo $JAVA_HOME  
 

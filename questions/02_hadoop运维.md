@@ -73,3 +73,15 @@ hadoop fs -chmod -R 755 /data
 - <font color=red>master1.meihaofenqi.net: Memory Overcommit Validation Threshold</font>  
 原因：当为该节点上的服务分配的内存大于该节点可用的总内存(默认内存的20%留给系统使用)  
 解决：主机 - 所有主机 - 选择报警的主机 - 资源(检查相应角色的内存分配,在配置搜索'memory'或'heap'进行相应更改并重启生效)
+
+- org.apache.hadoop.ipc.RemoteException(org.apache.hadoop.ipc.StandbyException): Operation category READ is not supported in state standby  
+原因：主节点是standby状态  
+解决：hdfs haadmin -failover nn2 nn1 将nn1切换成active状态
+
+- Initial job has not accepted any resources; check your cluster UI to ensure that workers are registered and have sufficient resources  
+原因：内存不足导致spark运行失败  
+解决：修改spark-env.sh减小executor默认内存值
+
+- System times on machines may be out of sync. Check system time and time zones.  
+原因：集群三台机器时间不同步  
+解决：设置系统时间与网络时间同步 --> ntpdate cn.pool.ntp.org

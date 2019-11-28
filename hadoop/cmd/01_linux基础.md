@@ -31,7 +31,7 @@ touch a.txt：新建一个空文件
 which java：显示可执行程序路径  
 type ls：查看命令的类型  
 alias：给命令设置别名,先用type查看一下是否被占用  
-type foo显示没被占用,alias foo='cd /usr;ls;'再看type foo已被占用,unalias foo解绑    
+type foo显示没被占用,alias foo='cd /usr;ls;'再看type foo已被占用,unalias foo解绑  
 {}展开：echo number{1..100}、echo {a..z}、mkdir {2005..2015}-{01..12}  
 more：显示内容超过一个屏幕：空格翻页,回车下一行,q退出
 less：和more类似,并且可以用j向下移,k向上移  
@@ -44,7 +44,8 @@ ls | wc -l：查看某个目录下有多少文件
 rm -rf /*：自杀  
 find ./ -inum 123 -delete：可以删除rm删不掉的文件(i是文件索引)  
 cp a.txt b.txt：将a.txt 复制为b.txt  
-scp a.txt root@python:~/a.txt：远程拷贝文件  
+scp -r a.txt root@python:~/a.txt：远程拷贝(复制所有)  
+rsync -av conf/ root@centos02:/home/project/spark-2.1.1/远程拷贝(只对差异文件更新)  
 cp -r dir1 dir2：-r表示递归  
 mv a.txt ../：将a.txt移动(剪切)到上一层目录  
 mv a.txt b.txt：将a.txt重命名为b.txt  
@@ -95,7 +96,7 @@ root         1  0.0  0.0  19364  1544 ?        Ss   Oct08   0:03 /sbin/init
 - date -R：显示时区  
 - date -s "2018-08-01 15:25:30"：设置系统时间  
 - hwclock -w：同步硬件时间  
-- ntpdate us.pool.ntp.org：使用ntp从时间服务器同步  
+- ntpdate cn.pool.ntp.org：使用ntp从时间服务器同步  
 - df -h：查看磁盘容量(-h表示系统自动调节合适的单位)  
 - du -h/-sh：查看当前目录下所有文件大小/目录总大小
 - du -h --max-depth=0,1,2：查看不同深度目录大小,=0就相当于du -sh  
