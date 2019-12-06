@@ -1,3 +1,5 @@
+[Scala下载地址](http://www.scala-lang.org/)  
+[Spark下载地址](http://spark.apache.org/)
 - spark是基于内存的快速、通用、可扩展的大数据计算引擎
 
 ## local
@@ -19,12 +21,18 @@ export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
 
 - spark-env.sh  
 ```bash
-# spark on yarn默认从hdfs加载数据, standalone模式直接从本地加载即可
-HADOOP_CONF_DIR=/home/project/hadoop-2.7.2/etc/hadoop
+# on yarn模式从hdfs上获取数据,local/standalone模式从本地加载数据
+YARN_CONF_DIR=/home/project/hadoop-2.7.2/etc/hadoop
 # jdk
 JAVA_HOME=/home/project/jdk1.8
 # master节点地址
-SPARK_MASTER_IP=centos01
+SPARK_MASTER_HOST=centos01
+SPARK_MASTER_PORT=7077
+# 如果使用HA的话添加以下配置
+SPARK_DAEMON_JAVA_OPTS="
+-Dspark.deploy.recoveryMode=ZOOKEEPER 
+-Dspark.deploy.zookeeper.url=centos01,centos02,centos03 
+-Dspark.deploy.zookeeper.dir=/spark"
 # worker节点核数和实例数
 SPARK_WORKER_CORES=1
 SPARK_WORKER_INSTANCES=1
@@ -42,8 +50,6 @@ SPARK_HISTORY_OPTS="
 ```
 - spark-defaults.conf
 ```bash
-# master节点地址和端口
-spark.master               spark://centos01:7077    
 # 开启日志
 spark.eventLog.enabled     true
 # application在运行过程中所有的信息均记录在该路径下

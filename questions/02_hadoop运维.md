@@ -9,8 +9,8 @@ set hive.exec.mode.local.auto=false;
 
 - <font color=red>hive表解锁</font>
 对hive表执行某个操作时卡死,是因为该表被锁住了  
-hive>show locks tablename;  -->  shared/exclusive   说明该表被锁住了  
-hive>unlock table tablename;  -->  解锁
+hive>show locks tablename;  -  shared/exclusive   说明该表被锁住了  
+hive>unlock table tablename;  -  解锁
 
 - hive表往mysql导数据报错主键冲突：duplicate entry '2017-09-18 00:00:07-1597658' for key 'primary'
 因为mysql表create_time和userid字段是主键,而hive表没有主键,所以会有数据重复插入,可以先在hive表里查询重复数据："select create_time,userid from test where dt='20170918' group  by create_time,userid having count(1) > 1"
@@ -74,14 +74,21 @@ hadoop fs -chmod -R 755 /data
 原因：当为该节点上的服务分配的内存大于该节点可用的总内存(默认内存的20%留给系统使用)  
 解决：主机 - 所有主机 - 选择报警的主机 - 资源(检查相应角色的内存分配,在配置搜索'memory'或'heap'进行相应更改并重启生效)
 
-- org.apache.hadoop.ipc.RemoteException(org.apache.hadoop.ipc.StandbyException): Operation category READ is not supported in state standby  
+- <font color=red>org.apache.hadoop.ipc.StandbyException: Operation category READ is not supported in state standby</font>  
 原因：主节点是standby状态  
 解决：hdfs haadmin -failover nn2 nn1 将nn1切换成active状态
 
-- Initial job has not accepted any resources; check your cluster UI to ensure that workers are registered and have sufficient resources  
+- <font color=red>Initial job has not accepted any resources; check your cluster UI to ensure that workers are registered and have sufficient resources</font>  
 原因：内存不足导致spark运行失败  
 解决：修改spark-env.sh减小executor默认内存值
 
-- System times on machines may be out of sync. Check system time and time zones.  
+- <font color=red>System times on machines may be out of sync. Check system time and time zones.</font>  
 原因：集群三台机器时间不同步  
-解决：设置系统时间与网络时间同步 --> ntpdate cn.pool.ntp.org
+解决：设置系统时间与网络时间同步 - service ntpd stop - ntpdate cn.pool.ntp.org - service ntpd start
+
+- VMware打不开虚拟机：开启模块 DiskEarly 的操作失败  
+解决：删除虚拟机所在目录的所有.lck文件
+
+- <font color=red>java.io.IOException: Could not locate executable null\bin\winutils.exe in the Hadoop binaries.</font>  
+原因：windows缺少hadoop环境  
+解决：安装windows版本的hadoop-2.7.2 - Idea - Run - Edit Configurations - Environment variables - 添加HADDOP_HOME 
