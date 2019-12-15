@@ -28,3 +28,7 @@ cp -r /usr/lib64/python2.7/site-packagespymysql /usr/lib/python2.7/site-packages
 - SecureCRT无法连接centos虚拟机  
 VMWare->编辑->虚拟网络编辑器->VMnet8->NAT模式  
 [解决方案](https://blog.csdn.net/r1142/article/details/81000966)
+
+- git clone报错fatal: The remote end hung up unexpectedly  
+原因：git文件太大传输过程缓存不够或者被墙了  
+解决：git config --global http.postBuffer 524288000
