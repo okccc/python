@@ -393,6 +393,47 @@ hadoop fs -du /user/hive/warehouse/ods.db | awk '{print int($1/1024/1024/1024) "
 23G  47G  /user/hive/warehouse/ods.db/debit_order_ext
 ```
 
+## <font color=red>Hive1.2</font>
+- 解压安装包  
+tar -xvf apache-hive-1.2.1-bin.tar.gz 
+- 添加到环境变量  
+export HIVE_HOME=/home/project/hive-1.2.1  
+export PATH=$PATH:$HIVE_HOME/bin:$HIVE_HOME/sbin
+- hive-env.sh  
+export HADOOP_HOME=/home/project/hadoop-2.7.2  
+export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
+- hive-site.xml
+```xml
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <!-- JDBC元数据地址 -->
+	<property>
+	  <name>javax.jdo.option.ConnectionURL</name>
+	  <value>jdbc:mysql://centos01:3306/metastore?createDatabaseIfNotExist=true</value>
+	</property>
+	<!-- JDBC驱动类 -->
+	<property>
+	  <name>javax.jdo.option.ConnectionDriverName</name>
+	  <value>com.mysql.jdbc.Driver</value>
+	</property>
+	<!-- 用户名 -->
+	<property>
+	  <name>javax.jdo.option.ConnectionUserName</name>
+	  <value>root</value>
+	</property>
+	<!-- 密码 -->
+	<property>
+	  <name>javax.jdo.option.ConnectionPassword</name>
+	  <value>root</value>
+	</property>
+</configuration>
+```
+- 将mysql-connector-java-5.1.27-bin.jar上传到lib目录下
+- 启动客户端  
+hive
+
+
 ## <font color=red>Trash</font>   
 hadoop的回收站trash默认是关闭的,还是打开比较好,防止误删数据  
 修改core-site.xml  
