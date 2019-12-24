@@ -88,7 +88,8 @@ mr-jobhistory-daemon.sh start historyserver
 - spark-shell  
 ./bin/spark-shell  
 scala> val count = sc.textFile("README.md").filter(line=>line.contains("Spark")).count()  
-count: Long = 20 
+count: Long = 20   
+![](images/spark-shell.png)
 
 - spark-submit  
 ./bin/spark-submit \
