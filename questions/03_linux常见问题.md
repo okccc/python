@@ -29,6 +29,15 @@ cp -r /usr/lib64/python2.7/site-packagespymysql /usr/lib/python2.7/site-packages
 VMWare->编辑->虚拟网络编辑器->VMnet8->NAT模式  
 [解决方案](https://blog.csdn.net/r1142/article/details/81000966)
 
+- VMware打不开虚拟机：开启模块DiskEarly的操作失败 | 虚拟机正在使用中获取所有权失败  
+解决：删除虚拟机所在目录的所有.lck文件
+
+- WMware Workstation与Hyper-v不兼容,请先从系统中移除Hyper-v角色,然后再运行VMware Workstation  
+[编辑注册表](https://www.jianshu.com/p/fbab3c16f481)
+
+- windows10关闭自动更新  
+windows+R -> services.msc -> Windows Update -> 停止并禁用
+
 - git clone报错fatal: The remote end hung up unexpectedly  
 原因：git文件太大传输过程缓存不够或者被墙了  
 解决：git config --global http.postBuffer 524288000

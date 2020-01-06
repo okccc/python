@@ -86,9 +86,6 @@ hadoop fs -chmod -R 755 /data
 原因：集群三台机器时间不同步  
 解决：设置系统时间与网络时间同步 - service ntpd stop - ntpdate cn.pool.ntp.org - service ntpd start
 
-- VMware打不开虚拟机：开启模块DiskEarly的操作失败 | 虚拟机正在使用中获取所有权失败  
-解决：删除虚拟机所在目录的所有.lck文件
-
 - <font color=red>java.io.IOException: Could not locate executable null\bin\winutils.exe in the Hadoop binaries.</font>  
 原因：windows缺少hadoop环境  
 解决：安装windows版本的hadoop-2.7.2 - Idea - Run - Edit Configurations - Environment variables - 添加HADDOP_HOME 
