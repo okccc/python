@@ -15,7 +15,8 @@ def get():
     # 参数
     params = {"wd": "知乎"}
     # 发送get请求(params接收字典/字符串的查询参数,字典类型自动转换为url编码,不需要urlencode())
-    response = requests.get(url, params=params, headers=headers, allow_redirects=False)
+    # timeout两个参数分别表示connect和read的超时时间,超时会抛异常
+    response = requests.get(url, params=params, headers=headers, allow_redirects=False, timeout=(3, 5))
     # 查看响应数据类型
     print(type(response))  # <class 'requests.models.Response'>
     print(response)  # <Response [200]>
