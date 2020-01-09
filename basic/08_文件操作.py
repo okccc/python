@@ -29,17 +29,31 @@ from moviepy.editor import *  # 合成视频的模块
 import os
 import re
 
-def recursive(path, suffix):
+def recursive(path):
     """递归操作"""
 
     files = os.listdir(path)
     for file in files:
         if os.path.isfile(path + file):
-            if file.endswith(suffix):
-                file_new = file.replace(suffix, ".png")
+            if file.endswith(".jpeg"):
+                file_new = file.replace(".jpeg", ".png")
                 os.rename(path + file, path + file_new)
+            # if file.endswith(".java"):
+            #     with open(path + file, encoding="utf8") as f1:
+            #         with open(path + file + ".bac", "w", encoding="utf8") as f2:
+            #             for line in f1.readlines():
+            #                 if "，" in line and "//" in line:
+            #                     f2.write(line.replace("，", ",").replace("//", "// "))
+            #                 elif "，" in line and "//" not in line:
+            #                     f2.write(line.replace("，", ","))
+            #                 elif "，" not in line and "//" in line:
+            #                     f2.write(line.replace("//", "// "))
+            #                 else:
+            #                     f2.write(line)
+            #     os.remove(path + file)
+            #     os.rename(path + file + ".bac", path + file)
         else:
-            recursive(path + file + "/", suffix)
+            recursive(path + file + "/")
 
 def test01():
     """往文件的每一行末尾添加两个空格"""
@@ -96,8 +110,8 @@ def test04():
 
 
 if __name__ == "__main__":
-    # recursive("D://PycharmProjects/python/", ".jpeg")
-    test01()
+    recursive("D://PycharmProjects/spark/src/main/java/com/okccc/")
+    # test01()
     # test02()
     # test03()
     # test04()

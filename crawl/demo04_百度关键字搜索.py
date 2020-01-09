@@ -179,7 +179,7 @@ class BaiDu02(object):
             # 从url_queue取出url
             url = self.url_queue.get()
             try:
-                response = requests.get(url, headers={"User-Agent": self.ua.random})
+                response = requests.get(url, headers={"User-Agent": self.ua.random}, timeout=(3, 5))
                 # return BeautifulSoup(response.text, "lxml")
                 # 将html源码放入soup_queue
                 self.soup_queue.put(BeautifulSoup(response.text, "lxml"))
@@ -202,7 +202,7 @@ class BaiDu02(object):
                 real_link = ""
                 if link.startswith("http"):
                     try:
-                        response = requests.get(link, headers={"User-Agent": self.ua.random}, allow_redirects=False)
+                        response = requests.get(link, headers={"User-Agent": self.ua.random}, allow_redirects=False, timeout=(3, 5))
                         # 禁用后status_code是302,通过response.headers["Location"]获取重定向的url
                         real_link = response.headers["Location"]
                         # print(real_link)
