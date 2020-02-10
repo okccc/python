@@ -51,12 +51,15 @@ lag(salary, 12, 0) over(partition by employeeno order by yearmonth) as prev_12_s
 - impala刷新hive(hdfs)数据
 impala-shell -i master2.meihaofenqi.net -q 'invalidate metadata'
 
-- cdh7180端口无法访问(cm界面打不开)  
+- cdh7180端口无法访问(CM界面打不开)  
 find / -type f -perm 755 -name 'cloudera*'  
 service cloudera-scm-server status  
 service cloudera-scm-server restart  
 service cloudera-scm-agent status  
-service cloudera-scm-agent restart
+service cloudera-scm-agent restart(注意：如果集群扩容后需要在每个节点都重启agent)
+
+- cdh集群磁盘扩容后CM界面hdfs/zk/yarn集群启动失败  
+解决：因为机器重启后cm服务也要重启,master1节点重启cloudera-scm-server/agent之后,其它节点重启cloudera-scm-agent
 
 - <font color=red>the server is temporarily unable to service your request due to maintenance downtime or capacity problem</font>  
 原因：cdh集群master1节点的交换空间满了512Mib/512Mib,导致cloudera挂掉,cm/hive/hue/impala等组件均无法连接使用  
@@ -89,3 +92,4 @@ hadoop fs -chmod -R 755 /data
 - <font color=red>java.io.IOException: Could not locate executable null\bin\winutils.exe in the Hadoop binaries.</font>  
 原因：windows缺少hadoop环境  
 解决：安装windows版本的hadoop-2.7.2 - Idea - Run - Edit Configurations - Environment variables - 添加HADDOP_HOME 
+
