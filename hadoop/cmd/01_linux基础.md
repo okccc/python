@@ -17,7 +17,7 @@
 /var 系统默认日志存放目录
   
 - 开关机  
-shutdown -h/-r now：立刻关机/重启
+shutdown -h/-r now：立刻关机/重启  
 shutdown -h/-r 5：5分钟后关机/重启     
 
 - 文件操作  

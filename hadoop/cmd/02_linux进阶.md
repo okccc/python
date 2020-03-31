@@ -1,11 +1,24 @@
+## xargs
+- linux命令可以从两个地方读取内容：标准输入和命令行参数
+- 管道：将|左侧命令的标准输出转换为标准输入,提供给右侧命令作为参数  
+cat a.txt | grep 'mysql' 等同于 grep 'mysql' a.txt  
+- xargs：很多命令不能接收标准输入而只能接收命令行参数,导致管道无法使用,xargs可以将标准输入转换为命令行参数传给后面的命令  
+-d：指定分隔符,默认是以空格分隔  
+-p：询问是否执行,输入y才真的执行,这样可以看清执行过程  
+-n：参数过多时可以指定每次传递的参数个数  
+echo 'aa bb cc' | xargs mkdir 或者 echo 'aa,bb,cc' | xargs -d ','等同于 mkdir aa bb cc  
+echo '1,2,3' | xargs -p -d ',' echo  
+echo '11@22@33@44@55' | xargs -d '@' -n 2 echo  
+杀掉某个用户所有进程：ps -ef | grep ^username | cut -c 10-15 | xargs kill -9
+
 ## cut
 - cut：作用于行数据的选取命令  
--b：以字节为单位进行分割    
--c：以字符为单位进行分割(处理中文时才用)  
+-b：以字节为单位进行分割  
+-c：以字符为单位进行分割(处理中文)  
 -d：指定分隔符  
 -f：指定字段  
 - 使用案例  
-who | cut -b 3：提取每一 行的第3个字节  
+who | cut -b 3：提取每一行的第3个字节  
 who | cut -b 3-5,8：提取每一行的第3,4,5,8个字节  
 who | cut -b -3：提取前3个字节  
 who | cut -b 3-：提取第3个字节到行尾  

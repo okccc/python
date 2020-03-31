@@ -41,6 +41,3 @@ windows+R -> services.msc -> Windows Update -> 停止并禁用
 - git clone报错fatal: The remote end hung up unexpectedly  
 原因：git文件太大传输过程缓存不够或者被墙了  
 解决：git config --global http.postBuffer 524288000
-
-- 杀掉某个用户所有进程  
-ps -ef | grep ^username | cut -c 10-15 | xargs kill -9
