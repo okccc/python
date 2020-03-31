@@ -29,4 +29,9 @@ mkvirtualenv --help
 pip install django==1.8.2
 - 查看版本  
 ![](images/查看django版本.png)
+- python项目一键导入所有安装包  
+将当前环境依赖包生成到文件：pip freeze > requirements.txt  
+在新环境安装文件中的所有包：pip install -r requirements.txt  
+
+
 

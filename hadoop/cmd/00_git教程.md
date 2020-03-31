@@ -3,7 +3,7 @@
 - 安装完配置用户和邮箱：  
 git config --global user.name "okccc"(这样就不用每次同步到github都输密码)  
 git config --global user.email "1573976179@qq.com"(此处email要和github保持一致,不然github上没有小绿块)  
-查看配置列表：git config --global --list  
+查看配置列表：git config --global -l/--list  
 优先级：--system(系统) < --global(用户) < --local(当前仓库,可单独指定用户邮箱)  
 打开配置文件：git config -e --system(/etc/gitconfig ) --global(~/.gitconfig) --local(/project/.git/config)  
 解决中文乱码：git config --global core.quotepath false
@@ -17,7 +17,7 @@ git config --global user.email "1573976179@qq.com"(此处email要和github保持
 - <font color=red>查看本地操作记录(commit/reset/pull/merge...)：git reflog</font>
 - 配置别名：git config --global alias.lg 'log --graph --pretty=oneline --abbrev-commit'
 - 删除别名：git config --global --unset alias.lg
-- 查看最新提交的更新：git show/git last  
+- 查看最近一次提交记录详情/简介：git show (-s/--stat)  
 <font color=red>查看指定提交的更新：git show commitid</font>  
 查看指定提交指定文件的更新：git show commitid filename
 - 删除工作区未track文件  
