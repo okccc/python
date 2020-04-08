@@ -1,24 +1,6 @@
 ## <font color=red>Zookeeper3.4</font>    
 - zookeeper是一个分布式应用程序协调服务
 - 每次都要先启动zookeeper,因为hdfs和yarn都依赖zk管理
-```xml  
-HA特点：  
-共享存储  
-——解决单点故障  
-——利用QJM保存Editlog  
-——保证数据一致性  
-FailoverController  
-——ZKFC控制  
-——避免NN GC时的心跳暂停  
-Fencing  
-——防止脑裂split-brain(2个NN,只有一个主,对外发号施令,另一个是从,做备份)  
-hadoop2.x提供了两种HDFS HA的解决方案,一种是NFS,另一种是QJM,这里我们使用简单的QJM。在该方案中,主备NameNode之间通过一组JournalNode同步元数据信息,一条数据只要成功写入多数,JournalNode即认为写入成功,通常配置奇数个JournalNode。这里还配置了一个zookeeper集群,用于ZKFC( DFSZKFailoverController)故障转移,当Active NameNode挂掉了,会自动切换Standby 为Active;  
-hadoop-2.4.1以后Yarn也有两个ResourceManager,一个Active,一个Standby,状态由zookeeper协调;  
-Zookeeper是由一个leader,多个follower组成的集群  
-一致性：每个server都保存一份相同的数据副本,client无论连接到哪个server,数据都一致  
-原子性：一次数据更新要么都成功,要么都失败  
-实时性：在一定时间范围内,client能读到最新数据  
-```
 - 解压安装包  
 tar -zxvf zookeeper-3.4.5.tar.gz  
 - 修改zoo.cfg
@@ -72,14 +54,11 @@ EPHEMERAL_SEQUENTIAL
 ## <font color=red>Hadoop2.7</font>  
 - 解压安装包  
 tar -xvf hadoop-2.7.2.tar.gz  
-
 - 添加到环境变量/etc/profile  
 export HADOOP_HOME=/home/project/hadoop-2.7.2  
 export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
-
 - hadoop-env.sh  
 export JAVA_HOME=/home/project/jdk1.8
-
 - core-site.xml
 ```xml
 <configuration>  
@@ -297,7 +276,7 @@ cd /usr/bin --> vim start-cluster --> chmod +x start-cluster
 for i in centos01 centos02 centos03
 do
     # ssh后面的命令是未登录执行,需要先刷新系统环境变量
-    ssh $i "source /etc/profile && zkServer.sh start"
+    ssh ${i} "source /etc/profile && zkServer.sh start"
 done
 # 启动hdfs
 start-dfs.sh
