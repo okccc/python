@@ -201,7 +201,7 @@ class DouYu03(object):
     """
     3.使用selenium模拟浏览器操作
       html = etree.HTML(driver.page_source)-->html.xpath()不能和driver.find_elements_by_xpath()混着用
-      driver.page_source速度更快但是html.xpath()有时候取数据莫名其妙报错,可以用driver.find_elements_by_xpath()
+      driver.page_source速度更快但是html.xpath()有时候取数据莫名其妙报错,建议用driver.find_elements_by_xpath()
     """
     def __init__(self):
         self.url = "https://www.douyu.com/directory/all"

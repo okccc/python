@@ -108,13 +108,13 @@ root         1  0.0  0.0  19364  1544 ?        Ss   Oct08   0:03 /sbin/init
 - 显示主机名：hostname、修改主机名：vim /etc/sysconfig/network  
 - 查看操作系统：cat /etc/issue、cat /etc/redhat-release  
 - 查看系统位数：getconf LONG_BIT  
-- free -m：查看内存使用情况  
+- free -h -s 3：每隔3秒查看内存使用情况  
 - swapon -s：查看交换空间使用情况 
 ```bash
-[root@master1 ~]# free -m
-                       total        used        free      shared    buff/cache   available
-Mem(物理内存):          32013       13996       13302        2281        4714       15413
-Swap(交换空间):           511           0         511
+[root@master1 ~]# free -h
+              total        used        free      shared  buff/cache   available
+Mem:            31G         14G        4.7G        2.3G         12G         14G
+Swap:          2.0G        492M        1.5G
 [root@master1 /]# swapon -s
 Filename               Type         Size    Used    Priority
 /swapfile              file         511     0       -1

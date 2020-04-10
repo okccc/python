@@ -278,7 +278,7 @@ class LaGou03(object):
             next_page.click()
             # 翻页时间间隔设置长一点
             time.sleep(10)
-            # 取数据
+            # 继续循环取数据存数据
             items, next_page = self.get_data()
             # 追加写入csv文件
             self.save_data_after(items)

@@ -25,14 +25,16 @@ url = "https://m.douban.com/movie_showing/items?os=android&for_mobile=1&callback
 上述url中的callback=jQuery/jsonp2、末尾的时间戳、类似&...这些参数都可以忽略(参考Network-->Headers-->Query String Parameters)
 """
 
+import time
+
+import requests
 from selenium import webdriver  # 导入webdriver
 from selenium.webdriver import ActionChains  # 导入行为链
-from selenium.webdriver.common.keys import Keys  # 导入keys调用键盘按键
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-import time
-import requests
+from selenium.webdriver.common.keys import Keys  # 导入keys调用键盘按键
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
 
 class Selenium01(object):
     def __init__(self):
@@ -84,26 +86,6 @@ class Selenium01(object):
         # 退出浏览器
         self.driver.quit()
 
-    def chains(self):
-        """鼠标行为链"""
-        # 打开百度页面
-        self.driver.get("https://www.baidu.com")
-        # 获取输入框标签和提交标签
-        tag1 = self.driver.find_element_by_id("kw")
-        tag2 = self.driver.find_element_by_id("su")
-        # 创建鼠标行为链对象
-        ac = ActionChains(self.driver)
-        # 操控鼠标
-        ac.move_to_element(tag1)
-        ac.send_keys_to_element(tag1, "大数据")
-        ac.move_to_element(tag2)
-        ac.click()
-        # 执行上面一系列操作
-        ac.perform()
-        time.sleep(3)
-        # 退出浏览器
-        self.driver.quit()
-
     def windows(self):
         """打开新窗口"""
         # 先打开百度页面
@@ -127,6 +109,54 @@ class Selenium01(object):
         self.driver.switch_to_window(windows[0])
         # 退出浏览器
         self.driver.quit()
+
+    def login(self):
+        """模拟登录"""
+        # 打开豆瓣
+        self.driver.get('https://www.douban.com/')
+        time.sleep(3)
+        # 登录表单是在iframe框架里面,先切换到iframe框架,不然无法定位元素  Unable to locate element: {...}
+        self.driver.switch_to.frame(0)
+        # 切换到密码登录
+        self.driver.find_element_by_class_name('account-tab-account').click()
+        time.sleep(1)
+        # 输入用户名密码
+        self.driver.find_element_by_id('username').send_keys('***')
+        self.driver.find_element_by_id('password').send_keys('***')
+        # 点击登录按钮
+        self.driver.find_element_by_xpath('//a[contains(@class, "btn")]').click()
+        time.sleep(3)
+        # 截屏看是否登录成功
+        self.driver.save_screenshot('./aaa.png')
+        # 退出浏览器
+        self.driver.quit()
+
+    def chains(self):
+        """鼠标行为链"""
+        # 创建鼠标行为链对象
+        ac = ActionChains(self.driver)
+        # # 打开页面
+        # self.driver.get("https://www.baidu.com")
+        # # 获取输入框标签和提交标签
+        # tag1 = self.driver.find_element_by_id("kw")
+        # tag2 = self.driver.find_element_by_id("su")
+        # # 操控鼠标
+        # ac.move_to_element(tag1).send_keys("lol")
+        # ac.move_to_element(tag2).click()
+        # 打开京东
+        self.driver.get('https://passport.jd.com/new/login.aspx?')
+        time.sleep(3)
+        # 切换到账户登录(注意：切换后html标签会添加属性class="checked"表示当前选项被选中)
+        self.driver.find_element_by_xpath('//div[contains(@class,"login-tab-r")]/a').click()
+        # 输入账号密码并点击登录
+        self.driver.find_element_by_name('loginname').send_keys('***')
+        self.driver.find_element_by_name('nloginpwd').send_keys('***')
+        self.driver.find_element_by_id('loginsubmit').click()
+        # 执行上面一系列操作
+        ac.perform()
+        # time.sleep(3)
+        # 退出浏览器
+        # self.driver.quit()
 
     def scroll(self):
         """控制滚动条"""
@@ -156,24 +186,19 @@ class Selenium01(object):
         # 退出浏览器
         self.driver.quit()
 
-    def login(self):
-        """模拟登录"""
-        # 打开豆瓣
-        self.driver.get('https://www.douban.com/')
-        time.sleep(3)
-        # 登录表单是在iframe框架里面,先切换到iframe框架,不然无法定位元素  Unable to locate element: {...}
-        self.driver.switch_to.frame(0)
-        # 切换到密码登录
-        self.driver.find_element_by_class_name('account-tab-account').click()
-        time.sleep(1)
-        # 输入用户名密码
-        self.driver.find_element_by_id('username').send_keys('***')
-        self.driver.find_element_by_id('password').send_keys('***')
-        # 点击登录按钮
-        self.driver.find_element_by_xpath('//a[contains(@class, "btn")]').click()
-        time.sleep(3)
-        # 截屏看是否登录成功
-        self.driver.save_screenshot('./aaa.png')
+    def cookie(self):
+        # 打开百度页面
+        self.driver.get("https://www.baidu.com")
+        # 获取cookie值
+        cookies = self.driver.get_cookies()
+        print(cookies)
+        # 字典生成式获取dict格式的cookies
+        cookies = {i["name"]: i["value"] for i in cookies}
+        print(cookies)
+        # 获取网站的cookie之后可以交给requests使用,因为requests速度比selenium快很多
+        requests.get(url="...", cookies=cookies)
+        # 删除所有cookie
+        self.driver.delete_all_cookies()
         # 退出浏览器
         self.driver.quit()
 
@@ -204,30 +229,14 @@ class Selenium01(object):
         driver = webdriver.Chrome(executable_path="D://chromedriver/chromedriver.exe", chrome_options=options)
         driver.get("https://www.baidu.com")
 
-    def cookie(self):
-        # 打开百度页面
-        self.driver.get("https://www.baidu.com")
-        # 获取cookie值
-        cookies = self.driver.get_cookies()
-        print(cookies)
-        # 字典生成式获取dict格式的cookies
-        cookies = {i["name"]: i["value"] for i in cookies}
-        print(cookies)
-        # 获取网站的cookie之后可以交给requests使用,因为requests速度比selenium快很多
-        requests.get(url="...", cookies=cookies)
-        # 删除所有cookie
-        self.driver.delete_all_cookies()
-        # 退出浏览器
-        self.driver.quit()
-
 
 if __name__ == '__main__':
     s = Selenium01()
     # s.introduce()
-    # s.chains()
     # s.windows()
+    # s.login()
+    s.chains()
     # s.scroll()
-    s.login()
+    # s.cookie()
     # s.wait()
     # s.proxy()
-    # s.cookie()

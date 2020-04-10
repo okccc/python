@@ -36,7 +36,7 @@ class QiuBai01(object):
 
     @staticmethod
     def parse_data(html):
-        # contains()模糊查询: 第一个参数是要匹配的标签,第二个参数是标签名的部分内容
+        # contains()模糊查询: 参数一是属性,参数二是属性值包含的部分内容
         nodes = html.xpath('//div[contains(@id, "qiushi_tag")]')
         items = []
         for node in nodes:

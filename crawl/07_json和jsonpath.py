@@ -35,10 +35,9 @@ import re
 
 def dumps():
     """
-    json.dumps(obj)：将Python对象序列化成Json格式的字符串(Serialize obj to a JSON formatted str)
     序列化：把变量从内存中变成可存储或传输的过程,延长生命周期
+    json.dumps(obj)：将Python对象序列化成Json格式的字符串(Serialize obj to a JSON formatted str)
     注意：json.dumps()序列化默认使用ascii编码,处理中文时要添加参数ensure_ascii=False禁用ascii编码,按utf-8编码
-    chardet.detect(byte_str)可以测试网页编码,参数类型必须是bytes or bytearray
     """
     T = (1, 2, 3, 4)
     L = [1, 2, 3, 4]
@@ -48,18 +47,16 @@ def dumps():
     print(json.dumps(L))  # [1, 2, 3, 4]
     print(type(json.dumps(L)))  # <class 'str'>
     print(json.dumps(D))  # {"city": "\u4e0a\u6d77", "name": "grubby"}
+    print(json.dumps(D, ensure_ascii=False))  # {"name": "grubby", "city": "上海"}
     print(type(json.dumps(D)))  # <class 'str'>
 
-    # 将str编码成bytes
-    res = json.dumps(D).encode('utf-8')
-    print(type(res))  # <class 'bytes'>
-    print(chardet.detect(res))  # {'encoding': 'ascii', 'confidence': 1.0, 'language': ''}
-
-    print(json.dumps(D, ensure_ascii=False))  # {"name": "grubby", "city": "上海"}
-    # 将str编码成bytes
-    res = json.dumps(D, ensure_ascii=False).encode('utf-8')
-    print(type(res))  # <class 'bytes'>
-    print(chardet.detect(res))  # {'encoding': 'utf-8', 'language': '', 'confidence': 0.7525}
+    # chardet.detect(byte_str)可以测试网页编码,参数类型必须是bytes/bytearray,要先将str编码成bytes
+    res1 = json.dumps(D).encode('utf-8')
+    res2 = json.dumps(D, ensure_ascii=False).encode('utf-8')
+    print(type(res1))  # <class 'bytes'>
+    print(type(res2))  # <class 'bytes'>
+    print(chardet.detect(res1))  # {'encoding': 'ascii', 'confidence': 1.0, 'language': ''}
+    print(chardet.detect(res2))  # {'encoding': 'utf-8', 'language': '', 'confidence': 0.7525}
 
 def dump():
     """

@@ -9,7 +9,7 @@ def vote():
          2.每个微信号每天限投一次是通过判断用户的Cookie值实现
     解决：通过fiddler手机数据抓包获取请求url、User-Agent、Cookie信息,模拟微信发送请求并手动更改Cookie值伪装成不同用户投票
     fiddler配置链接：https://www.cnblogs.com/qinyulin/articles/6843829.html
-    手机设置HTTP代理后无法上网：iphone-->通用-->关于本机-->证书信任设置-->针对根证书启用完全信任
+    手机设置HTTP代理后无法上网：iphone -> 通用 -> 关于本机 -> 证书信任设置 -> 针对根证书启用完全信任
     """
 
     # 请求地址

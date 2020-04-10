@@ -144,7 +144,7 @@ def tencent():
         # 写入windows需要确认编码的字符
         file.write(codecs.BOM_UTF8)
     # 追加写入数据
-    with open("D://tencent01.csv", "a", encoding="utf-8", newline="") as file:
+    with open("D://tencent.csv", "a", encoding="utf-8", newline="") as file:
         # 创建writer对象
         writer = csv.DictWriter(file, fieldnames=header)
         # 第一行写入表头
