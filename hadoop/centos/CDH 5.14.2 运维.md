@@ -56,6 +56,13 @@ hadoop fs -chmod -R 755 /data
 原因：为该节点上的服务分配的总内存大于该节点可用的总内存(其中总内存的20%默认是留给系统使用)  
 解决：主机 - 所有主机 - 报警主机 - 资源(检查服务对应实例的内存分配) - 配置(修改memory/heap参数大小) - 重启
 
+- <font color=red>不良: 此角色的事务日志目录所在的文件系统的可用空间小于5.0吉字节 /var/lib/zookeeper(可用4.8吉字节(23.84%),容量20.0吉字节)</font>  
+原因：系统盘空间不足  
+解决：将/var目录下日积月累的zk/hdfs/hive/mr/yarn等log日志定时删除或者在cdh集群配置更改其保存路径
+
+- cdh界面查看各个组件版本号  
+主机 - 所有主机 - 选中主机 - 组件
+
 - <font color=red>org.apache.hadoop.ipc.StandbyException: Operation category READ is not supported in state standby</font>  
 原因：主节点是standby状态  
 解决：hdfs haadmin -failover nn2 nn1 将nn1切换成active状态
