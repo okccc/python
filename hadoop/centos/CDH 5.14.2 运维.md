@@ -31,6 +31,10 @@ join：可能是因为"="两边的字段类型不一样
 - <font color=red>impala刷新hive(hdfs)数据</font>  
 impala-shell -i master2.meihaofenqi.net -q 'invalidate metadata'
 
+- <font color=red>升级python3后执行impala-shell报错</font>  
+原因：impala-shell.py是python2写的,还得用python2调用  
+解决：vim impala-shell -> 将最后一行的exec python ${SHELL_HOME}/impala_shell.py "$@"改成python2
+
 - <font color=red>cdh7180端口无法访问(CM界面打不开)</font>  
 find / -type f -perm 755 -name 'cloudera*'  
 service cloudera-scm-server status  
