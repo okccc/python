@@ -82,6 +82,9 @@ Filesystem      Size  Used Avail Use% Mounted on
 /dev/vda1        20G   13G  7.3G  64% /
 /dev/vdb        500G   63G  438G  13% /data
 
+# 查看inode使用率
+df -i
+
 # du (disk usage)
 du -sh  # 查看当前目录占用空间大小
 du -sh --time *  # 查看当前目录占用空间大小以及更新时间
@@ -233,7 +236,7 @@ ctrl + z  # 暂停某个前台运行的命令并放到后台
 bg %jobnum  # 调出暂停的后台命令继续执行 
 
 # w
-[root@master1 ~]# w
+[root@master1 ~]# w  # 查看当前活跃用户
  11:32:35 up 692 days, 20:04,  1 user,  load average: 0.43, 0.21, 0.21
 USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
 root     pts/0    10.9.6.148       11:08    3.00s  0.03s  0.00s w
@@ -241,7 +244,19 @@ root     pts/0    10.9.6.148       11:08    3.00s  0.03s  0.00s w
 
 ### auth
 ![](images/权限.png) 
-```bash  
+```bash
+# linux用户
+[root@master1 ~]# cat /etc/passwd | head -3
+# 用户名:密码(x表示密码保存在/etc/shadow):用户id(0root,1~99系统用户,100~999其它账户):组id:用户信息:主目录:命令解释程序
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+# linux组
+[root@centos01 ~]# cat /etc/group | head -3
+# 组名:密码(x表示密码保存在/etc/gshadow):组id:组成员
+root:x:0:
+bin:x:1:bin,daemon
+daemon:x:2:bin,daemon
 # user、group
 useradd hdfs -d /home   # 添加用户并指定主目录  
 passwd hdfs             # 为hdfs用户设置密码,不指定就是root用户
@@ -351,4 +366,39 @@ rpm -ev MySQL-server-5.6.21-1.el6.x86_64           # 删除
 rpm -ev --nodeps mysql-libs-5.1.71-1.el6.x86_64    # 忽略依赖关系强行删除  
 rpm -ivh file.rpm                                  # 显示安装进度
 rpm -Uvh file.rpm                                  # 升级安装包  
+```
+
+### lsof
+```bash
+# lsof (list open files) 列出当前系统所有进程打开的所有文件
+[root@master1 ~]# lsof | head -5
+# 进程名称 进程号 用户 文件描述符 文件类型 磁盘名称   文件大小   索引节点 文件名称
+COMMAND   PID   USER     FD  TYPE   DEVICE    SIZE/OFF   NODE    NAME
+bash      3208  root    rtd   DIR    253,0      4096       2     /
+mongod    2076  mongod  txt   REG    253,0    538384    915155   /usr/bin/mongod
+sshd      1728  root    4u    IPv6   14003       0t0     TCP     *:ssh (LISTEN)
+mysqld    1971  mysql   cwd   DIR    253,0      4096    261193   /var/lib/mysql
+
+-i,                  # 列出符合条件的进程打开情况(tcp/udp/:port/@ip...)
+-c, --course         # 列出指定进程名称打开情况
+-p, --process        # 列出指定进程号打开情况
+-u, --user           # 列出指定用户打开情况
+-g, --gid            # 列出指定gid的进程打开情况
+-d, --description    # 列出指定描述符的进程打开情况
+
+# 案例
+# 查看某个文件打开情况
+lsof /bin/bash
+# 查看tcp/22端口/ip的打开情况
+lsof -i tcp/:22/@10.9.169.233 
+# 查看mysql进程打开情况
+lsof -c mysql
+# 查看pid=1的打开情况
+lsof -p 1
+# 查看yarn用户打开情况
+lsof -u yarn
+# 查看gid=1的打开情况
+lsof -g 1
+# 查看文件描述符=4的是打开情况
+lsof -d 4
 ```
