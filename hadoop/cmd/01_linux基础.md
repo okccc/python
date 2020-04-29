@@ -29,6 +29,8 @@ cat /etc/redhat-release
 getconf LONG_BIT
 # 查看某个命令功能
 whatis xxx
+# 显示可执行程序路径
+which java    
 # 查看cpu信息
 lscpu
 # 查看物理cpu个数
@@ -39,6 +41,10 @@ cat /proc/cpuinfo | grep "cpu cores" | uniq
 cat /proc/loadavg  # 最近1,5,15分钟的系统负载, 正在运行进程数/系统总进程数, 最近运行的进程id
 # 查看系统运行时长
 uptime  # -s,--since系统启动时间  -p,--pretty友好格式输出  -V版本号
+# 显示当前shell环境变量的值 
+echo $SHELL  
+# 显示系统环境变量后10行
+set | tail -10  
 ```
 
 ### disk
@@ -257,51 +263,42 @@ chown -R root data      # 将data及其下所有子目录所属人都改为root(
 ```bash
 ln  # 硬链接：只能针对文件,和源文件指向同一个inode,相当于文件的副本可以防止重要文件误删除
 ln -s  # 软链接：可以针对文件或目录,和源文件指向不同的inode,相当于windows的快捷方式
-ll -a/-i/-n/-h  # 查看隐藏内容/显示索引和文件/显示文件uid和gid/自动适应文件大小  
+ll -a/-h/-i/-n  # 查看隐藏内容/自动适应文件大小/显示索引节点/显示文件uid和gid  
 ls -ltrh  # 按最后修改时间升序排列  
-history n  # 查看最近n条历史操作记录     !478  # 重新执行第478条记录
+ls | wc -l  # 查看某个目录下有多少文件  
+history n  # 查看最近n条历史操作记录  !478 重新执行第478条记录
 mkdir/rmdir -p a/b/c  # 递归创建/删除  
 echo '' > a.txt  # 清空文件  
 touch a.txt  # 新建一个空文件  
-which java  # 显示可执行程序路径  
 type ls  # 查看命令的类型  
 alias  # 给命令设置别名,先用type查看一下是否被占用  type foo显示没被占用,alias foo='cd /usr;ls;'再看type foo已被占用,unalias foo解绑  
 {}展开  # echo number{1..100}、echo {a..z}、mkdir {2005..2015}-{01..12}  
-
 more  # 显示内容超过一个屏幕  # 空格翻页,回车下一行,q退出
 less  # 和more类似,并且可以用j向下移,k向上移  
 more或less状态下,/word 向下搜索,?word向上搜索,多个word用n显示下一个
 head/tail a.txt  # 显示文件前/后10行  
-tail -n +10 显示文件前面10行以后的
-head -100 a.txt|tail -10 >> a.log  # 提取日志文件的
-tail -f catalina.log  # 动态显示文件后10行  
-
+tail -n +10  # 显示文件前面10行以后的
+tail -f catalina.log  # 动态显示文件后10行
 wc a.txt  # 显示3个数字分别是行数、单词数、字符数  
-ls | wc -l  # 查看某个目录下有多少文件  
-
-find ./ -inum 123 -delete  # 可以删除rm删不掉的文件(i是文件索引)  
-cp a.txt b.txt  # 将a.txt 复制为b.txt  
-scp -r a.txt root@python:~/a.txt  # 远程拷贝(复制所有)  
-rsync -av conf/ root@centos02:/home/project/spark-2.1.1/远程拷贝(只对差异文件更新)  
-cp -r dir1 dir2  # -r表示递归  
-mv a.txt ../  # 将a.txt移动(剪切)到上一层目录  
+find ./ -inum 123 -delete  # 可以删除rm删不掉的文件(i是文件的索引节点)  
+cp a.txt b.txt  # 复制文件 
+cp -r dir1 dir2  # 复制目录,-r表示递归  
+scp -r conf/ root@python:/home/conf/  # 远程拷贝(复制所有)  
+rsync -av conf/ root@python:/home/conf/  # 远程拷贝(只对差异文件更新)  
+mv a.txt ../  # 将a.txt移动到上一层目录  
 mv a.txt b.txt  # 将a.txt重命名为b.txt  
-压缩成.gz格式  # gzip -c aaa aaa.gz  
-解压.gz格式文件  # gunzip aaa.gz aaa  
+gzip -c aaa aaa.gz  # 将文件压缩成.gz格式 
+gunzip aaa.gz aaa  # 解压.gz格式的文件
 vim -o a.txt b.txt  # 分屏显示  
-dd删除当前行、:2,5 d 删除第2~5行的内容  
-:set nu 编辑文件时显示行号,PgUp/PgDn可以向上向下翻页  
-gg  # 顶部、shift g  # 底部  
-ctrl b 上一页、ctrl f 下一页  
-重定向  # cat a.txt >/>> b.txt  覆盖/追加  
-cat access.log | grep '01/Jun/2016:10' > test.log  # 抽出某个时间段的日志记录  
-sh startup.sh && tail -f ../logs/catalina.out  # 启动tomcat后立刻查看tomcat日志  
-echo $SHELL  # 显示当前shell环境变量的值  
-set|tail -10  # 显示系统环境变量的最后10个  
+dd  # 编辑文件时删除当前行, :2,5 d 删除第2~5行的内容  
+:set nu  # 编辑文件时显示行号,PgUp/PgDn可以向上向下翻页  
+gg/Shift + g  # 顶部/底部  
+ctrl + b/f  # 上一页/下一页  
+cat a.txt >/>> b.txt  # 重定向,覆盖/追加  
+cat access.log | grep '01/Jun/2016:10' > test.log  # 提取某个时间段的日志记录  
+sh startup.sh && tail -f ../logs/catalina.out  # 启动tomcat后立刻查看日志  
 sh -x test.sh  # 执行shell脚本时,启动跟踪模式 
-
-# stat
-文件的3个时间戳  
+# stat a.txt  文件的3个时间戳  
 Access time(atime)  # 读取操作 cat、cp、grep、sed、more、less、tail、head 会改变此时间  
 Modify time(mtime)  # 修改操作 vim、ll 会改变此时间  
 Change time(ctime)  # 修改文件属性或位置 chmod、chown、mv 会改变此时间  
