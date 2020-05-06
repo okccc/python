@@ -3,6 +3,7 @@ import requests
 import json
 import jsonpath
 import logging
+# tenacity是retrying的改进版,retrying已不再维护
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_fixed
 
 logging.basicConfig(
