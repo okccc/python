@@ -1,3 +1,85 @@
+### $
+```bash
+$#       # 这个程序的参数个数  
+$?       # 执行上一个指令的返回值(0表示正常)  
+$0       # 这个程序的执行名字  
+$n       # 这个程序的第n个参数值,n=1..9  
+$*       # 这个程序的所有参数,此选项参数可超过9个  
+$@       # 跟$*类似,但是可以当作数组用  
+$$       # 这个程序的PID(脚本运行的当前进程ID号)  
+$!       # 执行上一个背景指令的PID(后台运行的最后一个进程的进程ID号)  
+$-       # 显示shell使用的当前选项,与set命令功能相同  
+```
+
+### iconv  
+```bash
+-l, --list                  # 所有字符集  
+-f, --from                  # 修改前编码  
+-t, --to                    # 修改后编码  
+-c,                         # 忽略无效字符  
+-o, --output                # 输出文件  
+-s, --silent                # 安静模式  
+  , --verbose               # 显示详细信息  
+-?, --help                  # 帮助信息  
+  , --usage                 # 使用信息  
+-V, --version               # 版本号  
+# 案例
+iconv -f utf-8 -c -t gbk aaa.csv > bbb.csv  
+```
+
+### rpm  
+```bash
+-q, --query                 # 查询  
+-a, --all                   # 所有  
+-i, --install               # 安装包  
+-v, --verbose               # 显示详细信息  
+-h, --hash                  # print hash marks as package installs (good with -v)  
+-e, --erase                 # 卸载  
+-U, --upgrade               # 升级 
+--test                      # 安装测试,并不实际安装  
+--nodeps                    # 忽略软件包的依赖关系强行安装/删除  
+--force                     # 忽略软件包及文件的冲突  
+# 案例
+rpm -qa | grep -i mysql                            # 查询 
+rpm -ev MySQL-server-5.6.21-1.el6.x86_64           # 删除  
+rpm -ev --nodeps mysql-libs-5.1.71-1.el6.x86_64    # 忽略依赖关系强行删除  
+rpm -ivh file.rpm                                  # 显示安装进度
+rpm -Uvh file.rpm                                  # 升级安装包  
+```
+
+### lsof
+```bash
+# lsof (list open files) 列出当前系统所有进程打开的所有文件
+[root@master1 ~]# lsof | head -5
+# 进程名称 进程号 用户 文件描述符 文件类型 磁盘名称   文件大小   索引节点 文件名称
+COMMAND   PID   USER     FD  TYPE   DEVICE    SIZE/OFF   NODE    NAME
+bash      3208  root    rtd   DIR    253,0      4096       2     /
+mongod    2076  mongod  txt   REG    253,0    538384    915155   /usr/bin/mongod
+sshd      1728  root    4u    IPv6   14003       0t0     TCP     *:ssh (LISTEN)
+mysqld    1971  mysql   cwd   DIR    253,0      4096    261193   /var/lib/mysql
+
+-i,                  # 列出符合条件的进程打开情况(tcp/udp/:port/@ip...)
+-c, --course         # 列出指定进程名称打开情况
+-p, --process        # 列出指定进程号打开情况
+-u, --user           # 列出指定用户打开情况
+-g, --gid            # 列出指定gid的进程打开情况
+-d, --description    # 列出指定描述符的进程打开情况
+# 查看某个文件打开情况
+lsof /bin/bash
+# 查看tcp/22端口/ip的打开情况
+lsof -i tcp/:22/@10.9.169.233 
+# 查看mysql进程打开情况
+lsof -c mysql
+# 查看pid=1的打开情况
+lsof -p 1
+# 查看yarn用户打开情况
+lsof -u yarn
+# 查看gid=1的打开情况
+lsof -g 1
+# 查看文件描述符=4的是打开情况
+lsof -d 4
+```
+
 ### xargs
 ```bash
 # linux命令可以从两个地方读取内容：标准输入和命令行参数
@@ -74,8 +156,8 @@ cat access.log | grep "23/Jan/2019" | awk '{print $2}' | cut -c 1-2 | sort | uni
 
 ### grep
 ```bash
-# grep(global search re print) 基于行的文本搜索工具  
-# 格式: grep -option 'keyword' file  
+# grep(global search re print) - print lines matching a pattern 基于行的文本搜索工具 
+# 格式: grep -option 'str/re' file  
 -c        # 统计符合要求的行数  
 -i        # 忽略大小写  
 -n        # 输出时带上行号  
@@ -105,3 +187,107 @@ grep -xf/-wf a.log b.log
 grep -vxf a.log b.log  
 ```
 
+### find
+```bash
+# find - search for files in a directory hierarchy 在指定目录下按匹配规则查找文件(夹)  
+# 格式：find path -option [-print] [-exec command] {} \  
+-type                                           # 按类型查找(b块设备/c字符设备文件/d目录/f普通文件/l符号链接文件/p管道文件)  
+-name/perm/size/(no)user/(no)group/newer/empty  # 按名称/权限/大小/所属用户(组)/新旧/空文件查找  
+-atime(amin)                                    # 按天/分钟查找(文件的3个时间戳atime/mtime/ctime;amin/mmin/cmin)  
+-maxdepth/mindepth                              # 有时候目录层次很深需要设置目录深度 
+-exec command {} \;                            # 对查找的结果执行相关操作  
+# 案例  
+find . -type l                                  # 在当前目录下查找链接文件  
+find / -type f -perm 755 -name 'cloudera*'      # 查找根目录下cloudera相关的可执行命令
+find . -type f -atime 5                         # 在当前目录查找刚好5天前访问的文件  
+find . -type f -mtime -5/+5                     # 在当前目录查找5天内/5天前修改过的文件  
+find . -type f -newer a.txt                     # 在当前目录下查找修改时间比a.txt新的文件  
+find . -type f -size +10M                       # 查找当前目录大于10M的文件  
+find . -empty                                   # 查找当前目录下的空文件  
+# 找到当前目录下的文件夹并删掉  
+find . -type d -exec rm -rf {} \;
+# 合并小文件
+find . -maxdepth 3 -type f -name "*.txt" -exec cat > ./merge.txt {} \;
+# 将当前目录下root用户文件改成hdfs用户
+find . -type f -user root -exec chown hdfs {} \;
+# 将当前目录下半年前的日志文件删除                        
+find . -type f -mtime +180 -name "*.log" -exec rm -rf {} \;               
+```
+
+### sed
+```bash
+# sed(stream editor) - stream editor for filtering and transforming text 基于行的流编辑器
+# 格式：sed -option 'command' file  
+-n        # 安静模式,不输出全部行而只输出sed操作选中的行  
+-e        # 多重编辑且命令顺序会影响结果  
+-f        # 直接将sed动作写在一个文件内  
+-r        # 让sed命令支持扩展的正则表达式  
+-i        # sed默认是输出结果到屏幕而不改变原文件,-i直接修改文件内容
+# command  
+a\        # 追加,在选中行的下一行插入字符串  
+i\        # 插入,在选中行的上一行插入字符串  
+c\        # 行替换,将选中的行替换为新的字符串  
+d         # 删除,将选中的行删除  
+p         # 打印,打印当前选择的行,通常结合sed -n使用  
+s         # 字符串替换(可搭配正则使用),全局替换 s/old/new/g  
+&         # 保存搜索字符作相应替换,s/love/{&}/,love替换成{love}  
+# 案例  
+sed '1a\add one' a.txt                               # 在第一行的下一行添加字符串"add one"  
+sed '1,$a\add one' a.txt                             # 在所有行的下一行都添加字符串"add one"  
+sed '$c\add one' a.txt                               # 将最后一行替换成字符串"add one"  
+sed '4,$c\add one' a.txt                             # 将第四行以后的所有内容替换成字符串"add one",此时文件只剩下4行  
+sed '4,$d' a.txt                                     # 删除第四行以后的所有内容  
+sed '/^$/d' a.txt                                    # 删除所有空白行  
+sed '/first/a\add one' a.txt                         # 在包含"first"字符串的行的下一行添加字符串"add one"  
+sed '/^ha.*day$/a\add one' a.txt                     # 在以ha开头day结尾的行的下一行添加字符串"add one"  
+sed '/^ha.*day$/c\add one' a.txt                     # 将以ha开头day结尾的行替换成字符串"add one"  
+sed '/^ha.*day$/d' a.txt                             # 删除以ha开头day结尾的行  
+sed -n '/^ha.*day$/p' a.txt                          # 只打印以ha开头day结尾的行  
+sed -e '1,5d' -e 's/test/check/' a.txt               # 多重编辑且后面操作受前面影响  
+sed 's/book/books/g' a.txt                           # 将文件中的所有book替换成books  
+sed 's/book/books/2g' a.txt                          # 从第二处匹配的地方开始替换  
+sed -i 's/book/books/g' a.txt                        # 直接编辑a.txt,将book替换成books  
+echo it is test | sed 's/\w\+/{&}/g'                 # 将选中的单词两边加上大括号  {it} {is} {test}  
+sed 's/\(\) line/\1/g' a.txt                         # 匹配line前面的部分  
+sed 's/\(.*\) is \(.*\) line/\1 \2/g' a.txt          # 匹配is前面和line前面的部分  
+echo aa BB | sed 's/\([a-z]\+\) \([A-Z]\+\)/\2 \1/'  # 交换子串顺序  
+```
+
+### awk
+```bash
+# awk - pattern scanning and processing language 擅长列操作的文本分析处理工具
+# 格式：awk [-F | -f | -v] 'BEGIN{} /.../{command1;command2} END{}' file  
+-F          # 字段分隔符,默认空格  
+-f          # 调用脚本  
+-v          # 定义变量  
+BEGIN       # 初始化代码块,引用全局变量或设置FS分隔符  
+/.../       # 匹配代码块,字符串或正则表达式  
+{...}       # 命令代码块,多条命令用分号分隔,默认{print}={print $0} 
+END         # 结束代码块,输出最终计算结果  
+# 内置变量    
+$0/$n       # 整行记录/当前行的第n个字段  
+NR/NF       # 行号/字段数  
+OFS/ORS     # 输出字段分隔符,默认空格,制表符OFS='\t' / 输出记录分隔符,默认换行,即处理结果一行一行输出到屏幕  
+&&/||       # 逻辑与/逻辑或  
+/aaa/       # 匹配包含aaa的行  !/aaa/匹配不包含aaa的行  
+$n~/bbb/    # 匹配指定字段包含bbb的行  $n!~/bbb/匹配指定字段不包含bbb的行  
+printf      # %表示格式化输出,-8表示字符长度,s表示字符串类型,\n表示换行  
+# 案例  
+awk 'NR!=1' a.log                                 # 不显示第一行  
+awk 'NR>10' a.log                                 # 只显示10行以后的内容  
+awk 'END{print NR}' a.log                         # 显示最后一行行号(统计行数)  
+awk 'NR>=10&&NR<=20' a.log                        # 显示日志文件的10~20行  
+awk -F: '{print $1 $3}' /etc/passwd               # 以冒号切割后连着输出指定列不分隔  
+awk -F: '{print $1,$3,$5}' /etc/passwd            # 输出指定列使用空格分隔  
+awk -F: '{print $1,$3,$5}' OFS=':' /etc/passwd    # 输出多个指定列并指定分隔符  
+awk '/mysql/' /etc/passwd                         # 打印包含mysql的行  
+awk '!/mysql/' /etc/passwd                        # 打印不包含mysql的行  
+awk '/48\d*/' /etc/passwd                         # 打印包含数字且以48开头的行  
+awk -F: '$1~/mail|mysql/' /etc/passwd             # 打印$1字段是mail或mysql的行  
+awk -F: '$1!~/mail|mysql/' /etc/passwd            # 打印$1字段不是mail或mysql的行  
+awk -F: '$1~/^m/ && $3>100' /etc/passwd           # 打印$1字段是m开头且$3>100的行  
+awk '/MemFree/{print int($2/1024) "M"}' /proc/meminfo  # 计算剩余内存大小  
+ll | awk 'NR!=1 {count[$3]++} END{for(i in count) print i,count[i]}'                    # 计算当前目录下不同用户的文件数  
+netstat -an | awk '$6=="LISTEN" {printf "%-3s %-5s %-3s %-13s \n",NR,$1,$2,$3}'         # 格式化输出查询结果  
+netstat -an | awk '$6~/CONN|LIST/{count[$6]++} END{for (i in count) print i,count[i]}'  # 计算指定状态的连接数量  
+```
