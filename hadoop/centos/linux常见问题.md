@@ -43,3 +43,8 @@ windows+R -> services.msc -> Windows Update -> 停止并禁用
 - <font color=red>git clone报错fatal: The remote end hung up unexpectedly</font>  
 原因：git文件太大传输过程缓存不够或者被墙了  
 解决：git config --global http.postBuffer 524288000
+
+- send-mail: fatal: parameter inet_interfaces: no local interface found for ::1
+vim  /etc/postfix/main.cf  
+inet_interfaces = localhost -> inet_interfaces = all  
+service postfix restart

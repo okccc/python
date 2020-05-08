@@ -1,65 +1,83 @@
 ## <font color=red>Zookeeper3.4</font>    
-- zookeeper是一个分布式应用程序协调服务
-- 每次都要先启动zookeeper,因为hdfs和yarn都依赖zk管理
-- 解压安装包  
+```bash
+# zookeeper是一个分布式应用程序协调服务
+# 每次都要先启动zookeeper,因为hdfs和yarn都依赖zk管理
+# 解压安装包  
 tar -zxvf zookeeper-3.4.5.tar.gz  
-- 修改zoo.cfg
-```python
-# tickTime：CS通信心跳时间  
+```
+
+- <font color=blue>zoo.cfg</font>
+```bash
+# The number of milliseconds of each tick
 # Zookeeper服务器或客户端与服务器之间维持心跳的时间间隔,每隔tickTime 发送一个心跳,以毫秒为单位  
 tickTime=2000  
-# initLimit：LF初始通信时限  
-# 集群中的leader服务器(L)与follower服务器(F)之间,初始连接时能容忍的最多心跳数(tickTime的数量)  
+# The number of ticks that the initial synchronization phase can take 
+# 集群中的leader服务器(L)与follower服务器(F)之间,初始连接时能容忍的最多心跳数(tickTime数量)  
 initLimit=10  
-# syncLimit：LF同步通信时限  
-# 集群中的leader服务器与follower服务器之间,请求和应答之间能容忍的最多心跳数(tickTime的数量)  
-syncLimit=5  
-# dataDir：数据文件目录  
-# Zookeeper保存数据的目录,默认情况下,Zookeeper将写数据的日志文件也保存在这个目录里  
-dataDir=/home/project/zookeeper-3.4.5/data  
-# clientPort：客户端连接端口  
-# 客户端连接 Zookeeper 服务器的端口,Zookeeper 会监听这个端口,接受客户端的访问请求  
+# The number of ticks that can pass between sending a request and getting an acknowledgement 
+# 集群中的leader服务器与follower服务器之间,请求和应答之间能容忍的最多心跳数(tickTime数量) 
+syncLimit=5
+# the directory where the snapshot is stored.
+dataDir=/var/lib/zookeeper
+# the directory where the transaction logs are stored.
+dataLogDir=/var/lib/zookeeper
+# the port at which the clients will connect  
 clientPort=2181  
 # 服务器名称与地址：集群信息(服务器编号,服务器地址,LF通信端口,选举端口)  
 server.1=centos01:2888:3888  
 server.2=centos02:2888:3888  
 server.3=centos03:2888:3888 
 ```
-- 然后创建一个data文件夹  
+
+```bash
+# 然后创建一个data文件夹  
 mkdir /home/project/zookeeper-3.4.5/data  
 echo 1 > myid  
-- 拷贝zookeeper到其他节点  
+# 拷贝zookeeper到其他节点,分别修改myid值为2和3    
 scp -r /home/project/zookeeper-3.4.5/ centos02:/home/project  
 scp -r /home/project/zookeeper-3.4.5/ centos03:/home/project  
-- 分别修改myid值为2和3  
-- zookeeper命令行操作  
-启动：zkServer.sh start  
-查看状态：zkServer.sh status  
-进入当前这台机：zkCli.sh  
-进入指定ip的客户端：zkCli.sh –server <ip>  
-![](images/zookeeper.png)  
-- zookeeper选举机制  
+# zookeeper命令行操作  
+# 启动
+zkServer.sh start  
+# 查看状态
+zkServer.sh status  
+# 进入当前这台机
+zkCli.sh  
+# 进入指定ip的客户端
+zkCli.sh –server <ip>  
+# zookeeper选举机制  
 全新集群：比较myid(半数机制)  
 非全新集群(有机器中途宕机)：先看谁数据最新,再比较myid  
 层次化的目录结构,每个节点在zookeeper中叫做znode,节点znode可以包含数据和子节点  
-- znode有两种类型：  
+# znode两种类型
 短暂(ephemeral)(断开连接自己删除)  
 持久(persistent)(断开连接不删除)  
-- znode有四种目录节点：(默认持久非序列化)  
+# znode四种目录节点(默认持久非序列化)  
 PERSISTENT  
 PERSISTENT_SEQUENTIAL(持久序列化/test0000000019)  
 EPHEMERAL  
 EPHEMERAL_SEQUENTIAL  
+```
 
 ## <font color=red>Hadoop2.7</font>  
-- 解压安装包  
+```bash
+# 解压安装包  
 tar -xvf hadoop-2.7.2.tar.gz  
-- 添加到环境变量/etc/profile  
+tar -xvf apache-hive-1.2.1-bin.tar.gz 
+# 添加到环境变量/etc/profile  
 export HADOOP_HOME=/home/project/hadoop-2.7.2  
 export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
-- hadoop-env.sh  
-export JAVA_HOME=/home/project/jdk1.8
-- core-site.xml
+export HIVE_HOME=/home/project/hive-1.2.1  
+export PATH=$PATH:$HIVE_HOME/bin:$HIVE_HOME/sbin
+# 修改hadoop-env.sh  
+export JAVA_HOME=/home/project/jdk1.8  
+# 修改hive-env.sh  
+export HADOOP_HOME=/home/project/hadoop-2.7.2  
+export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
+# 将mysql-connector-java-5.1.27-bin.jar上传到hive的lib目录下
+```
+
+- <font color=blue>core-site.xml</font>
 ```xml
 <configuration>  
     <!-- 指定hdfs的nameservice为ns1 -->  
@@ -76,10 +94,16 @@ export JAVA_HOME=/home/project/jdk1.8
     <property>  
         <name>ha.zookeeper.quorum</name>  
         <value>centos01:2181,centos02:2181,centos03:2181</value>  
-    </property>  
+    </property>
+    <!-- 文件删除后保留时长(分钟),默认0表示关闭回收站,安全起见还是打开防止误删数据 -->
+    <property>  
+        <name>fs.trash.interval</name>  
+        <value>1440</value>  
+    </property>
 </configuration> 
 ``` 
-- hdfs-site.xml  
+
+- <font color=blue>hdfs-site.xml</font>  
 ```xml
 <configuration>  
     <!--指定hdfs的nameservice为ns1,需要和core-site.xml中的保持一致 -->  
@@ -157,7 +181,36 @@ export JAVA_HOME=/home/project/jdk1.8
     </property>
 </configuration> 
 ``` 
-- mapred-site.xml  
+
+- <font color=blue>hive-site.xml</font>
+```xml
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <!-- JDBC元数据地址 -->
+	<property>
+	  <name>javax.jdo.option.ConnectionURL</name>
+	  <value>jdbc:mysql://centos01:3306/metastore?createDatabaseIfNotExist=true</value>
+	</property>
+	<!-- JDBC驱动类 -->
+	<property>
+	  <name>javax.jdo.option.ConnectionDriverName</name>
+	  <value>com.mysql.jdbc.Driver</value>
+	</property>
+	<!-- 用户名 -->
+	<property>
+	  <name>javax.jdo.option.ConnectionUserName</name>
+	  <value>root</value>
+	</property>
+	<!-- 密码 -->
+	<property>
+	  <name>javax.jdo.option.ConnectionPassword</name>
+	  <value>root</value>
+	</property>
+</configuration>
+```
+
+- <font color=blue>mapred-site.xml</font>  
 ```xml
 <configuration>  
     <!-- 指定mr框架为yarn方式 -->  
@@ -177,7 +230,8 @@ export JAVA_HOME=/home/project/jdk1.8
     </property>
 </configuration>  
 ```
-- yarn-site.xml
+
+- <font color=blue>yarn-site.xml</font>
 ```xml
 <configuration>  
     <!-- 开启RM高可用 -->  
@@ -243,31 +297,44 @@ export JAVA_HOME=/home/project/jdk1.8
     </property>
 </configuration>  
 ```  
-- 修改slaves  
+
+- <font color=blue>slaves</font>
+```bash
+# 修改slaves  
 centos01  
 centos02  
 centos03  
-
-- 配置ssh免密登录  
+# 配置ssh免密登录  
 ssh-keygen -t rsa  
 ssh-coyp-id centos01,centos02,centos03
-
-- 拷贝到其它节点(将share下的doc删掉不然很慢)  
+# 拷贝到其它节点(将share下的doc删掉不然很慢)  
 scp -r hadoop-2.7.2/ centos02:/home/project  
 scp -r hadoop-2.7.2/ centos03:/home/project
+```
 
-- 启动集群：(严格按照下面的步骤)  
-启动zk：zkServer.sh start  
-启动journalnode：hadoop-daemon.sh start journalnode(每台都要启)  
-第一次启动集群时要格式化namenode(格式化之前要删除data和log数据)：hdfs namenode -format  
-把tmp拷到nn2下面  
+- 手动启动集群
+```bash
+# 启动zookeper
+zkServer.sh start  
+# 每台机器启动journalnode  
+hadoop-daemon.sh start journalnode 
+# 第一次启动集群要格式化namenode(格式化之前要删除data和log数据)
+hdfs namenode -format 
+# 把tmp拷到nn2下面
 scp -r hadoop-2.7.2/tmp centos02:/home/project/hadoop-2.7.2  
-格式化ZKFC：hdfs zkfc -formatZK  
-启动hdfs：start-dfs.sh  
-启动yarn：start-yarn.sh | centos02要手动启：yarn-daemon.sh start resourcemanager  
-启动mr历史日志：mr-jobhistory-daemon.sh start historyserver 
+# 格式化ZKFC  
+hdfs zkfc -formatZK
+# 启动hdfs  
+start-dfs.sh 
+# 启动yarn  
+start-yarn.sh 
+# centos02要手动启  
+yarn-daemon.sh start resourcemanager 
+# 启动mr历史日志 
+mr-jobhistory-daemon.sh start historyserver 
+```
 
-- 一键启动|停止集群  
+- 一键启动/停止集群  
 cd /usr/bin --> vim start-cluster --> chmod +x start-cluster
 ```bash
 #!/bin/bash
@@ -304,12 +371,6 @@ do
 done
 ```
 
-- Web页面监控  
-http://centos01:50070 (active)  
-http://centos02:50070 (standby)  
-http://centos01:8088 (yarn)  
-http://centos01:19888 (jobhistory)  
-
 - 测试集群状态
 ```bash
 # 查看hdfs的各节点状态信息
@@ -345,6 +406,10 @@ hadoop fs -put <Linux文件> <hdfs路径>
 hadoop fs -get <hdfs路径> <Linux文件>  
 # 创建文件夹(级联)
 hadoop fs -mkdir -p <path>  
+# 设置/取消该文件夹上传文件数限制
+hdfs dfsadmin -setQuota | -clrQuota 3 /test
+# 设置/取消该文件夹大小
+hdfs dfsadmin -setSpaceQuota | -clrSpaceQuota 1g /test
 # 在hdfs上移动文件
 hadoop fs -mv /aaa/* /bbb/  
 # 删除hdfs文件
@@ -372,57 +437,13 @@ hadoop fs -du /user/hive/warehouse/ods.db | awk '{print int($1/1024/1024/1024) "
 23G  47G  /user/hive/warehouse/ods.db/debit_order_ext
 ```
 
-## <font color=red>Hive1.2</font>
-- 解压安装包  
-tar -xvf apache-hive-1.2.1-bin.tar.gz 
-- 添加到环境变量  
-export HIVE_HOME=/home/project/hive-1.2.1  
-export PATH=$PATH:$HIVE_HOME/bin:$HIVE_HOME/sbin
-- hive-env.sh  
-export HADOOP_HOME=/home/project/hadoop-2.7.2  
-export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
-- hive-site.xml
-```xml
-<?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
-<configuration>
-    <!-- JDBC元数据地址 -->
-	<property>
-	  <name>javax.jdo.option.ConnectionURL</name>
-	  <value>jdbc:mysql://centos01:3306/metastore?createDatabaseIfNotExist=true</value>
-	</property>
-	<!-- JDBC驱动类 -->
-	<property>
-	  <name>javax.jdo.option.ConnectionDriverName</name>
-	  <value>com.mysql.jdbc.Driver</value>
-	</property>
-	<!-- 用户名 -->
-	<property>
-	  <name>javax.jdo.option.ConnectionUserName</name>
-	  <value>root</value>
-	</property>
-	<!-- 密码 -->
-	<property>
-	  <name>javax.jdo.option.ConnectionPassword</name>
-	  <value>root</value>
-	</property>
-</configuration>
-```
-- 将mysql-connector-java-5.1.27-bin.jar上传到lib目录下
-- 启动客户端  
-hive
-
+- Web页面监控  
+http://centos01:50070 (active)  
+http://centos02:50070 (standby)  
+http://centos01:8088 (yarn)  
+http://centos01:19888 (jobhistory)  
 
 ## <font color=red>Trash</font>   
-hadoop的回收站trash默认是关闭的,还是打开比较好,防止误删数据  
-修改core-site.xml  
-```xml
-<property>  
-    <name>fs.trash.interval</name>  
-    <value>1440</value>  
-    <description>文件删除后保留时长(分钟),默认是0,表示关闭回收站</description>  
-</property>  
-```  
 和Linux系统回收站一样,HDFS会为每个用户创建一个回收站目录：/user/用户名/.Trash/,在HDFS内部的具体实现就是在NameNode中开启一个后台线程Emptier,这个线程专门管理和监控系统回收站,将超过生命周期的数据删除并释放关联的数据块,但是在文件被删除和hdfs磁盘空间增加之间会有一个等待时间延迟;  
 通过命令删除的文件并没有立刻从HDFS中清除,而是转移到回收站/user/hdfs/.Trash/Current(hdfs是当前用户),可以通过mv操作恢复数据;如果回收站中文件已经存在,则HDFS会将这个文件重命名,命名规则是在文件后面紧跟一个编号(从1开始直到没有重名为止);  
 - 手动清空回收站  

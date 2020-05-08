@@ -22,7 +22,7 @@ ln -s /usr/local/python3/bin/pip3 /usr/bin/pip
 - 由于执行yum需要python2所以要修改下yum配置  
 vim /usr/bin/yum  
 将#! /usr/bin/python 修改为 #! /usr/bin/python2
-- **以后使用pip安装的包都在/usr/local/python3/bin目录下,可以添加软连接**
+- **以后使用pip安装的包都在/usr/local/python3/lib/python3.6/site-packages目录下,可以添加软连接**
 - pip常用命令  
 安装：pip install requests  
 卸载：pip uninstall requests  
