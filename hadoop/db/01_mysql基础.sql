@@ -16,10 +16,10 @@ sql：对数据库做增删改查
 提交：commit;      --begin后面的所有操作必须commit后才会生效
 回滚：rollback;    --begin后面的所有操作在rollback后都不会生效
 事务特性(acid)
-原子性(atomicity)：事务中的全部操作不可分割,要么全部完成要么均不执行
+原子性(atomicity)：事务中的所有操作不可分割,要么全部完成要么全部取消,如果事务崩溃会回滚到之前状态
 一致性(consistency)：几个并行执行的事务其执行结果和执行顺序无关
 隔离性(isolation)：事务的执行不受其他事务的干扰
-持久性(durability)：已提交事务对数据库的改变是一直生效的
+持久性(durability)：已提交事务对数据库的改变是永久生效的
 
 join
 inner join: 返回关联表中匹配到的值
