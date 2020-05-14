@@ -77,7 +77,13 @@ create -e /lock 'lock'  # -e表示临时,此时cli2无法创建/lock会显示已
 # 在cli2监控该znode
 stat -w /lock  # 当cli1断开连接时/lock自动丢失,此时cli2可以创建/lock
 
-
+# zk实现master-worker协同: 要求系统中只能有一个master,且master能实时监控worker情况
+# 在cli1创建临时znode
+create -e /master 'master:8888'
+# 在cli1创建持久znode并监控该znode
+create /workers && ls -w /workers
+# 在cli2的/workers节点下创建临时znode并观察监控变化
+create -e /workers/w1 'w1:8888'
 ```
 
 ### Hadoop2.7  
