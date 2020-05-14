@@ -1,12 +1,44 @@
-## <font color=red>Zookeeper3.4</font>    
+### Zookeeper3.4    
 ```bash
-# zookeeper是一个分布式应用程序协调服务
-# 每次都要先启动zookeeper,因为hdfs和yarn都依赖zk管理
-# 解压安装包  
-tar -zxvf zookeeper-3.4.5.tar.gz  
+# zookeeper是一个分布式应用程序协调服务,zk=文件系统+通知机制
+# 分布式系统：利用更多机器处理更多数据,协调就是让各个节点的信息能够同步和共享
+# 应用场景
+1.统一命名服务
+2.统一配置管理
+工程中的很多配置信息比如数据库连接一般写在配置文件中,单节点机器没啥问题
+分布式集群还是需要一个集中管理配置的地方,可以将配置信息写进znode,相关应用程序监听这个znode,zk依赖ZAB协议可以保证主从数据一致性
+Hadoop使用zk做namenode的高可用
+Hbase的客户端就是连接zk获取集群配置信息再进行后续操作
+Kafka也是用zk维护broker信息
+3.统一集群管理
+# zk数据结构
+数据结构通常是K-V或者树形结构两种,ZK是类似linux的树形结构,每个节点叫znode,可通过其路径唯一标识
+znode并不存储大规模业务数据,而是存储不少量状态和配置信息,每个znode默认能存储1M数据,适用于读多写少场景
+# zk三个状态
+Looking(选举状态): 当前节点不知道谁是leader,正在搜寻
+Leading(主节点): 当前节点即选出来的leader
+Following(从节点): leader已经选好,当前节点与之同步
+# ZAB协议(Zookeeper Atomic Broadcast)
+恢复模式(选leader): 当启动服务或leader出现异常时会通过半数机制选举新的leader并同步状态到follower,然后退出恢复模式
+广播模式(干活): 保证主从节点数据一致
+# zk事务操作
+zxid: 当zookeeper服务器状态发生变化时(insert/update/delete znode)会对应一个事务请求,zk会为其分配一个全局的事务id,编号越大说明事务越新
+# zk选举机制
+全新集群: 比较myid(半数机制)  
+非全新集群(有机器中途宕机): 先比较zxid再比较myid 
+# znode两种类型
+持久的(persistent): 即使zk集群宕机也不会丢失
+临时的(ephemeral): 断开连接就会丢失
+# znode四种目录节点(默认持久非序列化)  
+PERSISTENT  
+PERSISTENT_SEQUENTIAL(持久序列化/test0000000019)  
+EPHEMERAL  
+EPHEMERAL_SEQUENTIAL 
+# Watcher
+zk允许用户在指定znode注册watcher,当触发特定事件时zk服务端会将事件通知到客户端,以此实现分布式协调服务
 ```
 
-- <font color=blue>zoo.cfg</font>
+- zoo.cfg
 ```bash
 # The number of milliseconds of each tick
 # Zookeeper服务器或客户端与服务器之间维持心跳的时间间隔,每隔tickTime 发送一个心跳,以毫秒为单位  
@@ -18,9 +50,9 @@ initLimit=10
 # 集群中的leader服务器与follower服务器之间,请求和应答之间能容忍的最多心跳数(tickTime数量) 
 syncLimit=5
 # the directory where the snapshot is stored.
-dataDir=/var/lib/zookeeper
+dataDir=/home/project/zookeeper-3.6.1/data
 # the directory where the transaction logs are stored.
-dataLogDir=/var/lib/zookeeper
+dataLogDir=/home/project/zookeeper-3.6.1/data
 # the port at which the clients will connect  
 clientPort=2181  
 # 服务器名称与地址：集群信息(服务器编号,服务器地址,LF通信端口,选举端口)  
@@ -29,37 +61,26 @@ server.2=centos02:2888:3888
 server.3=centos03:2888:3888 
 ```
 
+- shell
 ```bash
-# 然后创建一个data文件夹  
-mkdir /home/project/zookeeper-3.4.5/data  
-echo 1 > myid  
-# 拷贝zookeeper到其他节点,分别修改myid值为2和3    
-scp -r /home/project/zookeeper-3.4.5/ centos02:/home/project  
-scp -r /home/project/zookeeper-3.4.5/ centos03:/home/project  
-# zookeeper命令行操作  
-# 启动
-zkServer.sh start  
-# 查看状态
-zkServer.sh status  
-# 进入当前这台机
-zkCli.sh  
-# 进入指定ip的客户端
-zkCli.sh –server <ip>  
-# zookeeper选举机制  
-全新集群：比较myid(半数机制)  
-非全新集群(有机器中途宕机)：先看谁数据最新,再比较myid  
-层次化的目录结构,每个节点在zookeeper中叫做znode,节点znode可以包含数据和子节点  
-# znode两种类型
-短暂(ephemeral)(断开连接自己删除)  
-持久(persistent)(断开连接不删除)  
-# znode四种目录节点(默认持久非序列化)  
-PERSISTENT  
-PERSISTENT_SEQUENTIAL(持久序列化/test0000000019)  
-EPHEMERAL  
-EPHEMERAL_SEQUENTIAL  
+# 每次都要先启动zookeeper,因为hdfs和yarn都依赖zk管理
+# 解压安装包并添加到环境变量
+tar -zxvf zookeeper-3.6.1.tar.gz
+# 查看状态/启动/停止
+zkServer.sh status/start/stop 
+# 打开客户端
+zkCli.sh -server host:port  
+
+# zk实现分布式锁: 当锁的持有者断开时锁会自动释放,zk的临时znode可以实现这个功能
+# 在cli1创建临时znode
+create -e /lock 'lock'  # -e表示临时,此时cli2无法创建/lock会显示已存在
+# 在cli2监控该znode
+stat -w /lock  # 当cli1断开连接时/lock自动丢失,此时cli2可以创建/lock
+
+
 ```
 
-## <font color=red>Hadoop2.7</font>  
+### Hadoop2.7  
 ```bash
 # 解压安装包  
 tar -xvf hadoop-2.7.2.tar.gz  
@@ -77,7 +98,7 @@ export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
 # 将mysql-connector-java-5.1.27-bin.jar上传到hive的lib目录下
 ```
 
-- <font color=blue>core-site.xml</font>
+- core-site.xml
 ```xml
 <configuration>  
     <!-- 指定hdfs的nameservice为ns1 -->  
@@ -103,7 +124,7 @@ export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
 </configuration> 
 ``` 
 
-- <font color=blue>hdfs-site.xml</font>  
+- hdfs-site.xml
 ```xml
 <configuration>  
     <!--指定hdfs的nameservice为ns1,需要和core-site.xml中的保持一致 -->  
@@ -182,7 +203,7 @@ export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
 </configuration> 
 ``` 
 
-- <font color=blue>hive-site.xml</font>
+- hive-site.xml
 ```xml
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
@@ -210,7 +231,7 @@ export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
 </configuration>
 ```
 
-- <font color=blue>mapred-site.xml</font>  
+- mapred-site.xml  
 ```xml
 <configuration>  
     <!-- 指定mr框架为yarn方式 -->  
@@ -231,7 +252,7 @@ export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
 </configuration>  
 ```
 
-- <font color=blue>yarn-site.xml</font>
+- yarn-site.xml
 ```xml
 <configuration>  
     <!-- 开启RM高可用 -->  
@@ -298,7 +319,7 @@ export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
 </configuration>  
 ```  
 
-- <font color=blue>slaves</font>
+- slaves
 ```bash
 # 修改slaves  
 centos01  
@@ -443,13 +464,13 @@ http://centos02:50070 (standby)
 http://centos01:8088 (yarn)  
 http://centos01:19888 (jobhistory)  
 
-## <font color=red>Trash</font>   
+### Trash   
 和Linux系统回收站一样,HDFS会为每个用户创建一个回收站目录：/user/用户名/.Trash/,在HDFS内部的具体实现就是在NameNode中开启一个后台线程Emptier,这个线程专门管理和监控系统回收站,将超过生命周期的数据删除并释放关联的数据块,但是在文件被删除和hdfs磁盘空间增加之间会有一个等待时间延迟;  
 通过命令删除的文件并没有立刻从HDFS中清除,而是转移到回收站/user/hdfs/.Trash/Current(hdfs是当前用户),可以通过mv操作恢复数据;如果回收站中文件已经存在,则HDFS会将这个文件重命名,命名规则是在文件后面紧跟一个编号(从1开始直到没有重名为止);  
 - 手动清空回收站  
 hadoop fs -expunge,先将当前回收站目录/user/用户名/.Trash/current重命名为：/user/用户名/.Trash/yyMMddHHmmss(当前系统时间,精确到秒),再次执行清空回收站操作,就彻底删除了;  
 
-## <font color=red>MapReduce</font>  
+### MapReduce  
 - Eclipse安装hadoop插件  
 ![](images/hadoop插件.png)  
 下载对应hadoop版本的插件：  
