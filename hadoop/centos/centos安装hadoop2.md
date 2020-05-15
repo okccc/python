@@ -41,24 +41,31 @@ zk允许用户在指定znode注册watcher,当触发特定事件时zk服务端会
 - zoo.cfg
 ```bash
 # The number of milliseconds of each tick
-# Zookeeper服务器或客户端与服务器之间维持心跳的时间间隔,每隔tickTime 发送一个心跳,以毫秒为单位  
+# ZK服务器或客户端与服务器之间维持心跳的时间间隔,每隔tickTime发送一个心跳,以毫秒为单位  
 tickTime=2000  
-# The number of ticks that the initial synchronization phase can take 
-# 集群中的leader服务器(L)与follower服务器(F)之间,初始连接时能容忍的最多心跳数(tickTime数量)  
+# leader与follower之间初始连接能容忍的最多心跳数(tickTime数量)  
 initLimit=10  
-# The number of ticks that can pass between sending a request and getting an acknowledgement 
-# 集群中的leader服务器与follower服务器之间,请求和应答之间能容忍的最多心跳数(tickTime数量) 
+# leader与follower之间请求应答能容忍的最多心跳数(tickTime数量) 
 syncLimit=5
-# the directory where the snapshot is stored.
+# 存储快照
 dataDir=/home/project/zookeeper-3.6.1/data
-# the directory where the transaction logs are stored.
-dataLogDir=/home/project/zookeeper-3.6.1/data
+# 存储事务日志
+dataLogDir=/home/project/zookeeper-3.6.1/logs
 # the port at which the clients will connect  
 clientPort=2181  
 # 服务器名称与地址：集群信息(服务器编号,服务器地址,LF通信端口,选举端口)  
-server.1=centos01:2888:3888  
-server.2=centos02:2888:3888  
-server.3=centos03:2888:3888 
+server.1=centos01:2888:3888
+server.2=centos02:2888:3888
+server.3=centos03:2888:3888
+```
+
+- zk启动报错
+```bash
+org.apache.zookeeper.server.quorum.QuorumPeerConfig$ConfigException: Address unresolved: centos01:3888
+原因：3888后面有空格导致无法识别端口号,linux复制文件时要注意空格
+
+Caused by: java.lang.IllegalArgumentException: myid file is missing
+原因：data目录下缺少myid文件
 ```
 
 - shell
@@ -66,8 +73,10 @@ server.3=centos03:2888:3888
 # 每次都要先启动zookeeper,因为hdfs和yarn都依赖zk管理
 # 解压安装包并添加到环境变量
 tar -zxvf zookeeper-3.6.1.tar.gz
-# 查看状态/启动/停止
-zkServer.sh status/start/stop 
+# 在data目录下创建myid文件
+echo '1' > myid
+# 启动/停止/状态
+zkServer.sh start-foreground/stop/status 
 # 打开客户端
 zkCli.sh -server host:port  
 
@@ -84,6 +93,8 @@ create -e /master 'master:8888'
 create /workers && ls -w /workers
 # 在cli2的/workers节点下创建临时znode并观察监控变化
 create -e /workers/w1 'w1:8888'
+
+
 ```
 
 ### Hadoop2.7  
