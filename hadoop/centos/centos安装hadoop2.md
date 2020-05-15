@@ -94,7 +94,10 @@ create /workers && ls -w /workers
 # 在cli2的/workers节点下创建临时znode并观察监控变化
 create -e /workers/w1 'w1:8888'
 
-
+# zk自带查看事务日志工具
+zkTxnLogToolkit.sh log.200000001
+# zk自带查看快照文件工具
+zkSnapShotToolkit.sh snapshot.0
 ```
 
 ### Hadoop2.7  
