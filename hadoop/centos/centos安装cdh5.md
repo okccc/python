@@ -92,3 +92,62 @@ web页面：http://centos01:7180 - admin/admin
 - SecureCRT参数设置  
 ![](images/crt配置01.png)  
 ![](images/crt配置02.png)  
+
+## db
+```sql
+-- 通过CM安装CDH默认使用内嵌的PostgreSQL数据库
+-- 数据库连接
+psql -h 127.0.0.1 -p 7432 -U cloudera-scm -d postgres
+-- 常用指令
+\q                -- 退出psql客户端
+\l                -- 列出所有的数据库
+\c database_name  -- 连接到指定的数据库
+\d                -- 列出当前数据库下所有表
+\d table_name     -- 显示指定表的结构信息
+\?                -- 列出所有sql的命令列表
+\h sql            -- 查看sql命令的解释,比如\h select 
+-- hive库下表名都是大写,查询时要加""不然报错
+hive=# select * from "DBS";
+-- 做crud操作时,字符串只能用'',""会被认为是column
+hue=# update auth_user set is_active='f' where id=10;
+```
+```sql
+[root@master1 data]# psql -h 127.0.0.1 -p 7432 -U cloudera-scm -d postgres
+Password for user cloudera-scm: 
+psql (9.2.24, server 9.2.23)
+Type "help" for help.
+
+postgres=# \l
+                                                List of databases
+        Name        |       Owner        | Encoding |  Collate   |   Ctype    |         Access privileges         
+--------------------+--------------------+----------+------------+------------+-----------------------------------
+ amon               | amon               | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ hive               | hive               | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ hue                | hue                | UTF8     | en_US.UTF8 | en_US.UTF8 | =Tc/hue                          +
+                    |                    |          |            |            | hue=CTc/hue
+ nav                | nav                | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ navms              | navms              | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ oozie_oozie_server | oozie_oozie_server | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ postgres           | cloudera-scm       | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ rman               | rman               | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ scm                | scm                | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ template0          | cloudera-scm       | UTF8     | en_US.UTF8 | en_US.UTF8 | =c/"cloudera-scm"                +
+                    |                    |          |            |            | "cloudera-scm"=CTc/"cloudera-scm"
+ template1          | cloudera-scm       | UTF8     | en_US.UTF8 | en_US.UTF8 | =c/"cloudera-scm"                +
+                    |                    |          |            |            | "cloudera-scm"=CTc/"cloudera-scm"
+(11 rows)
+
+postgres=# 
+```
+
+数据库|功能|账号密码
+:--:|:--|:--
+postgres|管理员账号cloudera-scm|/var/lib/cloudera-scm-server-db/data/generated_password.txt
+scm|cdh的metastore(集群配置的元数据)|/etc/cloudera-scm-server/db.properties
+hive|hive的metastore(表的元数据)|hive-site.xml
+hue|hue的metastore(用户,权限...)
+amon|activity monitor(活动监控)|/etc/cloudera-scm-server/db.mgmt.properties
+smon|service monitor(服务监控)
+rmon|report monitor(报告管理)
+hmon|host monitor(主机监控)
+nav|cloudera navigator(cloudera导航)
