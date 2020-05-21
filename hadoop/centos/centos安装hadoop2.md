@@ -248,6 +248,11 @@ export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
 	  <name>javax.jdo.option.ConnectionPassword</name>
 	  <value>root</value>
 	</property>
+	<!-- HiveServer2监听连接的端口 -->
+	<property>
+      <name>hive.server2.thrift.port</name>
+      <value>10000</value>
+    </property>
 </configuration>
 ```
 
