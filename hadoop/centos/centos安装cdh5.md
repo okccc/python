@@ -1,29 +1,49 @@
-[虚拟机安装文档、](http://www.cnblogs.com/shishanyuan/p/4701510.html)
-[cdh5安装文档1、](https://www.zybuluo.com/sasaki/note/242142)
-[cdh5安装文档2](http://www.jianshu.com/p/57179e03795f)    
+- [SecureCRT 64位 破解版](https://www.jianshu.com/p/f61a4f1f4405)
+- [VMvare安装Centos7](https://zhangweisep.github.io/2019/03/02/VM%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AE%89%E8%A3%85Centos-7/)
+- [cdh5安装文档1、](https://www.zybuluo.com/sasaki/note/242142)
+- [cdh5安装文档2](http://www.jianshu.com/p/57179e03795f)    
 
-## environment
+## centos7
+```bash
+# 修改ip地址  
+[root@cdh1 ~]# vim /etc/sysconfig/network-scripts/ifcfg-ens33
+BOOTPROTO="static"
+ONBOOT="yes"
+IPADDR=192.168.189.11
+GATEWAY=192.168.189.2  # 编辑 - 虚拟网络编辑器 - NAT设置
+NETMASK=255.255.255.0
+DNS1=8.8.8.8
+[root@cdh1 ~]# service network restart
+[root@cdh1 ~]# ip addr & ping www.baidu.com
+# 修改主机名
+[root@cdh1 ~]# vim /etc/hostname
+# 修改hosts
+[root@cdh1 ~]# vim /etc/hosts
+192.168.189.11  cdh1 
+192.168.189.12  cdh2  
+192.168.189.13  cdh3
+# 禁用selinux  
+[root@cdh1 ~]# vim /etc/sysconfig/selinux
+SELINUX=disabled 
+# 查看防火墙状态
+firewall-cmd --state
+# 开启/关闭防火墙
+systemctl start/stop firewalld 
+# 防火墙开机自启
+systemctl enable/disable firewalld.service
+```
 - 放弃图形化界面  
 vim /etc/inittab - id选3 (多用户模式即linux界面) - reboot  
 
 - sudo  
 vim /etc/sudoers 添加一行 hadoop ALL(ALL) ALL
 
-- 修改ip地址  
-vim /etc/sysconfig/network-scripts/ifcfg-eth0  
-修改ip并删除UUID和HWADDR这两行
 
-- 修改主机名  
-vim /etc/sysconfig/network - hostname master  
 
-- 修改ip和主机名映射关系  
-vim /etc/hosts  
-192.168.152.11  centos01  
-192.168.152.12  centos02  
-192.168.152.13  centos03
 
-- 禁用selinux  
-vim /etc/sysconfig/selinux - SELINUX=disabled  
+
+
+
 
 - 防火墙  
 开启关闭防火墙 service iptables status/start/stop  
