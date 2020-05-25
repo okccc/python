@@ -27,8 +27,9 @@ $-       # 显示shell使用的当前选项,与set命令功能相同
 iconv -f utf-8 -c -t gbk aaa.csv > bbb.csv  
 ```
 
-### rpm  
+### rpm
 ```bash
+# rpm((Red-Hat Package Manager))
 -q, --query                 # 查询  
 -a, --all                   # 所有  
 -i, --install               # 安装包  

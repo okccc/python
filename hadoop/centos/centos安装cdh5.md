@@ -31,6 +31,10 @@ firewall-cmd --state
 systemctl start/stop firewalld 
 # 防火墙开机自启
 systemctl enable/disable firewalld.service
+# 配置ntp时间同步服务
+yum install ntp
+# 安装mysql
+
 ```
 - 放弃图形化界面  
 vim /etc/inittab - id选3 (多用户模式即linux界面) - reboot  
@@ -38,17 +42,6 @@ vim /etc/inittab - id选3 (多用户模式即linux界面) - reboot
 - sudo  
 vim /etc/sudoers 添加一行 hadoop ALL(ALL) ALL
 
-
-
-
-
-
-
-
-- 防火墙  
-开启关闭防火墙 service iptables status/start/stop  
-查看防火墙是否开机自启 chkconfig iptables on/off/--list 
- 
 - mysql  
 开启关闭mysql service mysqld status/start/stop  
 查看mysql是否开机自启 chkconfig mysqld on/off/--list 
