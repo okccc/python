@@ -60,7 +60,7 @@ sqoop import
 --where "create_time=${YESTERDAY} or update_time=${YESTERDAY}"              # 筛选数据
 --hive-drop-import-delims                                   			    # 过滤掉分隔符\n, \r, \01
 --hive-import                                               	            # 导入hive,不设置就使用hive默认分隔符
---hive-table base.${table} -m 4                                               # -m表示maptask数量
+--hive-table base.${table} -m 4                                             # -m表示maptask数量
 --delete-target-dir                                                         # 删除已存在的目录
 --hive-overwrite                                                            # 覆盖数据
 --hive-partition-key dt                                                     # 分区字段dt
