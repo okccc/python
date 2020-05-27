@@ -109,7 +109,8 @@ def zip01():
     for index, name in enumerate(names):
         race = races[index]
         age = ages[index]
-        print((name, race, age))
+        # print((name, race, age))
     # zip()：将一系列可迭代对象中的元素打包成一个个tuple,并返回由这些tuple组成的list
     for name, race, age in zip(names, races, ages):
         print((name, race, age))
+zip01()

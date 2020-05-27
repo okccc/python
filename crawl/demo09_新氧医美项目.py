@@ -28,6 +28,7 @@ class SY(object):
         self.home = 'https://y.soyoung.com/yuehui/beijing/'
         self.addr_url = 'https://y.soyoung.com/{}/{}/'  # 省份 类目
         self.ajax_url = 'https://y.soyoung.com/yuehui/shop'
+        self.detail_url = 'https://y.soyoung.com/cp{}'  # pid
         # 请求头
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36",
@@ -165,6 +166,9 @@ class SY(object):
                 hospital_id = product['hospital_id']
                 hospital_name = product['hospital_name']
                 product_id = product['pid']
+                # response = requests.get(self.detail_url.format(product_id), headers=self.headers)
+                # html = etree.HTML(response.text)
+                # address = html.xpath('//div[@class="hospital"]//table//tr[3]/td[2]/text()')[0]
                 product_title = product['title']
                 price = product['price_online']
                 order_cnt = product['order_cnt']
@@ -187,7 +191,7 @@ class SY(object):
             cur = conn.cursor()
             try:
                 # 往数据库写数据(覆盖)
-                sql = "REPLACE INTO dw_xinyang_info VALUES(%s,%s,%s,%s,%s,%s,%s)"
+                sql = "REPLACE INTO dw_xinyang_product VALUES(%s,%s,%s,%s,%s,%s,%s)"
                 cur.executemany(sql, items)
                 conn.commit()
             except Exception as e:
@@ -231,6 +235,132 @@ class SY(object):
             q.join()
 
 
+class SY2(object):
+    def __init__(self):
+        self.url = 'https://y.soyoung.com/hospital/s0p0l0m0i0t0a0h0o0c2/page/{}'
+        self.headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36",
+            "Host": "y.soyoung.com",
+        }
+        # 数据库配置
+        self.config = {
+            "host": "10.9.157.245",
+            # "host": "localhost",
+            "port": 3306,
+            "user": "root",
+            "password": "ldaI00Uivwp",
+            # "password": "root",
+            "db": "hawaiidb",
+            # "db": "test",
+            "charset": "utf8",
+            "cursorclass": pymysql.cursors.DictCursor  # 以dict格式返回数据
+        }
+        # 构造url队列,请求响应队列,数据队列
+        self.url_queue = Queue()
+        self.html_queue = Queue()
+        self.item_queue = Queue()
+
+    def get_url(self):
+        """获取url列表"""
+        for i in range(1, 500):
+            # 将url放入url_queue
+            self.url_queue.put(self.url.format(i))
+
+    def get_data(self):
+        """发送get请求"""
+        while True:
+            # 从url_queue获取url
+            url = self.url_queue.get()
+            response = requests.get(url, headers=self.headers)
+            html = etree.HTML(response.text)
+            # 将html放入html_queue
+            self.html_queue.put(html)
+            # 将处理完的url_queue标记为task_done
+            self.url_queue.task_done()
+
+    def parse_data(self):
+        """解析数据"""
+        while True:
+            # 从html_queue获取html
+            html = self.html_queue.get()
+            lis = html.xpath('//li[@class="filter_item"]')
+            items = []
+            for each in lis:
+                shop = each.xpath('./a[1]/@title')[0]
+                qualification_tmp = each.xpath('./div/p[1]/text()')
+                qualification = qualification_tmp[0].strip() if len(qualification_tmp) > 0 else ''
+                address_tmp = each.xpath('./div/p[2]/text()')
+                address = address_tmp[0].strip() if len(address_tmp) > 0 else ''
+                skills = each.xpath('./div/p[3]/a/text()')
+                if len(skills) == 0:
+                    skills = ''
+                elif len(skills) == 1:
+                    skills = skills[0].strip()
+                elif len(skills) == 2:
+                    skills = skills[0].strip() + "," + skills[1].strip()
+                else:
+                    skills = skills[0].strip() + "," + skills[1].strip() + "," + skills[2].strip()
+                star_tmp = each.xpath('./div//span[@class="level"]/span/@style')
+                star = star_tmp[0][6:-1] if len(star_tmp) > 0 else ''
+                num_tmp = each.xpath('./div//span[@class="num"]/text()')
+                num = num_tmp[0][1:-1] if len(num_tmp) > 0 else 0
+                item = [shop, qualification, address, skills, star, num,
+                        time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]
+                items.append(item)
+            # 将items放入item_queue
+            self.item_queue.put(items)
+            # 将处理完的html_queue标记为task_done
+            self.html_queue.task_done()
+
+    def save_date(self):
+        """保存数据"""
+        while True:
+            # 从item_queue获取items
+            items = self.item_queue.get()
+            print(items)
+            conn = pymysql.connect(**self.config)
+            cur = conn.cursor()
+            try:
+                # 往数据库写数据(覆盖)
+                sql = "REPLACE INTO dw_xinyang_shop VALUES(%s,%s,%s,%s,%s,%s,%s)"
+                cur.executemany(sql, items)
+                conn.commit()
+            except Exception as e:
+                print(e)
+            finally:
+                cur.close()
+                conn.close()
+                # 将处理完的item_queue标记为task_done
+                self.item_queue.task_done()
+
+    def main(self):
+        # 线程列表
+        threads = []
+        # 1.获取url列表
+        self.get_url()
+        print(self.url_queue.qsize())
+        # 多线程操作部分
+        for i in range(5):
+            # 2.发送请求获取响应
+            t_get = threading.Thread(target=self.get_data)
+            threads.append(t_get)
+        for i in range(5):
+            # 3.解析数据
+            t_parse = threading.Thread(target=self.parse_data)
+            threads.append(t_parse)
+        for i in range(5):
+            # 4.保存数据
+            t_save = threading.Thread(target=self.save_date)
+            threads.append(t_save)
+        for t in threads:
+            # 由于子线程是死循环,要在开启之前将其设为守护线程表示该线程不重要,当主线程结束时不用等待子线程直接退出
+            t.setDaemon(daemonic=True)
+            t.start()
+        for q in [self.url_queue, self.html_queue, self.item_queue]:
+            # 让主线程在此处block,等待queue中的items全部处理完
+            q.join()
+
+
 if __name__ == '__main__':
-    sy = SY()
+    sy = SY2()
     sy.main()
