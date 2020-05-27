@@ -14,7 +14,9 @@ date  # -R 显示时区  -s 设置时间
 # 同步硬件时间
 hwclock -w
 # 使用ntp从时间服务器同步网络时间
-ntpdate cn.pool.ntp.org  
+ntpdate cn.pool.ntp.org
+# 开启httpd服务,通过ip访问linux的/var/www/html目录下的文件
+service httpd start && http://192.168.152.11/a.txt
 # 显示当前用户登陆时间
 who
 # 显示本机信息
