@@ -9,22 +9,12 @@ shutdown -h/-r now/5
 rm -rf /*
 # 日历
 cal (2019)  
-# 时间
-date  # -R 显示时区  -s 设置时间
-# 同步硬件时间
-hwclock -w
-# 使用ntp从时间服务器同步网络时间
-ntpdate cn.pool.ntp.org
 # 开启httpd服务,通过ip访问linux的/var/www/html目录下的文件
 service httpd start && http://192.168.152.11/a.txt
 # 显示当前用户登陆时间
 who
 # 显示本机信息
 uname -a  
-# 显示主机名 
-hostname
-# 修改主机名
-vim /etc/sysconfig/network 
 # 查看操作系统
 cat /etc/redhat-release
 # 查看系统位数
@@ -47,6 +37,20 @@ uptime  # -s,--since系统启动时间  -p,--pretty友好格式输出  -V版本�
 echo $SHELL  
 # 显示系统环境变量后10行
 set | tail -10  
+
+# ntp(network time protocol)
+# 硬件时钟：由主板电池驱动,关机后依然运行
+# 系统时钟：关机时不存在,开机后系统时钟从硬件时钟同步时间,关机时将系统时间写回硬件时钟
+# 查看系统时间
+date  # -R 显示时区
+# 查看硬件时间
+hwclock
+# 同步系统时钟到ntp服务器
+ntpdate -u <ntp_server>
+# 同步系统时钟到北京时间
+ntpdate cn.pool.ntp.org
+# 同步硬件时钟到系统时钟
+hwclock --systohc
 ```
 
 ### disk
