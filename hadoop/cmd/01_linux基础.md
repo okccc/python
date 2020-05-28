@@ -1,5 +1,7 @@
 ### os
 ```bash
+# RHEL(Red Hat Enterprise Linux)：红帽公司发布的面向企业的linux操作系统,收费
+# CentOS(Community enterprise Operating System)：基于RHEL的源代码二次编译而成,功能基本一样,免费
 # 32位和64位操作系统
 位指的是CPU一次能执行的二进制数据的位数  
 32位  # 2^32 = 4,294,967,296bit = 4g 理论上32位操作系统只能使用4g内存
