@@ -29,7 +29,11 @@ iconv -f utf-8 -c -t gbk aaa.csv > bbb.csv
 
 ### rpm
 ```bash
-# rpm((Red-Hat Package Manager))
+# rpm(Red-Hat Package Manager)
+# .rpm和.tar.gz区别
+# .rpm是已经编译好的二进制软件包,是RedHat公司发布的软件包管理工具,可使用rpm命令轻松安装/升级/卸载
+# .tar.gz是用tar打包用gzip压缩的二进制软件包,解压后需手动编译源码且无法升级
+# ./configure --prefix=指定路径(配置,方便rm -rf卸载干净) && make(编译) && make install(安装) && make uninstall(卸载)
 -q, --query                 # 查询  
 -a, --all                   # 所有  
 -i, --install               # 安装包  
