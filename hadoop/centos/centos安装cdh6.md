@@ -1,0 +1,212 @@
+- [SecureCRT 64位 破解版](https://www.jianshu.com/p/f61a4f1f4405)
+- [VMvare安装Centos7](https://zhangweisep.github.io/2019/03/02/VM%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AE%89%E8%A3%85Centos-7/)
+- [cm官方下载地址](https://archive.cloudera.com/cm6/6.2.1/redhat7/yum/RPMS/x86_64/)
+- [cdh官方下载地址](https://archive.cloudera.com/cdh6/6.2.1/parcels/)
+- [cdh6.2官方安装文档](https://docs.cloudera.com/documentation/enterprise/6/6.2/topics/installation.html)
+
+## centos7
+```bash
+# 修改ip地址  
+[root@cdh1 ~]# vim /etc/sysconfig/network-scripts/ifcfg-ens33
+BOOTPROTO="static"
+ONBOOT="yes"
+IPADDR=192.168.189.11
+GATEWAY=192.168.189.2  # 编辑 - 虚拟网络编辑器 - NAT设置
+NETMASK=255.255.255.0
+DNS1=8.8.8.8
+[root@cdh1 ~]# service network restart && ifconfig && ping www.baidu.com
+# 修改主机名
+[root@cdh1 ~]# vim /etc/hostname && reboot
+# 修改hosts
+[root@cdh1 ~]# vim /etc/hosts
+192.168.189.11  cdh1
+192.168.189.12  cdh2
+192.168.189.13  cdh3
+192.168.189.14  cdh4
+
+# 禁用selinux  
+[root@cdh1 ~]# vim /etc/sysconfig/selinux
+SELINUX=disabled 
+# 防火墙
+[root@cdh1 ~]# firewall-cmd --state && systemctl start/stop/enable/disable firewalld 
+
+# 开启ntp服务
+[root@cdh1 ~]# yum -y install ntp
+[root@cdh1 ~]# vim /etc/ntp.conf
+# server 0.centos.pool.ntp.org iburst
+# server 1.centos.pool.ntp.org iburst
+# server 2.centos.pool.ntp.org iburst
+# server 3.centos.pool.ntp.org iburst
+# 主节点 | 其它节点
+server cn.pool.ntp.org | server cdh1
+[root@cdh1 ~]# systemctl start/enable ntpd
+
+# 开启http服务
+[root@cdh1 ~]# yum -y install httpd
+[root@cdh1 conf]# vim /etc/httpd/conf/httpd.conf
+AddType application/x-gzip .gz .tgz .parcel
+[root@cdh1 ~]# systemctl start/enable httpd
+
+# 在线安装很慢,可以下载好放到本地仓库
+[root@cdh1 ~]# mkdir -p /var/www/html/cloudera-repos/cm6/6.2.1
+# 可以通过浏览器查看本地源 http://192.168.189.11/cloudera-repos/cm6/6.2.1
+# 创建CM的repo文件
+[root@cdh1 ~]# vim /etc/yum.repos.d/cloudera-manager.repo
+[cloudera-manager]
+name=Cloudera Manager 6.2.1
+baseurl=http://cdh1/cloudera-repos/cm6/6.2.1/
+gpgcheck=0
+enabled=1
+autorefresh=0
+type=rpm-md
+
+# Cloudera建议将/proc/sys/vm/swappiness设置为最大值10
+[root@cdh1 ~]# echo 10 > /proc/sys/vm/swappiness  # 临时生效
+[root@cdh1 ~]# vim /etc/sysctl.conf  # 永久生效
+vm.swappiness=10
+
+# Cloudera建议禁用大页面压缩
+[root@cdh1 ~]# echo never > /sys/kernel/mm/transparent_hugepage/defrag
+[root@cdh1 ~]# echo never > /sys/kernel/mm/transparent_hugepage/enabled
+
+# 安装jdk
+[root@cdh1 ~]# wget https://archive.cloudera.com/cm6/6.2.1/redhat7/yum/RPMS/x86_64/oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm
+[root@cdh1 ~]# vim /etc/profile
+export JAVA_HOME=/usr/java/jdk1.8.0_181-cloudera
+export PATH=$PATH:$JAVA_HOME/bin
+[root@cdh1 ~]# java -version
+
+# 安装mysql
+# 克隆虚拟机
+# 配置ssh免密登录
+[root@cdh1 ~]# ssh-keygen -t rsa
+[root@cdh1 ~]# ssh-copy-id cdh2/cdh3/cdh4
+```
+
+## CM
+```bash
+# 在cdh1节点安装Cloudera-Manager-Server
+# 安装依赖
+yum -y install bind-utils openssl-devel psmisc cyrus-sasl-plain cyrus-sasl-gssapi portmap /lib/lsb/init-functions httpd mod_ssl python-psycopg2 MySQL-python
+# 安装cl yum -y install bind-utils openssl-devel psmisc cyrus-sasl-plain cyrus-sasl-gssapi portmap /lib/lsb/init-functions httpd mod_ssl python-psycopg2 MySQL-python
+# 安装cloudera-manager-daemonsoudera-manager-daemons
+[root@cdh1 opt]# rpm -ivh cloudera-manager-daemons-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/cm
+# 安装cloudera-manager-server(master节点)
+[root@cdh1 opt]# rpm -ivh cloudera-manager-server-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/parcel-repo(csd) /etc/cloudera-scm-server /var/log/cloudera-scm-server
+# 安装cloudera-manager-agent
+[root@cdh1 opt]# rpm -ivh cloudera-manager-agent-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/cm-agent /etc/cloudera-scm-agent /var/log/cloudera-scm-agent
+
+# package包以.rpm结尾,数量多下载不方便
+# parcel包以.parcel结尾,相当于压缩包,一个包对应一个系统版本,方便下载
+# cloudera推荐使用parcel安装,方便Cloudera Manager自动化部署和滚动升级
+# 将CDH Parcel文件和manifest.json上传到 /opt/cloudera/parcel-repo/
+# 修改文件所有者
+[root@cdh1 parcel-repo]# chown -R cloudera-scm:cloudera-scm /opt/cloudera/parcel-repo/*
+# 修改server_host地址(所有节点)
+[root@cdh1 opt]# vim /etc/cloudera-scm-agent/config.ini
+server_host=cdh1
+
+# 安装JDBC Driver
+[root@cdh1 ~]# wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.46.tar.gz
+[root@cdh1 ~]# tar -xvf mysql-connector-java-5.1.46.tar.gz
+[root@cdh1 ~]# mkdir -p /usr/share/java/
+[root@cdh1 ~]# cp mysql-connector-java-5.1.46-bin.jar /usr/share/java/mysql-connector-java.jar
+# 创建CDH各组件的数据库
+CREATE DATABASE scm DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+GRANT ALL ON scm.* TO 'scm'@'%' IDENTIFIED BY 'scm@1234';
+CREATE DATABASE amon DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+GRANT ALL ON amon.* TO 'amon'@'%' IDENTIFIED BY 'amon@123';
+CREATE DATABASE rman DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+GRANT ALL ON rman.* TO 'rman'@'%' IDENTIFIED BY 'rman@123';
+CREATE DATABASE hue DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+GRANT ALL ON hue.* TO 'hue'@'%' IDENTIFIED BY 'hue@1234';
+CREATE DATABASE metastore DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+GRANT ALL ON metastore.* TO 'metastore'@'%' IDENTIFIED BY 'metastore@123';
+CREATE DATABASE sentry DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+GRANT ALL ON sentry.* TO 'sentry'@'%' IDENTIFIED BY 'sentry@123';
+CREATE DATABASE nav DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+GRANT ALL ON nav.* TO 'nav'@'%' IDENTIFIED BY 'nav@1234';
+CREATE DATABASE navms DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+GRANT ALL ON navms.* TO 'navms'@'%' IDENTIFIED BY 'navms@123';
+CREATE DATABASE oozie DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+GRANT ALL ON oozie.* TO 'oozie'@'%' IDENTIFIED BY 'oozie@123';
+CREATE DATABASE hive DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+GRANT ALL ON hive.* TO 'hive'@'%' IDENTIFIED BY 'hive@123';
+flush privileges;
+# 初始化CM数据库,密码是刚才创建的scm用户密码scm@1234
+[root@cdh1 ~]# /opt/cloudera/cm/schema/scm_prepare_database.sh mysql scm scm
+# 查看CM数据库配置
+[root@cdh1 ~]# cat /etc/cloudera-scm-server/db.properties
+
+# 启动CM服务,scm库会生成很多表,/var/log/cloudera-scm-server会生成cloudera-scm-server.log
+[root@cdh1 ~]# systemctl start/enable cloudera-scm-server
+[root@cdh1 ~]# tail -f /var/log/cloudera-scm-server/cloudera-scm-server.log
+INFO WebServerImpl:com.cloudera.server.cmf.WebServerImpl: Started Jetty server.  # 说明启动成功
+```
+
+## CDH
+```bash
+# 访问CM WEB界面 http://192.168.189.11:7180 admin/admin,登录后scm库的USERS表多了admin账号
+
+# 如果安装失败,卸载CDH环境重新部署
+[root@cdh1 ~]# yum -y remove 'cloudera-manager-*' && yum clean all
+```
+
+## db
+```sql
+-- 通过CM安装CDH默认使用内嵌的PostgreSQL数据库
+-- 数据库连接
+psql -h 127.0.0.1 -p 7432 -U cloudera-scm -d postgres
+-- 常用指令
+\q                -- 退出psql客户端
+\l                -- 列出所有的数据库
+\c database_name  -- 连接到指定的数据库
+\d                -- 列出当前数据库下所有表
+\d table_name     -- 显示指定表的结构信息
+\?                -- 列出所有sql的命令列表
+\h sql            -- 查看sql命令的解释,比如\h select 
+-- hive库下表名都是大写,查询时要加""不然报错
+hive=# select * from "DBS";
+-- 做crud操作时,字符串只能用'',""会被认为是column
+hue=# update auth_user set is_active='f' where id=10;
+```
+```sql
+[root@master1 data]# psql -h 127.0.0.1 -p 7432 -U cloudera-scm -d postgres
+Password for user cloudera-scm: 
+psql (9.2.24, server 9.2.23)
+Type "help" for help.
+
+postgres=# \l
+                                                List of databases
+        Name        |       Owner        | Encoding |  Collate   |   Ctype    |         Access privileges         
+--------------------+--------------------+----------+------------+------------+-----------------------------------
+ amon               | amon               | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ hive               | hive               | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ hue                | hue                | UTF8     | en_US.UTF8 | en_US.UTF8 | =Tc/hue                          +
+                    |                    |          |            |            | hue=CTc/hue
+ nav                | nav                | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ navms              | navms              | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ oozie_oozie_server | oozie_oozie_server | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ postgres           | cloudera-scm       | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ rman               | rman               | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ scm                | scm                | UTF8     | en_US.UTF8 | en_US.UTF8 | 
+ template0          | cloudera-scm       | UTF8     | en_US.UTF8 | en_US.UTF8 | =c/"cloudera-scm"                +
+                    |                    |          |            |            | "cloudera-scm"=CTc/"cloudera-scm"
+ template1          | cloudera-scm       | UTF8     | en_US.UTF8 | en_US.UTF8 | =c/"cloudera-scm"                +
+                    |                    |          |            |            | "cloudera-scm"=CTc/"cloudera-scm"
+(11 rows)
+
+postgres=# 
+```
+
+数据库|功能|账号密码
+:--:|:--|:--
+postgres|管理员账号cloudera-scm|/var/lib/cloudera-scm-server-db/data/generated_password.txt
+scm|cdh的metastore(集群配置的元数据)|/etc/cloudera-scm-server/db.properties
+hive|hive的metastore(表的元数据)|hive-site.xml
+hue|hue的metastore(用户,权限...)
+amon|activity monitor(活动监控)|/etc/cloudera-scm-server/db.mgmt.properties
+smon|service monitor(服务监控)
+rmon|report monitor(报告管理)
+hmon|host monitor(主机监控)
+nav|cloudera navigator(cloudera导航)
