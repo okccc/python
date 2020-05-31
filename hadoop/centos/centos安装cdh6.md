@@ -52,16 +52,6 @@ AddType application/x-gzip .gz .tgz .parcel
 [root@cdh1 ~]# systemctl start httpd && systemctl enable httpd
 Created symlink from /etc/systemd/system/multi-user.target.wants/httpd.service to /usr/lib/systemd/system/httpd.service
 
-# 创建CM的repo文件
-[root@cdh1 ~]# vim /etc/yum.repos.d/cloudera-manager.repo
-[cloudera-manager]
-name=Cloudera Manager 6.2.1
-baseurl=http://cdh1/cloudera-repos/cm6/6.2.1/
-gpgcheck=0  # yum安装或升级软件包时是否开启gpg校验 0关闭1开启 
-enabled=1   # yum安装或升级软件包时是否将该仓库做为软件包提供源 0禁用1启用
-autorefresh=0
-type=rpm-md
-
 # Cloudera建议将/proc/sys/vm/swappiness设置为最大值10
 [root@cdh1 ~]# echo 10 > /proc/sys/vm/swappiness  # 临时生效
 [root@cdh1 ~]# vim /etc/sysctl.conf  # 永久生效
@@ -87,7 +77,19 @@ export PATH=$PATH:$JAVA_HOME/bin
 
 ## CM
 ```bash
-# yum在线安装很慢,可以下载好放到本地仓库
+# 安装Cloudera-Manager-Server
+# 方式一：构建本地仓库源使用yum安装
+[root@cdh1 ~]# vim /etc/yum.repos.d/cloudera-manager.repo
+[cloudera-manager]
+name=Cloudera Manager 6.2.1
+baseurl=http://cdh1/cloudera-repos/cm6/6.2.1
+gpgcheck=0  # yum安装或升级软件包时是否开启gpg校验 0关闭1开启 
+enabled=1   # yum安装或升级软件包时是否将该仓库做为软件包提供源 0禁用1启用
+autorefresh=0
+type=rpm-md
+# 将cloudera-manager.repo复制到cdh2和cdh3
+[root@cdh1 ~]# scp -r /etc/yum.repos.d/cloudera-manager.repo cdh2:/etc/yum.repos.d
+# 通过http服务构建本地仓库地址
 [root@cdh1 ~]# mkdir -p /var/www/html/cloudera-repos/cm6/6.2.1/RPMS/x86_64/
 [root@cdh1 ~]# mkdir -p /var/www/html/cloudera-repos/cm6/6.2.1/repodata
 # 可以通过浏览器查看本地源 http://192.168.189.11/cloudera-repos/cm6/6.2.1/RPMS/x86_64/
@@ -98,18 +100,18 @@ export PATH=$PATH:$JAVA_HOME/bin
 -rw-r--r-- 1 root root 14041 9月  17 2019 allkeys.asc
 drwxr-xr-x 2 root root  4096 5月  31 14:23 repodata
 drwxr-xr-x 3 root root    20 5月  31 14:11 RPMS
-# 在cdh1节点安装Cloudera-Manager-Server
+# 只在cdh1节点安装,其它节点后续在CM界面里Install Agents
 [root@cdh1 ~]# yum install cloudera-manager-daemons cloudera-manager-agent cloudera-manager-server
 
-## 使用.rpm包手动安装
-## 安装依赖(所有节点)
-#yum -y install bind-utils openssl-devel psmisc cyrus-sasl-plain cyrus-sasl-gssapi portmap /lib/lsb/init-functions httpd mod_ssl python-psycopg2 MySQL-python
-## 安装cloudera-manager-daemons(所有节点)
-#[root@cdh1 opt]# rpm -ivh cloudera-manager-daemons-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/cm
-## 安装cloudera-manager-server(master节点)
-#[root@cdh1 opt]# rpm -ivh cloudera-manager-server-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/parcel-repo(csd) /etc/cloudera-scm-server /var/log/cloudera-scm-server
-## 安装cloudera-manager-agent(所有节点)
-#[root@cdh1 opt]# rpm -ivh cloudera-manager-agent-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/cm-agent /etc/cloudera-scm-agent /var/log/cloudera-scm-agent
+# 方式二：使用rpm命令手动安装
+# 安装依赖(所有节点)
+[root@cdh1 opt]# yum -y install bind-utils openssl-devel psmisc cyrus-sasl-plain cyrus-sasl-gssapi portmap /lib/lsb/init-functions httpd mod_ssl python-psycopg2 MySQL-python
+# 安装cloudera-manager-daemons(所有节点)
+[root@cdh1 opt]# rpm -ivh cloudera-manager-daemons-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/cm
+# 安装cloudera-manager-server(master节点)
+[root@cdh1 opt]# rpm -ivh cloudera-manager-server-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/parcel-repo(csd) /etc/cloudera-scm-server /var/log/cloudera-scm-server
+# 安装cloudera-manager-agent(所有节点)
+[root@cdh1 opt]# rpm -ivh cloudera-manager-agent-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/cm-agent /etc/cloudera-scm-agent /var/log/cloudera-scm-agent
 
 # package包以.rpm结尾,数量多下载不方便
 # parcel包以.parcel结尾,相当于压缩包,一个包对应一个系统版本,方便下载
@@ -162,7 +164,11 @@ INFO WebServerImpl:com.cloudera.server.cmf.WebServerImpl: Started Jetty server. 
 
 # 访问CM WEB界面 http://192.168.189.11:7180 admin/admin,登录后scm库的USERS表多了admin账号
 # Install Agents可能会失败多试几次
-# 创建hive和oozie数据库失败,因为使用MySQL作为元数据存储,要将mysql驱动放到hive和oozie的lib目录下
+# 安装完CDH要将mysql驱动放到hive和oozie的lib目录下不然创建数据库失败,因为hive和oozie使用mysql做metastore
+[root@cdh1 ~]# cp /usr/share/java/mysql-connector-java.jar /opt/cloudera/parcels/CDH/lib/hive/lib
+[root@cdh1 ~]# cp /usr/share/java/mysql-connector-java.jar /opt/cloudera/parcels/CDH/lib/oozie/lib
+# 数据库设置Hive -> JDBC URL
+jdbc:mysql://cdh1:3306/hive?createDatabaseIfNotExist=true
 # 如果安装失败,卸载CDH环境重新部署
 [root@cdh1 ~]# yum -y remove 'cloudera-manager-*' && yum clean all
 ```
