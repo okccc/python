@@ -1,3 +1,4 @@
+- [VMware Workstation 15 Pro 破解版](https://www.jianshu.com/p/2d00763a8605)
 - [SecureCRT 64位 破解版](https://www.jianshu.com/p/f61a4f1f4405)
 - [VMvare安装Centos7](https://zhangweisep.github.io/2019/03/02/VM%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AE%89%E8%A3%85Centos-7/)
 - [cm官方下载地址](https://archive.cloudera.com/cm6/6.2.1/redhat7/yum/RPMS/x86_64/)
@@ -6,6 +7,8 @@
 
 ## centos7
 ```bash
+# yum安装 -y表示不询问安装 Is this ok [y/d/N]: y
+[root@cdh1 ~]# yum -y install vim wget lrzsz
 # 修改ip地址  
 [root@cdh1 ~]# vim /etc/sysconfig/network-scripts/ifcfg-ens33
 BOOTPROTO="static"
@@ -28,7 +31,7 @@ DNS1=8.8.8.8
 [root@cdh1 ~]# vim /etc/sysconfig/selinux
 SELINUX=disabled 
 # 防火墙
-[root@cdh1 ~]# firewall-cmd --state && systemctl start/stop/enable/disable firewalld 
+[root@cdh1 ~]# firewall-cmd --state && systemctl stop firewalld && systemctl disable firewalld
 
 # 开启ntp服务
 [root@cdh1 ~]# yum -y install ntp
@@ -39,24 +42,23 @@ SELINUX=disabled
 # server 3.centos.pool.ntp.org iburst
 # 主节点 | 其它节点
 server cn.pool.ntp.org | server cdh1
-[root@cdh1 ~]# systemctl start/enable ntpd
+[root@cdh1 ~]# systemctl start ntpd && systemctl enable ntpd
+Created symlink from /etc/systemd/system/multi-user.target.wants/ntpd.service to /usr/lib/systemd/system/ntpd.service
 
 # 开启http服务
 [root@cdh1 ~]# yum -y install httpd
 [root@cdh1 conf]# vim /etc/httpd/conf/httpd.conf
 AddType application/x-gzip .gz .tgz .parcel
-[root@cdh1 ~]# systemctl start/enable httpd
+[root@cdh1 ~]# systemctl start httpd && systemctl enable httpd
+Created symlink from /etc/systemd/system/multi-user.target.wants/httpd.service to /usr/lib/systemd/system/httpd.service
 
-# 在线安装很慢,可以下载好放到本地仓库
-[root@cdh1 ~]# mkdir -p /var/www/html/cloudera-repos/cm6/6.2.1
-# 可以通过浏览器查看本地源 http://192.168.189.11/cloudera-repos/cm6/6.2.1
 # 创建CM的repo文件
 [root@cdh1 ~]# vim /etc/yum.repos.d/cloudera-manager.repo
 [cloudera-manager]
 name=Cloudera Manager 6.2.1
 baseurl=http://cdh1/cloudera-repos/cm6/6.2.1/
-gpgcheck=0
-enabled=1
+gpgcheck=0  # yum安装或升级软件包时是否开启gpg校验 0关闭1开启 
+enabled=1   # yum安装或升级软件包时是否将该仓库做为软件包提供源 0禁用1启用
 autorefresh=0
 type=rpm-md
 
@@ -66,17 +68,17 @@ type=rpm-md
 vm.swappiness=10
 
 # Cloudera建议禁用大页面压缩
-[root@cdh1 ~]# echo never > /sys/kernel/mm/transparent_hugepage/defrag
-[root@cdh1 ~]# echo never > /sys/kernel/mm/transparent_hugepage/enabled
+[root@cdh1 ~]# vim /etc/rc.local
+echo never > /sys/kernel/mm/transparent_hugepage/defrag
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
 
 # 安装jdk
 [root@cdh1 ~]# wget https://archive.cloudera.com/cm6/6.2.1/redhat7/yum/RPMS/x86_64/oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm
 [root@cdh1 ~]# vim /etc/profile
 export JAVA_HOME=/usr/java/jdk1.8.0_181-cloudera
 export PATH=$PATH:$JAVA_HOME/bin
-[root@cdh1 ~]# java -version
+[root@cdh1 ~]# source /etc/profile && java -version
 
-# 安装mysql
 # 克隆虚拟机
 # 配置ssh免密登录
 [root@cdh1 ~]# ssh-keygen -t rsa
@@ -85,16 +87,29 @@ export PATH=$PATH:$JAVA_HOME/bin
 
 ## CM
 ```bash
+# yum在线安装很慢,可以下载好放到本地仓库
+[root@cdh1 ~]# mkdir -p /var/www/html/cloudera-repos/cm6/6.2.1/RPMS/x86_64/
+[root@cdh1 ~]# mkdir -p /var/www/html/cloudera-repos/cm6/6.2.1/repodata
+# 可以通过浏览器查看本地源 http://192.168.189.11/cloudera-repos/cm6/6.2.1/RPMS/x86_64/
+[root@cdh1 6.2.1]# pwd
+/var/www/html/cloudera-repos/cm6/6.2.1
+[root@cdh1 6.2.1]# ll
+总用量 20
+-rw-r--r-- 1 root root 14041 9月  17 2019 allkeys.asc
+drwxr-xr-x 2 root root  4096 5月  31 14:23 repodata
+drwxr-xr-x 3 root root    20 5月  31 14:11 RPMS
 # 在cdh1节点安装Cloudera-Manager-Server
-# 安装依赖
-yum -y install bind-utils openssl-devel psmisc cyrus-sasl-plain cyrus-sasl-gssapi portmap /lib/lsb/init-functions httpd mod_ssl python-psycopg2 MySQL-python
-# 安装cl yum -y install bind-utils openssl-devel psmisc cyrus-sasl-plain cyrus-sasl-gssapi portmap /lib/lsb/init-functions httpd mod_ssl python-psycopg2 MySQL-python
-# 安装cloudera-manager-daemonsoudera-manager-daemons
-[root@cdh1 opt]# rpm -ivh cloudera-manager-daemons-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/cm
-# 安装cloudera-manager-server(master节点)
-[root@cdh1 opt]# rpm -ivh cloudera-manager-server-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/parcel-repo(csd) /etc/cloudera-scm-server /var/log/cloudera-scm-server
-# 安装cloudera-manager-agent
-[root@cdh1 opt]# rpm -ivh cloudera-manager-agent-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/cm-agent /etc/cloudera-scm-agent /var/log/cloudera-scm-agent
+[root@cdh1 ~]# yum install cloudera-manager-daemons cloudera-manager-agent cloudera-manager-server
+
+## 使用.rpm包手动安装
+## 安装依赖(所有节点)
+#yum -y install bind-utils openssl-devel psmisc cyrus-sasl-plain cyrus-sasl-gssapi portmap /lib/lsb/init-functions httpd mod_ssl python-psycopg2 MySQL-python
+## 安装cloudera-manager-daemons(所有节点)
+#[root@cdh1 opt]# rpm -ivh cloudera-manager-daemons-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/cm
+## 安装cloudera-manager-server(master节点)
+#[root@cdh1 opt]# rpm -ivh cloudera-manager-server-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/parcel-repo(csd) /etc/cloudera-scm-server /var/log/cloudera-scm-server
+## 安装cloudera-manager-agent(所有节点)
+#[root@cdh1 opt]# rpm -ivh cloudera-manager-agent-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/cm-agent /etc/cloudera-scm-agent /var/log/cloudera-scm-agent
 
 # package包以.rpm结尾,数量多下载不方便
 # parcel包以.parcel结尾,相当于压缩包,一个包对应一个系统版本,方便下载
@@ -102,16 +117,18 @@ yum -y install bind-utils openssl-devel psmisc cyrus-sasl-plain cyrus-sasl-gssap
 # 将CDH Parcel文件和manifest.json上传到 /opt/cloudera/parcel-repo/
 # 修改文件所有者
 [root@cdh1 parcel-repo]# chown -R cloudera-scm:cloudera-scm /opt/cloudera/parcel-repo/*
-# 修改server_host地址(所有节点)
-[root@cdh1 opt]# vim /etc/cloudera-scm-agent/config.ini
-server_host=cdh1
+[root@cdh1 parcel-repo]# ll -h
+总用量 2.0G
+-rw-r--r-- 1 cloudera-scm cloudera-scm 2.0G 5月  29 13:12 CDH-6.2.1-1.cdh6.2.1.p0.1425774-el7.parcel
+-rw-r--r-- 1 cloudera-scm cloudera-scm   40 12月  4 21:35 CDH-6.2.1-1.cdh6.2.1.p0.1425774-el7.parcel.sha
+-rw-r--r-- 1 cloudera-scm cloudera-scm  34K 12月  4 21:37 manifest.json
+# CDH会被安装在/opt/cloudera/parcels目录
+[root@cdh1 parcels]# ll
+总用量 0
+lrwxrwxrwx  1 root root  31 5月  31 15:21 CDH -> CDH-6.2.1-1.cdh6.2.1.p0.1425774
+drwxr-xr-x 11 root root 119 9月  11 2019 CDH-6.2.1-1.cdh6.2.1.p0.1425774
 
-# 安装JDBC Driver
-[root@cdh1 ~]# wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.46.tar.gz
-[root@cdh1 ~]# tar -xvf mysql-connector-java-5.1.46.tar.gz
-[root@cdh1 ~]# mkdir -p /usr/share/java/
-[root@cdh1 ~]# cp mysql-connector-java-5.1.46-bin.jar /usr/share/java/mysql-connector-java.jar
-# 创建CDH各组件的数据库
+# 安装mysql,创建cdh各组件的数据库
 CREATE DATABASE scm DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
 GRANT ALL ON scm.* TO 'scm'@'%' IDENTIFIED BY 'scm@1234';
 CREATE DATABASE amon DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
@@ -139,15 +156,13 @@ flush privileges;
 [root@cdh1 ~]# cat /etc/cloudera-scm-server/db.properties
 
 # 启动CM服务,scm库会生成很多表,/var/log/cloudera-scm-server会生成cloudera-scm-server.log
-[root@cdh1 ~]# systemctl start/enable cloudera-scm-server
-[root@cdh1 ~]# tail -f /var/log/cloudera-scm-server/cloudera-scm-server.log
+[root@cdh1 ~]# systemctl start cloudera-scm-server && systemctl enable cloudera-scm-server
+[root@cdh1 ~]# tail -f /var/log/cloudera-scm-server/cloudera-scm-server.log  # 时间略久
 INFO WebServerImpl:com.cloudera.server.cmf.WebServerImpl: Started Jetty server.  # 说明启动成功
-```
 
-## CDH
-```bash
 # 访问CM WEB界面 http://192.168.189.11:7180 admin/admin,登录后scm库的USERS表多了admin账号
-
+# Install Agents可能会失败多试几次
+# 创建hive和oozie数据库失败,因为使用MySQL作为元数据存储,要将mysql驱动放到hive和oozie的lib目录下
 # 如果安装失败,卸载CDH环境重新部署
 [root@cdh1 ~]# yum -y remove 'cloudera-manager-*' && yum clean all
 ```

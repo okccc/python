@@ -27,29 +27,6 @@ $-       # 显示shell使用的当前选项,与set命令功能相同
 iconv -f utf-8 -c -t gbk aaa.csv > bbb.csv  
 ```
 
-### rpm
-```bash
-# rpm(Red-Hat Package Manager)
-# .rpm和.tar.gz区别
-# .rpm是已经编译好的二进制软件包,是RedHat公司发布的软件包管理工具,可使用rpm命令轻松安装/升级/卸载
-# .tar.gz是用tar打包用gzip压缩的二进制软件包,解压后需手动编译源码且无法升级
-# ./configure --prefix=指定路径(配置,方便rm -rf卸载干净) && make(编译) && make install(安装) && make uninstall(卸载)
--q, --query                 # 查询  
--a, --all                   # 所有  
--i, --install               # 安装包  
--v, --verbose               # 显示详细信息  
--h, --hash                  # print hash marks as package installs (good with -v)  
--e, --erase                 # 卸载  
--U, --upgrade               # 升级 
---test                      # 安装测试,并不实际安装  
---nodeps                    # 忽略软件包的依赖关系强行安装/删除  
---force                     # 忽略软件包及文件的冲突  
-# 案例
-rpm -qa | grep -i mysql                            # 查询 
-rpm -ev MySQL-server-5.6.21-1.el6.x86_64           # 删除  
-rpm -ev --nodeps mysql-libs-5.1.71-1.el6.x86_64    # 忽略依赖关系强行删除  
-rpm -ivh file.rpm                                  # 显示安装进度
-rpm -Uvh file.rpm                                  # 升级安装包  
 ```
 
 ### lsof
