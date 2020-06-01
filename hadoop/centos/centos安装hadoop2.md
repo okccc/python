@@ -487,7 +487,23 @@ hadoop fs -du /user/hive/warehouse/ods.db | awk '{print int($1/1024/1024/1024) "
 http://centos01:50070 (active)  
 http://centos02:50070 (standby)  
 http://centos01:8088 (yarn)  
-http://centos01:19888 (jobhistory)  
+http://centos01:19888 (jobhistory)
+
+### hue
+```bash
+# 解决hue10万行下载限制
+# 以管理员账号admin登录查看配置信息
+Hue Administration - Configuration - beeswax - download_cell_limit(默认100000行*100列=10000000)
+[root@master1 ~]# find / -name beeswax
+/opt/cloudera/parcels/CDH-5.14.2-1.cdh5.14.2.p0.3/lib/hue/apps/beeswax
+/opt/cloudera/parcels/CDH-5.14.2-1.cdh5.14.2.p0.3/lib/hue/apps/beeswax/src/beeswax
+/opt/cloudera/parcels/CDH-5.14.2-1.cdh5.14.2.p0.3/lib/hue/apps/beeswax/src/beeswax/static/beeswax
+/opt/cloudera/parcels/CDH-5.14.2-1.cdh5.14.2.p0.3/lib/hue/build/static/beeswax
+[root@master1 ~]# vim /opt/cloudera/parcels/CDH-5.14.2-1.cdh5.14.2.p0.3/lib/hue/apps/beeswax/src/beeswax/conf.py
+DOWNLOAD_CELL_LIMIT = Config(
+  key='download_cell_limit',
+  default=100000000,
+```
 
 ### Trash   
 和Linux系统回收站一样,HDFS会为每个用户创建一个回收站目录：/user/用户名/.Trash/,在HDFS内部的具体实现就是在NameNode中开启一个后台线程Emptier,这个线程专门管理和监控系统回收站,将超过生命周期的数据删除并释放关联的数据块,但是在文件被删除和hdfs磁盘空间增加之间会有一个等待时间延迟;  
