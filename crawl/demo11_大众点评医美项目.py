@@ -27,14 +27,14 @@ class DP(object):
         }
         # 数据库配置
         self.config = {
-            # "host": "10.9.157.245",
-            "host": "localhost",
+            "host": "10.9.157.245",
+            # "host": "localhost",
             "port": 3306,
             "user": "root",
-            # "password": "ldaI00Uivwp",
-            "password": "root",
-            # "db": "hawaiidb",
-            "db": "test",
+            "password": "ldaI00Uivwp",
+            # "password": "root",
+            "db": "hawaiidb",
+            # "db": "test",
             "charset": "utf8",
             "cursorclass": pymysql.cursors.DictCursor  # 以dict格式返回数据
         }

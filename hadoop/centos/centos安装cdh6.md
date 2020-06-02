@@ -100,10 +100,10 @@ type=rpm-md
 -rw-r--r-- 1 root root 14041 9月  17 2019 allkeys.asc
 drwxr-xr-x 2 root root  4096 5月  31 14:23 repodata
 drwxr-xr-x 3 root root    20 5月  31 14:11 RPMS
-# 只在cdh1节点安装,其它节点后续在CM界面里Install Agents
+# 只在cdh1节点安装,其它节点后续在CM界面里Install Agents,yum会自动解决依赖问题
 [root@cdh1 ~]# yum install cloudera-manager-daemons cloudera-manager-agent cloudera-manager-server
 
-# 方式二：使用rpm命令手动安装
+# 方式二：使用rpm命令手动安装(推荐)
 # 安装依赖(所有节点)
 [root@cdh1 opt]# yum -y install bind-utils openssl-devel psmisc cyrus-sasl-plain cyrus-sasl-gssapi portmap /lib/lsb/init-functions httpd mod_ssl python-psycopg2 MySQL-python
 # 安装cloudera-manager-daemons(所有节点)
@@ -176,28 +176,20 @@ jdbc:mysql://cdh1:3306/hive?createDatabaseIfNotExist=true
 ## db
 ```sql
 -- 通过CM安装CDH默认使用内嵌的PostgreSQL数据库
--- 数据库连接
-psql -h 127.0.0.1 -p 7432 -U cloudera-scm -d postgres
--- 常用指令
-\q                -- 退出psql客户端
-\l                -- 列出所有的数据库
-\c database_name  -- 连接到指定的数据库
-\d                -- 列出当前数据库下所有表
-\d table_name     -- 显示指定表的结构信息
-\?                -- 列出所有sql的命令列表
-\h sql            -- 查看sql命令的解释,比如\h select 
--- hive库下表名都是大写,查询时要加""不然报错
-hive=# select * from "DBS";
--- 做crud操作时,字符串只能用'',""会被认为是column
-hue=# update auth_user set is_active='f' where id=10;
-```
-```sql
-[root@master1 data]# psql -h 127.0.0.1 -p 7432 -U cloudera-scm -d postgres
-Password for user cloudera-scm: 
-psql (9.2.24, server 9.2.23)
-Type "help" for help.
+postgres    -- 管理员cloudera-scm    /var/lib/cloudera-scm-server-db/data/generated_password.txt
+scm         -- cdh的metastore       /etc/cloudera-scm-server/db.properties
+hive        -- hive的metastore          
+hue         -- hue的metastore
+amon        -- activity monitor     /etc/cloudera-scm-server/db.mgmt.properties
+smon        -- service monitor
+rmon        -- report monitor
+hmon        -- host monitor
+nav         -- cloudera navigator
 
-postgres=# \l
+-- 使用管理员账号cloudera-scm登录,不然查询表没有权限
+[root@master1 ~]# psql -h 127.0.0.1 -p 7432 -U cloudera-scm -d postgres
+Password for user cloudera-scm:9BQ2Ep4fYm
+postgres=> \l
                                                 List of databases
         Name        |       Owner        | Encoding |  Collate   |   Ctype    |         Access privileges         
 --------------------+--------------------+----------+------------+------------+-----------------------------------
@@ -216,18 +208,19 @@ postgres=# \l
  template1          | cloudera-scm       | UTF8     | en_US.UTF8 | en_US.UTF8 | =c/"cloudera-scm"                +
                     |                    |          |            |            | "cloudera-scm"=CTc/"cloudera-scm"
 (11 rows)
+postgres=> 
 
-postgres=# 
+-- 常用指令
+\q                -- 退出psql客户端
+\l                -- 列出所有的数据库
+\c database_name  -- 连接到指定的数据库
+\d                -- 列出当前数据库下所有表
+\d table_name     -- 显示指定表的结构信息
+\?                -- 列出所有sql的命令列表
+\h sql            -- 查看sql命令的解释,比如\h select 
+
+-- hive库下表名都是大写,查询时要加""不然报错
+hive=# select * from "DBS";
+-- 做crud操作时,字符串只能用'',""会被认为是column
+hue=# update auth_user set password=md5('admin@123') where username='admin';
 ```
-
-数据库|功能|账号密码
-:--:|:--|:--
-postgres|管理员账号cloudera-scm|/var/lib/cloudera-scm-server-db/data/generated_password.txt
-scm|cdh的metastore(集群配置的元数据)|/etc/cloudera-scm-server/db.properties
-hive|hive的metastore(表的元数据)|hive-site.xml
-hue|hue的metastore(用户,权限...)
-amon|activity monitor(活动监控)|/etc/cloudera-scm-server/db.mgmt.properties
-smon|service monitor(服务监控)
-rmon|report monitor(报告管理)
-hmon|host monitor(主机监控)
-nav|cloudera navigator(cloudera导航)
