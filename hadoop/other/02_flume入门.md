@@ -1,158 +1,135 @@
-## flume简介
-vi flume-env.sh
-修改java_home=/home/cq/jdk1.8.0_65  
-查看版本：flume-ng version  
-![](images/flume原理.png)
-client ：生产数据，运行在一个独立的线程  
-event ：是flume数据传输的基本单元  
-agent：jvm 运行flume的最小独立单元，由source、channel和sink三大组件构成  
-source：从client收集数据，传递给channel  
-channel：数据缓冲区，连接 source和sink，像一个队列  
-memory channel: 基于内存，volatile(挥发)  
-file channel: 基于wal(预写式日志write-ahead logging）实现  
-jdbc channel: 基于嵌入database实现  
-        channel支持事务，提供较弱的顺序保证  
-sink：从channel收集数据，运行在一个独立线程，可以存储数据，也可以继续传输。  
-注意事项：  
-memory-channel：效率高但可能有丢数据的风险，使用memory-channel时，把capacity设置的足够小，使内存中的数据尽可能少，这样在意外重启和断电时丢的数据就很少  
-file-channel：在系统崩溃的时候能保证数据的完整性和一致性，安全性高但效率低，并且一般flume是用于数据传输，引入file-channel时，它的角色会向存储转变，这在整个流程中是不合适的，通常sink端是kafka和hdfs这种可用性和扩张性比较好的系统，不用担心数据拥堵问题  
-默认的http source没有设置线程池，有性能问题，如果有用到，需要修改代码。  
-单sink速度跟不上时，需要多个sink，比如跨机房数据传输网络延迟高单rpc sink吞吐上不去和hdfs sink效率不高情形，可以在一个channel后配多个sink
-***
-## 常用案例
-<font color=blue>**nginx2hdfs.conf**</font>
-```
-#  agent组件
-a1.sources = r1
-a1.sinks = k1
-a1.channels = c1
-#  配置source
-a1.sources.r1.type = exec
-a1.sources.r1.channels = c1
-a1.sources.r1.command = tail -F /opt/nginx/logs/da_qbsite_dig.access.log    # 要监控的日志文件
-#  添加拦截器(正则表达式)
-a1.sources.r1.interceptors = regex
-a1.sources.r1.interceptors.regex.type=REGEX_FILTER
-a1.sources.r1.interceptors.regex.regex=^.+uid=.+&uname=.+spuId=.+$
-a1.sources.r1.interceptors.regex.excludeEvents=false
-#  配置channel
-a1.channels.c1.type = memory
-a1.channels.c1.capacity = 1000
-a1.channels.c1.transactionCapacity = 100
-#  配置sink
-a1.sinks.k1.type = hdfs
-a1.sinks.k1.channel = c1
-a1.sinks.k1.hdfs.path = hdfs://nameservice1/user/flume/qbsite-events/%y-%m-%d/%H%M/
-a1.sinks.k1.hdfs.filePrefix = events#
-a1.sinks.k1.hdfs.useLocalTimeStamp = true
-a1.sinks.k1.hdfs.fileType = DataStream
-a1.sinks.k1.hdfs.writeFormat =Text
-a1.sinks.k1.hdfs.round = true
-a1.sinks.k1.hdfs.roundValue = 10
-a1.sinks.k1.hdfs.roundUnit = minute
-a1.sinks.k1.hdfs.rollInterval = 60
-a1.sinks.k1.hdfs.rollSize = 0
-a1.sinks.k1.hdfs.rollCount = 0
-a1.sinks.k1.hdfs.batchSize = 1
-a1.sinks.k1.hdfs.maxOpenFiles = 1000
-#  给source和sink绑定channel
-a1.sources.r1.channels = c1
-a1.sinks.k1.channel = c1
+### flume
+```bash
+# flume是基于流式架构的分布式日志采集系统,实时读取本地磁盘数据然后写入hdfs
 
-启动命令：bin/flume-ng agent -c conf -f conf/nginx-hdfs.conf -n a1  (存hdfs需要hadoop环境)
-后台运行：bin/nohup flume-ng agent -c conf -f conf/nginx-hdfs.conf -n a1 &
-# c：flume配置文件目录
-# f：自己写的文件目录
-# n：agent的名字
-# Dflume.root.logger=INFO,console：日志级别info，输出在控制台，有错误会显示，测试
+# flume优点
+1.可以和任意存储进程集成
+2.输入数据速率大于写入存储速率,flume会进行缓冲减轻hdfs压力
+3.flume使用receiver和sender两个独立事务模型来确保消息能可靠发送
+receiver：事务中所有数据全部成功提交到channel之后source才认为该数据读取完成
+sender：事务中所有数据全部被sink写出去才会从channel中移除,否则会回滚,所有事件回到channel等待重新传输
+
+# flume组件
+event：flume传输数据的基本单元
+agent：jvm运行flume的最小独立单元,由source-channel-sink组成
+source：接收数据,包括avro/exec/syslog/http/spool dir等各种格式的日志数据
+channel：数据缓冲区,像一个队列,允许source和sink运行在不同的速率上,包括memory channel(不关心数据丢失)和file channel(落地到磁盘)
+channel selectors：包括replicating(将source过来的events发往所有channel)和multiplexing(将source过来的events发往指定channel)
+sink：不断轮询channel中的事件并将其移除到存储系统或下一个agent,目的地通常是hdfs/logger等
+
+# web应用通常分布在多台服务器,可以部署多个flume采集日志然后集中到一个flume,再输出到hdfs进行日志分析
+
+# 安装配置
+[root@master1 ~]# vim flume-env.sh
+export JAVA_HOME=/usr/java/jdk1.8.0_181-cloudera
 ```
-***
-<font color=blue>**kafka2hdfs.conf**</font>
-```
+
+#### nginx-hdfs.conf
+```bash
 # 命名agent组件
 a1.sources = r1
 a1.sinks = k1
 a1.channels = c1
+
+# source是文件
+a1.sources.r1.type = exec  # execute,表示通过执行linux命令来读取文件
+a1.sources.r1.command = tail -f /var/log/hive/hadoop-cmf-hive-HIVESERVER2.log.out  # 要监控的日志文件
+# 添加拦截器
+a1.sources.r1.interceptors = regex
+a1.sources.r1.interceptors.regex.type=REGEX_FILTER
+a1.sources.r1.interceptors.regex.regex=^.+uid=.+&uname=.+spuId=.+$
+a1.sources.r1.interceptors.regex.excludeEvents=false
+
+# source是目录
+a2.sources.r2.type = spooldir
+a2.sources.r2.spoolDir = /opt/module/flume/upload
+a2.sources.r2.fileSuffix = .COMPLETED
+a2.sources.r2.fileHeader = true
+a2.sources.r2.ignorePattern = ([^ ]*\.tmp)  # 忽略所有以.tmp结尾的文件2
+
+# source是kafka
+a3.sources.r3.type = org.apache.flume.source.kafka.KafkaSource
+a3.sources.r3.zookeeperConnect = cdh1:2181
+a3.sources.r3.topic = test
+a3.sources.r3.groupId = flume
+a3.sources.r3.kafka.consumer.auto.offset.reset = earliest
+a3.sources.r3.kafka.consumer.timeout.ms = 100
+
+# 配置channel
+a1.channels.c1.type = memory
+a1.channels.c1.capacity = 1000             # 表示channel总容量是1000个event
+a1.channels.c1.transactionCapacity = 100   # 表示channel收集到100个event才会提交事务
+# 配置sink
+a1.sinks.k1.type = hdfs
+a1.sinks.k1.hdfs.path = hdfs://nameservice1/user/flume/qbsite-events/%y-%m-%d/%H
+a1.sinks.k1.hdfs.filePrefix = logs-        # 文件前缀
+a1.sinks.k1.hdfs.round = true              # 是否按照时间滚动文件夹
+a1.sinks.k1.hdfs.roundUnit = hour          # 定义时间单位
+a1.sinks.k1.hdfs.roundValue = 1            # 多久创建一个新的文件夹
+a1.sinks.k1.hdfs.useLocalTimeStamp = true  # 是否使用本地时间戳
+a1.sinks.k1.hdfs.batchSize = 1000          # 积攒多少个event才flush到hdfs
+a1.sinks.k1.hdfs.fileType = DataStream     # 文件类型,默认SequenceFile
+a1.sinks.k1.hdfs.rollInterval = 60         # 多久生成一个新的文件
+a1.sinks.k1.hdfs.rollSize = 134217728      # 设置每个文件的字节数
+a1.sinks.k1.hdfs.rollCount = 0             # 文件的滚动与event数量无关
+# 给source和sink绑定channel
+a1.sources.r1.channels = c1
+a1.sinks.k1.channel = c1
+
+# 启动flume
+bin/flume-ng agent -c conf -f conf/nginx-hdfs.conf -n a1
+-c  # flume配置文件目录
+-f  # 要执行的文件
+-n  # agent的名字
+-Dflume.root.logger=INFO,console  # 测试监听端口时使用
+```
+
+#### nginx-kafka-spark-redis.conf
+```bash
+# 下载flume整合kafka插件flumeng-kafka-plugin.jar放入flume/lib,启动flume-ng时需要用到的kafka的jar包
+# zkclient-0.3.jar、kafka_2.10-0.8.2.2.jar、kafka-clients-0.8.2.2.jar、scala-library-2.10.4.jar、metrics-core-2.2.0.jar也放入flume/lib
+# 命名agent组件
+a1.sources = r1
+a1.channels = c1
+a1.sinks = k1
 # 配置source
-a1.sources.r1.type = org.apache.flume.source.kafka.KafkaSource
-a1.sources.r1.channels = channel1
-a1.sources.r1.zookeeperConnect = localhost:2181
-a1.sources.r1.topic = test1
-a1.sources.r1.groupId = flume
-a1.sources.r1.kafka.consumer.auto.offset.reset = earliest
-a1.sources.r1.kafka.consumer.timeout.ms = 100
+a1.sources.r1.type = exec
+a1.sources.r1.command = tail -f /opt/test.log
+# 添加拦截器
+a1.sources.r1.interceptors = regex
+a1.sources.r1.interceptors.regex.type=REGEX_FILTER
+a1.sources.r1.interceptors.regex.regex=^.+uid=.+&uname=.+spuId=.+$
+a1.sources.r1.interceptors.regex.excludeEvents=false
 # 配置channel
 a1.channels.c1.type = memory
 a1.channels.c1.capacity = 1000
 a1.channels.c1.transactionCapacity = 100
 # 配置sink
-a1.sinks.k1.type = hdfs
-a1.sinks.k1.channel = c1
-a1.sinks.k1.hdfs.path = hdfs://172.16.14.52:8020/user/flume/qbsite-events/%y-%m-%d/%H%M/
-a1.sinks.k1.hdfs.filePrefix = events-
-a1.sinks.k1.hdfs.round = true
-a1.sinks.k1.hdfs.roundValue = 10
-a1.sinks.k1.hdfs.roundUnit = minute
-a1.sinks.k1.hdfs.rollInterval = 3
-a1.sinks.k1.hdfs.rollSize = 20
-a1.sinks.k1.hdfs.rollCount = 5
-a1.sinks.k1.hdfs.batchSize = 1
-a1.sinks.k1.hdfs.useLocalTimeStamp = true
-# 生成的文件类型，默认是Sequencefile，可用DataStream，则为普通文本
-a1.sinks.k1.hdfs.fileType = DataStream
-# 给source和sink绑定channel
-a1.sources.r1.channels = c1
-a1.sinks.k1.channel = c
-```
-***
-<font color=blue>**nginx2kafka2spark2redis.conf**</font>
-```
-下载flume整合kafka插件：flumeng-kafka-plugin.jar放入flume/lib目录下
-以及启动flume-ng时需要用到的kafka的jar包：zkclient-0.3.jar、kafka_2.10-0.8.2.2.jar、kafka-clients-0.8.2.2.jar、scala-library-2.10.4.jar、metrics-core-2.2.0.jar(数据统计工具)都要拷贝到flume/lib目录下
-#  命名agent组件
-a1.sources = r1
-a1.channels = c1
-a1.sinks = k1
-#  配置source
-a1.sources.r1.type = exec
-a1.sources.r1.command = tail -F /opt/nginx/logs/da_wapsite_dig.access.log (通常是nginx日志)
-#  添加拦截器
-a1.sources.r1.interceptors = regex
-a1.sources.r1.interceptors.regex.type=REGEX_FILTER
-a1.sources.r1.interceptors.regex.regex=^.+uid=.+&uname=.+spuId=.+$
-a1.sources.r1.interceptors.regex.excludeEvents=false
-#  配置channel
-a1.channels.c1.type = memory
-a1.channels.c1.capacity = 1000
-a1.channels.c1.transactionCapacity = 100
-#  配置sink
 a1.sinks.k1.type = org.apache.flume.plugins.KafkaSink
-a1.sinks.k1.metadata.broker.list = ubuntu:9092                                              //kafka端口
+a1.sinks.k1.metadata.broker.list = ubuntu:9092                            # kafka地址
 a1.sinks.k1.partition.key = 0
-a1.sinks.k1.partitioner.class = org.apache.flume.plugins.SinglePartition                    //kafka分区
-a1.sinks.k1.serializer.class = kafka.serializer.StringEncoder                               //序列化
-a1.sinks.k1.request.required.acks = 0                                                       //设置ack
-a1.sinks.k1.max.message.size = 1000000                                                      //message最大尺寸
-a1.sinks.k1.producer.type = sync                                                            //同步
-a1.sinks.k1.custom.encoding = UTF-8                                                        //编码
-a1.sinks.k1.custom.topic.name = test                                                        //topic名称
-#  给source和sink绑定channel
+a1.sinks.k1.partitioner.class = org.apache.flume.plugins.SinglePartition  # kafka分区
+a1.sinks.k1.serializer.class = kafka.serializer.StringEncoder             # 序列化
+a1.sinks.k1.request.required.acks = 0                                     # 设置ack
+a1.sinks.k1.max.message.size = 1000000                                    # message最大尺寸
+a1.sinks.k1.producer.type = sync                                          # 同步
+a1.sinks.k1.custom.encoding = UTF-8                                       # 编码
+a1.sinks.k1.custom.topic.name = test                                      # topic名称
+# 给source和sink绑定channel
 a1.sources.r1.channels = c1
 a1.sinks.k1.channel = c1
 
-1、先启动kafka：
+# 先启动kafka：
 kafka-server-start.sh config/server.properties &
 kafka-topics.sh --create --zookeeper ubuntu:2181 --replication-factor 1 --partitions 1 --topic test
 kafka-console-consumer.sh --zookeeper ubuntu:2181 --from-beginning --topic test
-2、再启动flume-ng：
+# 再启动flume-ng：
 flume-ng agent -c conf/ -f conf/flume-kafka.conf -n a1 -Dflume.root.logger=INFO,console
-3、往监测的文件test.log里边写数据，echo "犯我德邦者  虽远必诛 " >> test.log
-制造数据：for i in {1..10000};do echo "hello world $i" >> test.log;echo $i;sleep 0.01;done
-kafka的consumer接收到消息说明成功
-注意事项：spark要和zookeeper/kafka装在同一套集群环境上，因为spark作为consumer消费kafka的数据后要向zookeeper发送消息，zookeeper会移动offset
+# 往监测文件写数据,kafka的consumer接收到消息说明成功
+for i in {1..10000}; do echo "hello spark ${i}" >> test.log; echo ${i}; sleep 0.01; done
 ```
+
 ```java
-代码部分：
 package org.com.qbao.dc.spark.streaming;
 import java.util.ArrayList;
 import java.util.HashMap;
