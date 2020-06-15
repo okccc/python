@@ -110,8 +110,8 @@ def test04():
 
 
 if __name__ == "__main__":
-    recursive("D://PycharmProjects/spark/src/main/java/com/okccc/")
+    # recursive("D://PycharmProjects/spark/src/main/java/com/okccc/")
     # test01()
-    # test02()
+    test02()
     # test03()
     # test04()

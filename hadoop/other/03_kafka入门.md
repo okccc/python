@@ -1,20 +1,45 @@
-kafka安装   
-在centos01上安装kafka  
-1、修改server.properties  
-broker.id=1  
-advertised.host.name=ip地址（防止flume发送数据到kafka出错）  
-zookeeper.connect=centos01:2181,centos02:2181,centos03:2181  
-(把装有zk的机器都写上，如果本机的zk挂了，它会去找其它机器的zk)  
-2、发送到其它机器  
-scp -r kafka_2.10-0.8.1.1/ centos02:/home/cq  
-broker.id=2  
-zookeeper.connect=centos01:2181,centos02:2181,centos03:2181  
-3、先启动zookeeper集群  
-zkServer.sh start  
-4、在每一台节点上启动broker  
-进入kafka_home：kafka-server-start.sh config/server.properties & （在控制台打印启动信息）  
-![](images/broker.png)    
-重新启动！  
+### kafka
+```bash
+# Kafka是基于发布-订阅模式的分布式消息队列,主要应用于大数据实时处理领域
+[root@master1 ~]# vim server.properties
+# broker的全局唯一编号,不能重复
+broker.id=0
+# 开启删除topic功能
+delete.topic.enable=true
+# 处理网络请求的线程数
+num.network.threads=3
+# 处理磁盘io的线程数
+num.io.threads=8
+# 发送套接字的缓冲区大小
+socket.send.buffer.bytes=102400
+# 接收套接字的缓冲区大小
+socket.receive.buffer.bytes=102400
+# 请求套接字的缓冲区大小
+socket.request.max.bytes=104857600
+# kafka运行日志存放路径	
+log.dirs=/opt/module/kafka/logs
+# topic在当前broker上的分区个数
+num.partitions=1
+# 恢复和清理data下数据的线程数
+num.recovery.threads.per.data.dir=1
+# segment文件保留的最长时间,超时将被删除
+log.retention.hours=168
+# 配置Zookeeper地址
+zookeeper.connect=cdh1:2181,cdh2:2181,cdh3:2181
+
+[root@master1 ~]# vim /etc/profile && source /etc/profile
+export KAFKA_HOME=/opt/module/kafka
+export PATH=$PATH:$KAFKA_HOME/bin
+
+# 分发到其他节点
+scp -r kafka cdh2:/opt/module/kafka && broker.id=2
+scp -r kafka cdh3:/opt/module/kafka && broker.id=3
+
+# 先启动zookeeper  
+[root@master1 ~]# zkServer.sh start  
+# 在每个节点启动broker  
+[root@master1 ~]# kafka-server-start.sh config/server.properties &
+ 
 5、在kafka集群中创建topic  
 kafka-topics.sh --create --zookeeper centos01:2181 --replication-factor 3 --partitions 1 --topic girls  
 kafka-topics.sh --create --zookeeper centos01:2181 --replication-factor 3 --partitions 1 --topic boys  
@@ -44,8 +69,10 @@ Topic ：消息根据topic进行归类，每个topic被分成多个partition(区
 partition：在存储层面是逻辑append log文件，包含多个segment文件  
 Segement：消息存储的真实文件，会不断追加生成新的消息，默认存储7天  
 offset：消息在文件中的位置（偏移量）  
+```
+![](images/broker.png)  
 ![](images/kafka流程图.png)  
-<font color=red>kafka api</font>  
+### kafka api
 ```java
 public class ProducerDemo {  
     public static void main(String[] args) throws Exception {  
@@ -70,6 +97,7 @@ public class ProducerDemo {
         }  
     }  
 }  
+
 public class ConsumerDemo {  
     public static void main(String[] args) {  
         //新建属性  
@@ -111,7 +139,7 @@ public class ConsumerDemo {
     }  
 }  
 ```
-<font color=red>zookeeper监控</font>  
+### zookeeper监控
 kafka启动时会在zookeeper上创建brokers节点和consumers节点。  
 ![](images/zk01.png)    
 ids：监控broker是否存活     格式: /brokers/ids/[0...N]    

@@ -1,6 +1,8 @@
 ### flume
 ```bash
 # flume是基于流式架构的分布式日志采集系统,实时读取本地磁盘数据然后写入hdfs
+[root@master1 ~]# vim flume-env.sh
+export JAVA_HOME=/usr/java/jdk1.8.0_181-cloudera
 
 # flume优点
 1.可以和任意存储进程集成
@@ -18,10 +20,6 @@ channel selectors：包括replicating(将source过来的events发往所有channe
 sink：不断轮询channel中的事件并将其移除到存储系统或下一个agent,目的地通常是hdfs/logger等
 
 # web应用通常分布在多台服务器,可以部署多个flume采集日志然后集中到一个flume,再输出到hdfs进行日志分析
-
-# 安装配置
-[root@master1 ~]# vim flume-env.sh
-export JAVA_HOME=/usr/java/jdk1.8.0_181-cloudera
 ```
 
 #### nginx-hdfs.conf
