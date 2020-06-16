@@ -118,7 +118,8 @@ show profiles;
 show index from person;
 -- 删除索引
 alter table person drop index pindex;
--- 创建视图(将复杂的查询sql封装成虚拟表,表可读可写视图只能读不能写)
+-- 创建视图(将复杂的查询sql封装成虚拟表)
+-- 视图优点：sql语句重用,简化复杂sql(解耦),定制用户数据,安全(只能读不能写)
 create view view_name as select id,name,age from person where sex='男';
 -- 查看视图
 select * from view_name;
