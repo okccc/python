@@ -1,6 +1,7 @@
 ### kafka
 ```bash
 # Kafka是基于发布-订阅模式的分布式消息队列,主要应用于大数据实时处理领域
+# 消息队列作用：异步(注册发短信)、消峰(秒杀系统流量消峰)、解耦
 [root@master1 ~]# vim server.properties
 # broker的全局唯一编号,不能重复
 broker.id=0
@@ -16,7 +17,7 @@ socket.send.buffer.bytes=102400
 socket.receive.buffer.bytes=102400
 # 请求套接字的缓冲区大小
 socket.request.max.bytes=104857600
-# kafka运行日志存放路径	
+# kafka运行日志存放路径
 log.dirs=/opt/module/kafka/logs
 # topic在当前broker上的分区个数
 num.partitions=1

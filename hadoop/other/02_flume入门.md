@@ -15,7 +15,7 @@ sender：事务中所有数据全部被sink写出去才会从channel中移除,�
 event：flume传输数据的基本单元
 agent：jvm运行flume的最小独立单元,由source-channel-sink组成
 source：接收数据,包括avro/exec/syslog/http/spool dir等各种格式的日志数据
-channel：数据缓冲区,像一个队列,允许source和sink运行在不同的速率上,包括memory channel(不关心数据丢失)和file channel(落地到磁盘)
+channel：数据缓冲区,相当于消息队列,允许source和sink运行在不同的速率上,包括memory channel(不关心数据丢失)和file channel(落地到磁盘)
 channel selectors：包括replicating(将source过来的events发往所有channel)和multiplexing(将source过来的events发往指定channel)
 sink：不断轮询channel中的事件并将其移除到存储系统或下一个agent,目的地通常是hdfs/logger等
 
