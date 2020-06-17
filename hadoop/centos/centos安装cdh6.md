@@ -110,8 +110,11 @@ drwxr-xr-x 3 root root    20 5月  31 14:11 RPMS
 [root@cdh1 opt]# rpm -ivh cloudera-manager-daemons-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/cm
 # 安装cloudera-manager-server(master节点)
 [root@cdh1 opt]# rpm -ivh cloudera-manager-server-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/parcel-repo(csd) /etc/cloudera-scm-server /var/log/cloudera-scm-server
+Created symlink from /etc/systemd/system/multi-user.target.wants/cloudera-scm-server.service to /usr/lib/systemd/system/cloudera-scm-server.service
 # 安装cloudera-manager-agent(所有节点)
 [root@cdh1 opt]# rpm -ivh cloudera-manager-agent-6.2.1-1426065.el7.x86_64.rpm  # 新增目录/opt/cloudera/cm-agent /etc/cloudera-scm-agent /var/log/cloudera-scm-agent
+Created symlink from /etc/systemd/system/multi-user.target.wants/cloudera-scm-agent.service to /usr/lib/systemd/system/cloudera-scm-agent.service
+Created symlink from /etc/systemd/system/multi-user.target.wants/supervisord.service to /usr/lib/systemd/system/supervisord.service
 
 # package包以.rpm结尾,数量多下载不方便
 # parcel包以.parcel结尾,相当于压缩包,一个包对应一个系统版本,方便下载
