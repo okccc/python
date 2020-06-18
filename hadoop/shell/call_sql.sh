@@ -1,10 +1,8 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 if [ $# -eq 1 ]; then
     sqlfile=$1
     stat_date=`date -d yesterday +%Y%m%d`
-	dt=${stat_date:0:8}
-	hour=${stat_date:8:2}
 elif [ $# -eq 2 ]; then
     sqlfile=$1
     stat_date=$2
@@ -20,12 +18,14 @@ test ! -d $logpath && mkdir $logpath
 hqlpath=/home/hive/gds/hql
 ERRORLOG=${logpath}/${sqlfile}_${stat_date}.log
 
-#执行hql文件
-hive -hivevar data_date=${stat_date} -hivevar data_date_dt=${dt} -hivevar data_date_hour=${hour} -f ${hqlpath}/${sqlfile}.sql &>> $ERRORLOG
+# hive shell -> sql对应的dt=${hivevar:dt}
+hive -hivevar dt=${stat_date} -f ${hqlpath}/${sqlfile}.sql &>> ${ERRORLOG}
+# impala-shell -> sql对应的dt='${var:dt}'
+impala-shell -i master2 --var=dt=${stat_date} -f ${hqlpath}/${sqlfile}.sql &>> ${ERRORLOG}
 
 if [ $? -eq 0 ];then
-    echo "---call proc succeed at $CURRENT---" >> $ERRORLOG
+    echo "---call proc succeed at $CURRENT---" >> ${ERRORLOG}
 else
-    echo "---call proc failed at $CURRENT---" >>  $ERRORLOG
+    echo "---call proc failed at $CURRENT---" >>  ${ERRORLOG}
     exit 1
 fi

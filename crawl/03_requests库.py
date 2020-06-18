@@ -47,7 +47,7 @@ import json
 def get():
     # 请求地址
     url = "https://www.baidu.com/s?"
-    # 请求头：一般加上User-Agent就可以,不行的话再加上HOST/COOKIE试试
+    # 请求头：一般加上User-Agent就可以,不行的话再加上HOST/COOKIE试试,有时候返回结果为空说明ip被封了
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.1; rv2.0.1) Gecko/20100101 Firefox/4.0.1"}
     # 参数
     params = {"wd": "知乎"}

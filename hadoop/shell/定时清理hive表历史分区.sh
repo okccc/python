@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 LOG_PATH=/user/hive/warehouse/logs.db
 ERRORLOG=/bidata/nginx/webtrace/webtrace/branch/rm_log/hive_partition_clean.log

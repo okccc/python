@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 YESTERDAY=`date -d yesterday +%Y-%m-%d`
 

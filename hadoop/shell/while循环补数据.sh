@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 table=$1
 partitions=$2

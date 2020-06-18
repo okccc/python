@@ -1,5 +1,6 @@
 # coding=utf-8
 import requests
+from lxml import etree
 from selenium import webdriver
 from queue import Queue
 import time
@@ -26,11 +27,14 @@ class MT(object):
         }
         # 数据库配置
         self.config = {
-            "host": "10.9.157.245",
+            # "host": "10.9.157.245",
+            "host": "localhost",
             "port": 3306,
             "user": "root",
-            "password": "ldaI00Uivwp",
-            "db": "hawaiidb",
+            # "password": "ldaI00Uivwp",
+            "password": "root",
+            # "db": "hawaiidb",
+            "db": "test",
             "charset": "utf8",
             "cursorclass": pymysql.cursors.DictCursor  # 以dict格式返回数据
         }
@@ -44,7 +48,7 @@ class MT(object):
     def get_city_tag(self):
         """获取城市和类目信息"""
         # 城市编号
-        cityids = [1, 10, 20, 30, 40, 42, 44, 45, 50, 51, 52, 55, 56, 57, 59, 60, 62, 65, 66, 70, 73, 76, 80, 82, 83, 89, 91,]
+        cityids = [1, 10, 20, 30, 40, 42, 44, 45, 50, 51, 52, 55, 56, 57, 59, 60, 62, 65, 66, 70, 73, 76, 80, 82, 83, 89, 91]
         # cityids = [1]
         # 医学美容分类编号
         tagids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 54, 123, 156, 157, 158]
@@ -97,8 +101,8 @@ class MT(object):
         driver.quit()
 
     def get_url(self):
+        """获取所有url"""
         while True:
-            """获取所有url"""
             # 从meta_queue取出元组(city, tag, count)并拆包
             cityid, tagid, count = self.meta_queue.get()
             for i in range(1, count):
@@ -131,28 +135,39 @@ class MT(object):
             for shop in shops:
                 shop_id = shop['shopId']
                 shop_name = shop['name']
-                ext_infos = shop['extInfo']
-                product_infos = shop['productInfos']
-                if ext_infos:
-                    for info in ext_infos:
-                        info_id = info['id']
-                        info_title = info['title']
-                        price = info['price']
-                        saled = info['saledTimeDesc'] if info['saledTimeDesc'] else '已售0'
-                        item = [shop_id, shop_name, info_id, info_title, price, saled,
-                                time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]
-                        items.append(item)
-                elif product_infos:
-                    for info in product_infos:
-                        info_id = info['infoId']
-                        info_title = info['title']
-                        price = info['currentPrice']
-                        saled = info['saledTimeDesc'] if info['saledTimeDesc'] else '已售0'
-                        item = [shop_id, shop_name, info_id, info_title, price, saled,
-                                time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]
-                        items.append(item)
-                else:
-                    continue
+                link = shop['url']
+                response = requests.get(link, headers=self.headers)
+                html = etree.HTML(response.text)
+                address_tmp = html.xpath('//div[@class="poi-address"]/text()')
+                address = address_tmp[0] if len(address_tmp) > 0 else ''
+                expend_tmp = html.xpath('//span[@class="avg-price"]/text()')
+                expend = expend_tmp[0][3:] if len(expend_tmp) > 0 else ''
+                star_tmp = html.xpath('//a[@class="react"]//em[@class="star-text"]/text()')
+                star = star_tmp[0] if len(star_tmp) > 0 else 0
+                num_tmp = html.xpath('//span[@class="pull-right"]/text()')
+                num = num_tmp[0][:-3] if len(num_tmp) > 0 else 0
+                item = [shop_id, shop_name, address, expend, star, num, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]
+                items.append(item)
+                # if ext_infos:
+                #     for info in ext_infos:
+                #         info_id = info['id']
+                #         info_title = info['title']
+                #         price = info['price']
+                #         saled = info['saledTimeDesc'] if info['saledTimeDesc'] else '已售0'
+                #         item = [shop_id, shop_name, info_id, info_title, price, saled,
+                #                 time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]
+                #         items.append(item)
+                # elif product_infos:
+                #     for info in product_infos:
+                #         info_id = info['infoId']
+                #         info_title = info['title']
+                #         price = info['currentPrice']
+                #         saled = info['saledTimeDesc'] if info['saledTimeDesc'] else '已售0'
+                #         item = [shop_id, shop_name, info_id, info_title, price, saled,
+                #                 time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]
+                #         items.append(item)
+                # else:
+                #     continue
             # 将items放入item_queue
             if len(items) > 0:
                 self.item_queue.put(items)
@@ -169,7 +184,7 @@ class MT(object):
             cur = conn.cursor()
             try:
                 # 往数据库写数据(覆盖)
-                sql = "replace into dw_meituan_info values(%s,%s,%s,%s,%s,%s,%s)"
+                sql = "replace into dw_meituan_shop values(%s,%s,%s,%s,%s,%s,%s)"
                 cur.executemany(sql, items)
                 conn.commit()
             except Exception as e:
@@ -203,7 +218,7 @@ class MT(object):
             # 4.解析数据
             t_parse = threading.Thread(target=self.parse_data)
             thread_list.append(t_parse)
-        for i in range(10):
+        for i in range(15):
             # 5.保存数据
             t_save = threading.Thread(target=self.save_data)
             thread_list.append(t_save)
@@ -213,6 +228,142 @@ class MT(object):
             t.start()
             time.sleep(0.5)
         for q in (self.city_tag_queue, self.meta_queue, self.url_queue, self.data_queue, self.item_queue):
+            q.join()
+
+
+class MT2(object):
+    def __init__(self):
+        # 列表页
+        self.url = 'https://{}.meituan.com/jiankangliren/pn{}/'
+        self.headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36"}
+        # 数据库配置
+        self.config = {
+            "host": "10.9.157.245",
+            # "host": "localhost",
+            "port": 3306,
+            "user": "root",
+            "password": "ldaI00Uivwp",
+            # "password": "root",
+            "db": "hawaiidb",
+            # "db": "test",
+            "charset": "utf8",
+            "cursorclass": pymysql.cursors.DictCursor  # 以dict格式返回数据
+        }
+        # 构造url队列,请求响应队列,数据队列
+        self.url_queue = Queue()
+        self.html_queue = Queue()
+        self.item_queue = Queue()
+
+    def get_url(self):
+        """获取url列表"""
+        # 城市名称
+        # citys = ['bj', 'sh', 'gz', 'sz', 'tj', 'xa', 'cq', 'hz', 'nj', 'wh', 'cd', 'cz', 'cc', 'chs', 'dl', 'dg', 'fz', 'fs',
+        #          'gy', 'hf', 'hrb', 'jn', 'km', 'nb', 'nn', 'nc', 'qd', 'qz', 'sjz', 'su', 'sy', 'ty', 'wz', 'xm', 'zz']
+        citys = ['gz', 'sz']
+        for city in citys:
+            # 每个城市首页
+            url_full = self.url.format(city, 1)
+            print(url_full)
+            response = requests.get(url_full, headers=self.headers)
+            html = etree.HTML(response.text)
+            # 判断最大页数
+            num = html.xpath('//nav[@class="mt-pagination"]//li[last()-1]//text()')
+            print(num)
+            if num:
+                for i in range(1, int(num[0])+1):
+                    # 将url放入url_queue
+                    self.url_queue.put(self.url.format(city, i))
+
+    def get_data(self):
+        """发送get请求"""
+        while True:
+            # 从url_queue获取url
+            url = self.url_queue.get()
+            print(url)
+            response = requests.get(url, headers=self.headers)
+            html = etree.HTML(response.text)
+            # 将html放入html_queue
+            self.html_queue.put(html)
+            # 将处理完的url_queue标记为task_done
+            self.url_queue.task_done()
+
+    def parse_data(self):
+        """解析数据"""
+        while True:
+            # 从html_queue获取html
+            html = self.html_queue.get()
+            divs = html.xpath('//div[contains(@class,"abstract-item")]')
+            items = []
+            for each in divs:
+                shop = each.xpath('.//a[@class="item-title"]/text()')[0]
+                classify_tmp = each.xpath('.//div[@class="item-site-info"]/span[1]/text()')
+                print(classify_tmp)
+                classify = classify_tmp[0] if len(classify_tmp) > 0 else ''
+                address_tmp = each.xpath('.//div[@class="item-site-info"]/span[2]/text()')
+                print(address_tmp)
+                address = address_tmp[0] if len(address_tmp) > 0 else ''
+                try:
+                    expend = each.xpath('.//div[@class="item-price-info"]/span/text()')[0]
+                except:
+                    expend = ''
+                star_tmp = each.xpath('.//div[contains(@class,"item-eval-info")]/span[1]/text()')
+                star = star_tmp[0] if len(star_tmp) > 0 else ''
+                num_tmp = each.xpath('.//div[contains(@class,"item-eval-info")]/span[2]/text()')
+                num = num_tmp[0] if len(num_tmp) > 0 else 0
+                item = [shop, classify, address, expend, star, num, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]
+                print(item)
+                items.append(item)
+            # 将items放入item_queue
+            self.item_queue.put(items)
+            # 将处理完的html_queue标记为task_done
+            self.html_queue.task_done()
+
+    def save_date(self):
+        """保存数据"""
+        while True:
+            # 从item_queue获取items
+            items = self.item_queue.get()
+            print(items)
+            conn = pymysql.connect(**self.config)
+            cur = conn.cursor()
+            try:
+                # 往数据库写数据(覆盖)
+                sql = "REPLACE INTO dw_meituan_shop VALUES(%s,%s,%s,%s,%s,%s,%s)"
+                cur.executemany(sql, items)
+                conn.commit()
+            except Exception as e:
+                print(e)
+            finally:
+                cur.close()
+                conn.close()
+                # 将处理完的item_queue标记为task_done
+                self.item_queue.task_done()
+
+    def main(self):
+        # 线程列表
+        threads = []
+        # 1.获取url列表
+        self.get_url()
+        print(self.url_queue.qsize())
+        # 多线程操作部分
+        for i in range(5):
+            # 2.发送请求获取响应
+            t_get = threading.Thread(target=self.get_data)
+            threads.append(t_get)
+        for i in range(5):
+            # 3.解析数据
+            t_parse = threading.Thread(target=self.parse_data)
+            threads.append(t_parse)
+        for i in range(5):
+            # 4.保存数据
+            t_save = threading.Thread(target=self.save_date)
+            threads.append(t_save)
+        for t in threads:
+            # 由于子线程是死循环,要在开启之前将其设为守护线程表示该线程不重要,当主线程结束时不用等待子线程直接退出
+            t.setDaemon(daemonic=True)
+            t.start()
+        for q in [self.url_queue, self.html_queue, self.item_queue]:
+            # 让主线程在此处block,等待queue中的items全部处理完
             q.join()
 
 

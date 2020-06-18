@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 LOG_PATH=/bidata/nginx/webtrace/webtrace/branch
 ERRORLOG=/bidata/nginx/webtrace/webtrace/branch/rm_log/log_clean.log

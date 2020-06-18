@@ -54,14 +54,14 @@ dataLogDir=/home/project/zookeeper-3.6.1/logs
 # the port at which the clients will connect  
 clientPort=2181  
 # 服务器名称与地址：集群信息(服务器编号,服务器地址,LF通信端口,选举端口)  
-server.1=centos01:2888:3888
-server.2=centos02:2888:3888
-server.3=centos03:2888:3888
+server.1=cdh1:2888:3888
+server.2=cdh2:2888:3888
+server.3=cdh3:2888:3888
 ```
 
 - zk启动报错
 ```bash
-org.apache.zookeeper.server.quorum.QuorumPeerConfig$ConfigException: Address unresolved: centos01:3888
+org.apache.zookeeper.server.quorum.QuorumPeerConfig$ConfigException: Address unresolved: cdh1:3888
 原因：3888后面有空格导致无法识别端口号,linux复制文件时要注意空格
 
 Caused by: java.lang.IllegalArgumentException: myid file is missing
@@ -134,7 +134,7 @@ export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
     <!-- 指定zookeeper地址 -->  
     <property>  
         <name>ha.zookeeper.quorum</name>  
-        <value>centos01:2181,centos02:2181,centos03:2181</value>  
+        <value>cdh1:2181,cdh2:2181,cdh3:2181</value>  
     </property>
     <!-- 文件删除后保留时长(分钟),默认0表示关闭回收站,安全起见还是打开防止误删数据 -->
     <property>  
@@ -160,27 +160,27 @@ export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
     <!-- nn1的RPC通信地址 -->  
     <property>  
         <name>dfs.namenode.rpc-address.ns1.nn1</name>  
-        <value>centos01:9000</value>  
+        <value>cdh1:9000</value>  
     </property>  
     <!-- nn1的http通信地址 -->  
     <property>  
         <name>dfs.namenode.http-address.ns1.nn1</name>  
-        <value>centos01:50070</value>  
+        <value>cdh1:50070</value>  
     </property>  
     <!-- nn2的RPC通信地址 -->  
     <property>  
         <name>dfs.namenode.rpc-address.ns1.nn2</name>  
-        <value>centos02:9000</value>  
+        <value>cdh2:9000</value>  
     </property>  
     <!-- nn2的http通信地址 -->  
     <property>  
         <name>dfs.namenode.http-address.ns1.nn2</name>  
-        <value>centos02:50070</value>  
+        <value>cdh2:50070</value>  
     </property>  
     <!-- 指定NameNode的元数据在JournalNode上的存放位置 -->  
     <property>  
         <name>dfs.namenode.shared.edits.dir</name>  
-        <value>qjournal://centos01:8485;centos02:8485;centos03:8485/ns1</value>  
+        <value>qjournal://cdh1:8485;cdh2:8485;cdh3:8485/ns1</value>  
     </property>  
     <!-- 指定JournalNode在本地磁盘存放数据的位置 -->  
     <property>  
@@ -231,7 +231,7 @@ export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
     <!-- JDBC元数据地址 -->
 	<property>
 	  <name>javax.jdo.option.ConnectionURL</name>
-	  <value>jdbc:mysql://centos01:3306/metastore?createDatabaseIfNotExist=true</value>
+	  <value>jdbc:mysql://cdh1:3306/metastore?createDatabaseIfNotExist=true</value>
 	</property>
 	<!-- JDBC驱动类 -->
 	<property>
@@ -267,12 +267,12 @@ export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
     <!-- mr历史服务器端地址 -->
     <property>
         <name>mapreduce.jobhistory.address</name>
-        <value>centos01:10020</value>
+        <value>cdh1:10020</value>
     </property>
     <!-- mr历史服务器web端地址 -->
     <property>
         <name>mapreduce.jobhistory.webapp.address</name>
-        <value>centos01:19888</value>
+        <value>cdh1:19888</value>
     </property>
 </configuration>  
 ```
@@ -298,16 +298,16 @@ export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
     <!-- 分别指定RM的地址 -->  
     <property>  
        <name>yarn.resourcemanager.hostname.rm1</name>  
-       <value>centos01</value>  
+       <value>cdh1</value>  
     </property>  
     <property>  
        <name>yarn.resourcemanager.hostname.rm2</name>  
-       <value>centos02</value>  
+       <value>cdh2</value>  
     </property>  
     <!-- 指定zk集群地址 -->  
     <property>  
        <name>yarn.resourcemanager.zk-address</name>  
-       <value>centos01:2181,centos02:2181,centos03:2181</value>  
+       <value>cdh1:2181,cdh2:2181,cdh3:2181</value>  
     </property>  
     <!-- Reducer获取数据的方式 -->
     <property>  
@@ -327,7 +327,7 @@ export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
     <!-- 指定yarn.log.server.url所在节点 -->
     <property>
         <name>yarn.log.server.url</name>
-        <value>http://centos01:19888/jobhistory/logs</value>
+        <value>http://cdh1:19888/jobhistory/logs</value>
     </property>
     
     <!-- 下面两项配置是防止spark运行时内存不足导致报错-->
@@ -347,15 +347,15 @@ export HIVE_CONF_DIR=/home/project/hive-1.2.1/conf
 - slaves
 ```bash
 # 修改slaves  
-centos01  
-centos02  
-centos03  
+cdh1  
+cdh2  
+cdh3  
 # 配置ssh免密登录  
 ssh-keygen -t rsa  
-ssh-coyp-id centos01,centos02,centos03
+ssh-coyp-id cdh1,cdh2,cdh3
 # 拷贝到其它节点(将share下的doc删掉不然很慢)  
-scp -r hadoop-2.7.2/ centos02:/home/project  
-scp -r hadoop-2.7.2/ centos03:/home/project
+scp -r hadoop-2.7.2/ cdh2:/home/project  
+scp -r hadoop-2.7.2/ cdh3:/home/project
 ```
 
 - 手动启动集群
@@ -367,36 +367,37 @@ hadoop-daemon.sh start journalnode
 # 第一次启动集群要格式化namenode(格式化之前要删除data和log数据)
 hdfs namenode -format 
 # 把tmp拷到nn2下面
-scp -r hadoop-2.7.2/tmp centos02:/home/project/hadoop-2.7.2  
+scp -r hadoop-2.7.2/tmp cdh2:/home/project/hadoop-2.7.2  
 # 格式化ZKFC  
 hdfs zkfc -formatZK
 # 启动hdfs  
 start-dfs.sh 
 # 启动yarn  
 start-yarn.sh 
-# centos02要手动启  
+# cdh2要手动启  
 yarn-daemon.sh start resourcemanager 
 # 启动mr历史日志 
 mr-jobhistory-daemon.sh start historyserver 
 ```
 
 - 一键启动/停止集群  
-cd /usr/bin --> vim start-cluster --> chmod +x start-cluster
+cd /usr/bin -> vim start-cluster -> chmod +x start-cluster
 ```bash
 #!/bin/bash
-
 # 启动zk
-for i in centos01 centos02 centos03
+for i in cdh1 cdh2 cdh3
 do
+    echo ==================== ${i} ====================
     # ssh后面的命令是未登录执行,需要先刷新系统环境变量
     ssh ${i} "source /etc/profile && zkServer.sh start"
+    echo ${?}
 done
 # 启动hdfs
 start-dfs.sh
 # 启动yarn
 start-yarn.sh
-# centos02要手动启动
-ssh centos02 "source /etc/profile && yarn-daemon.sh start resourcemanager"
+# cdh2要手动启动
+ssh cdh2 "source /etc/profile && yarn-daemon.sh start resourcemanager"
 # 开启mr的jobhistory
 mr-jobhistory-daemon.sh start historyserver
 # 启动spark
@@ -409,7 +410,7 @@ mr-jobhistory-daemon.sh start historyserver
 cd /usr/bin --> vim jpsall --> chmod +x jpsall
 ```bash
 #!/bin/bash
-for i in centos01 centos02 centos03
+for i in cdh1 cdh2 cdh3
 do
     echo ==================== ${i} ====================
     # ssh后面的命令是未登录执行,需要先刷新系统环境变量
@@ -443,8 +444,8 @@ yarn application -kill ***
 ```bash
 # 查看帮助
 hadoop fs -help <cmd>  
-# 查看文件列表
-hadoop fs -ls /  
+# 查看文件列表以时间倒序排序
+hadoop fs -ls -t -r /  
 # 查看文件内容
 hadoop fs -cat <hdfs文件>  
 # 上传下载
@@ -484,10 +485,10 @@ hadoop fs -du /user/hive/warehouse/ods.db | awk '{print int($1/1024/1024/1024) "
 ```
 
 - Web页面监控  
-http://centos01:50070 (active)  
-http://centos02:50070 (standby)  
-http://centos01:8088 (yarn)  
-http://centos01:19888 (jobhistory)
+http://cdh1:50070 (active)  
+http://cdh2:50070 (standby)  
+http://cdh1:8088 (yarn)  
+http://cdh1:19888 (jobhistory)
 
 ### hue
 ```bash

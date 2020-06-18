@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 if [ $# -eq 2 ]; then
     table_name="$1"

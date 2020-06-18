@@ -1,4 +1,4 @@
-[centos7安装mysql5.7](https://juejin.im/post/5d07cf13f265da1bd522cfb6)
+- [centos7安装mysql5.7](https://juejin.im/post/5d07cf13f265da1bd522cfb6)
 ```bash
 # 查看现有版本  
 rpm -qa | grep -i mysql 

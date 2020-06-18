@@ -1,5 +1,4 @@
-#!/bin/sh
-
+#!/bin/bash
 export JAVA_HOME=/usr/java/jdk1.7.0_67-cloudera/
 
 YESTERDAY=`date -d yesterday +%Y%m%d`  # `date -d '-1 day' +%Y%m%d` 或者 `date +%Y%m%d --date '-1 day'`

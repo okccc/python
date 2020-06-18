@@ -53,7 +53,7 @@ def id01():
 def print01():
     """
     print(): 默认换行,在结尾添加end=""可以不换行接着输出
-    %表示格式化输出符: 当print输出内容包不同数据类型的变量时要对变量格式化
+    %表示格式化输出符: 当print输出内容包含不同数据类型的变量时要对变量格式化
     %s:字符串  %d:整数  %f:小数  %%:输出%
     print(f'')表示格式化,相当于print(''.format())
     """
@@ -70,8 +70,7 @@ def high_order():
     """
     高阶函数：一个函数接收另一个函数作为参数
     map(function, sequence)：对sequence中的item依次执行function后将结果组成迭代器返回
-    reduce(function, sequence[, initial])：先对sequence中前两个item执行function得到的结果再与下一个item执行function如此迭代
-                                           如果有initial则作为初始值调用
+    reduce(function, sequence[, initial])：先对sequence中前两个item执行function得到的结果再与下一个item执行function如此迭代,如果有initial则作为初始值调用
     filter(function, sequence)：对sequence中的item依次执行function后将结果值返回True的组成迭代器返回
     """
     from functools import reduce

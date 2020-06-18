@@ -11,9 +11,12 @@ Ctrl + Home：跳到顶部
 Ctrl + End：跳到底部
 
 Pycharm插件
+Translation：翻译
+Markdown Navigator
+Rainbow Brackets：彩虹括号
+Material Theme UI：主题
 Statistic：当前项目的统计信息
 Mongo Plugin：mongodb的可视化数据库工具  View --> Tool Windows --> Mongo Explorer
-markdown support/navigation
 embedded web browser：内嵌浏览器
 
 Chrome插件
@@ -24,6 +27,7 @@ Extensity：管理chrome插件
 Enhanced Github：显式github上文件大小
 FeHelper：前端助手
 Git History：炫酷的展示github中任意文件的修改历史
+Google翻译：可保存单词本
 Isometric Contributions：渲染github贡献记录的等距像素视图(装X神器)
 JSONView：json格式化
 Momentum：壁纸
