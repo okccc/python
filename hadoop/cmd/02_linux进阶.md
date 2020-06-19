@@ -27,41 +27,6 @@ $-       # 显示shell使用的当前选项,与set命令功能相同
 iconv -f utf-8 -c -t gbk aaa.csv > bbb.csv  
 ```
 
-```
-
-### lsof
-```bash
-# lsof (list open files) 列出当前系统所有进程打开的所有文件
-[root@master1 ~]# lsof | head -5
-# 进程名称 进程号 用户 文件描述符 文件类型 磁盘名称   文件大小   索引节点 文件名称
-COMMAND   PID   USER     FD  TYPE   DEVICE    SIZE/OFF   NODE    NAME
-bash      3208  root    rtd   DIR    253,0      4096       2     /
-mongod    2076  mongod  txt   REG    253,0    538384    915155   /usr/bin/mongod
-sshd      1728  root    4u    IPv6   14003       0t0     TCP     *:ssh (LISTEN)
-mysqld    1971  mysql   cwd   DIR    253,0      4096    261193   /var/lib/mysql
-
--i,                  # 列出符合条件的进程打开情况(tcp/udp/:port/@ip...)
--c, --course         # 列出指定进程名称打开情况
--p, --process        # 列出指定进程号打开情况
--u, --user           # 列出指定用户打开情况
--g, --gid            # 列出指定gid的进程打开情况
--d, --description    # 列出指定描述符的进程打开情况
-# 查看某个文件打开情况
-lsof /bin/bash
-# 查看tcp/22端口/ip的打开情况
-lsof -i tcp/:22/@10.9.169.233 
-# 查看mysql进程打开情况
-lsof -c mysql
-# 查看pid=1的打开情况
-lsof -p 1
-# 查看yarn用户打开情况
-lsof -u yarn
-# 查看gid=1的打开情况
-lsof -g 1
-# 查看文件描述符=4的是打开情况
-lsof -d 4
-```
-
 ### xargs
 ```bash
 # linux命令可以从两个地方读取内容：标准输入和命令行参数

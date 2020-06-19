@@ -83,9 +83,10 @@ hadoop fs -chmod -R 755 /data
 原因：windows缺少hadoop环境  
 解决：安装windows版本的hadoop-2.7.2 - Idea - Run - Edit Configurations - Environment variables - 添加HADDOP_HOME 
 
-- <font color=red>执行hql报错 FAILED: ParseException line 321:8 character ' ' not supported here</font>
-原因：windows的UTF-8 BOM格式会带有一些特殊符号在linux环境下乱码
-解决：notepad++ - 格式 - 以UTF-8无BOM格式编码
+- <font color=red>执行hql报错 FAILED: ParseException line 321:8 character ' ' not supported here</font>  
+原因：windows的UTF-8 BOM格式会带有一些隐藏的特殊符号,切换成以ANSI格式编码就能看到有些空格是特殊字符,导致在linux环境下乱码  
+解决：notepad++ - 格式 - 以UTF-8无BOM格式编码  
+保护色：设置 - 语言格式设置 - 背景色 - more colors - 80/97/205   
 
 - 订单表数据抽取：
 http://blog.csdn.net/yangtongli2012/article/details/51725408

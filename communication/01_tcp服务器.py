@@ -8,7 +8,7 @@ tcp如何保证传输可靠性？
 确认和重传：接收方收到报文会确认,发送方发送一段时间后没有收到确认会重传
 
 tcp连接四要素：local ip, local port, remote ip, remote port
-HTTP请求的local IP remote IP remote PORT是固定的,只有local PORT是可变的,可用的local PORT数量就限制了C/S之间的tcp连接数量
+HTTP请求的local ip remote ip remote port是固定的,只有local port是可变的,可用的local port数量就限制了C/S之间的tcp连接数量
 查看可使用端口：sysctl -a | grep net.ipv4.ip_local_port_range
 
 seq序列号：tcp是面向字节流的,字节流中的每个字节都按顺序编号,接收方根据编号进行确认,保证原始数据包的位置  ISN初始化序列号

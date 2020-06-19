@@ -1,6 +1,8 @@
 ### flume
 ```bash
 # flume是基于流式架构的分布式日志采集系统,实时读取本地磁盘数据然后写入hdfs
+
+# 修改配置文件
 [root@master1 ~]# vim flume-env.sh
 export JAVA_HOME=/usr/java/jdk1.8.0_181-cloudera
 

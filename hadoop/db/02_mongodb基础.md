@@ -1,25 +1,46 @@
-## mongodb基础
-- MongoDB是一个基于分布式文件存储的NoSQL数据库,旨在为web应用提供可扩展的高性能数据存储解决方案  
-- 优点：数据结构灵活(类json格式)、高性能(支持mr处理海量数据)、扩展性好  
-- 缺点：nosql不支持事务和表关联等操作、占用空间大  
-- 安装  
-wget http://fastdl.mongodb.org/other/mongodb-other-x86_64-2.2.3.tgz  
-tar zxvf mongodb-other-x86_64-2.2.3.tgz  
-mkdir -p /data/db/   # mongodb需要自定义数据目录  
-- 服务端：mongod  
-- 客户端：mongo  
-- 查看帮助：mongod –help  
-- 启动：sudo service mongod start  
-- 停止：sudo service mongod stop  
-- 重启：sudo service mongod restart  
-- 默认端⼝：27017  
-- 查看是否启动成功：ps ajx|grep mongod  
-- 配置文件位置：/etc/mongod.conf  
-- 日志位置：/var/log/mongodb/mongod.log  
-- 数据备份：mongodump -h hostname -d test -o output_path  
-- 数据恢复：mongorestore -h hostname -d test --dir input_path  
-- 导入数据：/usr/bin/mongoimport -d tencent -c position --file ./position.json(csv)  
-## type
+[参考文档](https://www.cnblogs.com/web424/p/6928992.html)
+
+## mongodb
+```bash
+# mongodb是一个基于分布式文件存储的NoSQL数据库,旨在为web应用提供可扩展的高性能数据存储解决方案  
+
+# 优点：数据结构灵活(类json格式)、高性能(支持mr处理海量数据)、扩展性好  
+# 缺点：nosql不支持事务和表关联等操作、占用空间大  
+
+# 配置MongoDb的yum源  
+[root@master1 ~]# vim /etc/yum.repos.d/mongodb-org-3.4.repo
+[mongodb-org-3.4]  
+name=MongoDB Repository  
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/
+gpgcheck=0  
+enabled=1  
+gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc  
+# 安装MongoDb  
+[root@master1 ~]# yum -y install mongodb-org  
+# 查看安装位置  
+[root@master1 ~]# whereis mongod  
+# 修改配置文件
+[root@master1 ~]# vim /etc/mongod.conf    
+# bindIp: 127.0.0.1  # Listen to local interface only, comment to listen on all interfaces.
+# 启动服务端
+[root@master1 ~]# systemctl start mongod && systemctl enable mongod 
+# 监控日志
+[root@master1 ~]# tail -f /var/log/mongodb/mongod.log
+# 数据备份
+[root@master1 ~]# mongodump -h hostname -d test -o output_path  
+# 数据恢复
+[root@master1 ~]# mongorestore -h hostname -d test --dir input_path  
+# 导入数据
+[root@master1 ~]# /usr/bin/mongoimport -d tencent -c position --file ./position.json(csv)  
+# 启动客户端
+[root@master1 ~]# mongo
+MongoDB shell version v3.4.16
+connecting to: mongodb://127.0.0.1:27017  # 默认端口27017
+MongoDB server version: 3.4.16
+> 
+```
+
+### type
 - Object ID：文档ID保证唯一性,是一个12字节的十六进制数：当前时间戳(4) + 机器ID(3) + mongodb服务进程id(2) + 增量值(3)  
 - String：字符串  
 - Boolean：true/false  
@@ -40,7 +61,8 @@ column|field|字段/域
 index|index|索引
 joins|/|nosql数据库不维护表之间的关系
 primary key|primary key|MongoDB自动将_id字段设置为主键
-## db  
+
+### db  
 - db：当前数据库名称  
 - show dbs：查看所有数据库  
 - use test：切换数据库(如果数据库不存在则指向数据库但不创建,直到插入数据或创建集合时数据库才被创建)  
@@ -116,7 +138,9 @@ db.position.count({location:"北京"})
 - <font color=red>db.集合.distinct('去重字段',{query})</font>  
 db.position.distinct('category')  
 db.position.distinct('category',{update_time:{$gte:"2019年05月08日"}})
-## mongodb聚合操作
+
+### mongodb聚合操作
+```sql
 - <font color=red>db.集合.aggregate({管道:{表达式}},{管道:{表达式}}...)</font> 
 
 管道|作用|表达式|作用
@@ -151,3 +175,4 @@ db.position.aggregate({$group:{_id:"$category",sum:{$sum:1}}},{$sort:{sum:-1}},{
 - <font color=red>将数组类型字段拆分成多条文档</font>  
 db.position.insert({_id:1,title:["开发","产品","销售"]})  
 db.position.aggregate({$match:{_id:1}},{$unwind:'$title'})
+```

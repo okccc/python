@@ -150,17 +150,51 @@ procs  ----------memory----------  --swap--  ---io---  --system--  -----cpu-----
 # cpu使用占比：us用户进程使用cpu时间比例,sy系统调用使用cpu时间比例,id是cpu空闲时间比例,wa是cpu等待磁盘io的时间正常是0
 ```
 
+### lsof
+```bash
+# lsof (list open files) 列出当前系统所有进程打开的所有文件
+[root@master1 ~]# lsof | head -5
+# 进程名称 进程号 用户 文件描述符 文件类型 磁盘名称   文件大小   索引节点 文件名称
+COMMAND   PID   USER     FD  TYPE   DEVICE    SIZE/OFF   NODE    NAME
+bash      3208  root    rtd   DIR    253,0      4096       2     /
+mongod    2076  mongod  txt   REG    253,0    538384    915155   /usr/bin/mongod
+sshd      1728  root    4u    IPv6   14003       0t0     TCP     *:ssh (LISTEN)
+mysqld    1971  mysql   cwd   DIR    253,0      4096    261193   /var/lib/mysql
+
+-i,                  # 列出符合条件的进程打开情况(tcp/udp/:port/@ip...)
+-c, --course         # 列出指定进程名称打开情况
+-p, --process        # 列出指定进程号打开情况
+-u, --user           # 列出指定用户打开情况
+-g, --gid            # 列出指定gid的进程打开情况
+-d, --description    # 列出指定描述符的进程打开情况
+# 查看某个文件打开情况
+lsof /bin/bash
+# 查看tcp/22端口/ip的打开情况
+lsof -i tcp/:22/@10.9.169.233 
+# 查看mysql进程打开情况
+lsof -c mysql
+# 查看pid=1的打开情况
+lsof -p 1
+# 查看yarn用户打开情况
+lsof -u yarn
+# 查看gid=1的打开情况
+lsof -g 1
+# 查看文件描述符=4的是打开情况
+lsof -d 4
+```
+
 ### netstat
 ```bash
 # netstat 监控tcp/ip网络,可以检验本机各端口的网络连接情况
 [root@master1 ~]# netstat | head -5
 # 有源TCP连接
 Active Internet connections (w/o servers)
-# 协议  接收/发送队列(通常是0)  本机地址  外部地址  状态
-Proto Recv-Q Send-Q Local Address           Foreign Address         State      
-tcp        0      0 master1.meihao:palace-6 master1.meihaofen:46282 ESTABLISHED
-tcp        0      0 master1.meihaofen:53288 master1.meihaofenq:7432 ESTABLISHED
-tcp        0      0 master1.meihaofen:39856 namenode1.me:inovaport1 ESTABLISHED
+# 协议 接收但未处理 发送但未确认 本机地址:端口              外部地址:端口              tcp连接的socket状态
+Proto   Recv-Q    Send-Q    Local Address            Foreign Address          State   
+tcp       0         0       0.0.0.0:21050            0.0.0.0:*                LISTEN  
+tcp       0         0       master1.meihao:palace-6  master1.meihaofen:46282  ESTABLISHED
+tcp       0         0       master1.meihaofen:39856  namenode1.me:inovaport1  TIME_WAIT
+tcp       0         0       master1.meihaofen:53288  master1.meihaofenq:7432  CLOSE_WAIT
 # 有源Unix域套接口(只用于本机通信)
 Active UNIX domain sockets (w/o servers)
 # 协议  连接到本套接口的进程号  标识  状态  inode  路径
@@ -179,6 +213,11 @@ unix  2      [ ]         DGRAM      CONNECTED     9427     /run/systemd/notify
 -t, --tcp                     # 显示tcp相关选项
 -u, --udp                     # 显示udp相关选项
 -x, --unix                    # 显示unix相关选项
+
+[root@master2 ~]# netstat -anp | grep 21050  # 端口不会独立存在,而是依附于进程
+tcp        0      0 0.0.0.0:21050           0.0.0.0:*               LISTEN      27652/impalad       
+tcp        0      0 10.9.120.102:21050      10.9.169.233:57510      ESTABLISHED 27652/impalad       
+tcp        0      0 10.9.120.102:21050      10.9.169.233:35938      ESTABLISHED 27652/impalad       
 
 # 查看tcp的数量
 netstat -ant | wc -l
@@ -308,7 +347,7 @@ find ./ -inum 123 -delete  # 可以删除rm删不掉的文件(i是文件的索�
 cp a.txt b.txt  # 复制文件 
 cp -r dir1 dir2  # 复制目录,-r表示递归  
 scp -r conf/ root@python:/home/conf/  # 远程拷贝(复制所有)  
-rsync -av conf/ root@python:/home/conf/  # 远程拷贝(只对差异文件更新)  
+rsync -av conf/ root@python:/home/conf/  # 远程拷贝(只对差异文件更新,所以比scp速度快)  
 mv a.txt ../  # 将a.txt移动到上一层目录  
 mv a.txt b.txt  # 将a.txt重命名为b.txt  
 gzip -c aaa aaa.gz  # 将文件压缩成.gz格式 
@@ -339,11 +378,12 @@ yum install/remove/update/clean
 
 ### rpm
 ```bash
-# rpm(Red-Hat Package Manager)
 # .rpm和.tar.gz区别
-# .rpm是已经编译好的二进制软件包,是RedHat公司发布的软件包管理工具,可使用rpm命令轻松安装/升级/卸载
-# .tar.gz是用tar打包用gzip压缩的二进制软件包,解压后需手动编译源码且无法升级
-# ./configure --prefix=指定路径(配置,方便rm -rf卸载干净) && make(编译) && make install(安装) && make uninstall(卸载)
+.rpm是已经编译好的二进制软件包,是RedHat公司发布的软件包管理工具,可使用rpm命令轻松安装/升级/卸载
+.tar.gz是用tar打包用gzip压缩的二进制软件包,解压后需手动编译源码且无法升级
+./configure --prefix=指定路径(方便rm -rf卸载干净) && make(编译) && make install(安装) && make uninstall(卸载)
+
+# rpm(Red-Hat Package Manager)
 -q, --query                 # 查询  
 -a, --all                   # 所有  
 -i, --install               # 安装包  
@@ -354,9 +394,11 @@ yum install/remove/update/clean
 --test                      # 安装测试,并不实际安装  
 --nodeps                    # 忽略软件包的依赖关系强行安装/删除  
 --force                     # 忽略软件包及文件的冲突  
+
 # 案例
 rpm -qa | grep -i mysql                            # 查询 
 rpm -ev MySQL-server-5.6.21-1.el6.x86_64           # 删除  
 rpm -ev --nodeps mysql-libs-5.1.71-1.el6.x86_64    # 忽略依赖关系强行删除  
 rpm -ivh file.rpm                                  # 显示安装进度
 rpm -Uvh file.rpm                                  # 升级安装包
+```

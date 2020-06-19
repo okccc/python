@@ -1,14 +1,36 @@
-## redis基础  
+[参考文档](https://www.cnblogs.com/freeweb/p/5276558.html)
+## redis
+```bash
+# redis是一个高性能的key-value数据库
 
-nosql|存储方式|数据结构|
-:---:|:---:|:---:|
-mongodb|文档存储|类json格式的数据|
-redis|k-v存储|通过key快速查询value|
-hbase|列存储|结构化和半结构化数据|
-- redis三大特点  
+# redis三大特点  
 1.数据完全基于内存所以读写速度极快,每秒约10万条,为防数据丢失会定期往磁盘写数据持久化  
 2.支持多种数据类型(字符串、list、set/zset、hash...)  
 3.分布式集群
+
+# nosql对比
+mongodb：文档存储,类json格式的数据
+redis：key-value存储,通过key快速查询value
+hbase：列存储,结构化和半结构化数据
+
+# 下载压缩包  
+[root@cdh1 ~]# wget http://download.redis.io/releases/redis-4.0.10.tar.gz
+# 解压  
+[root@cdh1 ~]# tar -xvf redis-4.0.10.tar.gz  
+# 切换到redis目录  
+[root@cdh1 ~]# cd /usr/local/redis-4.0.10  
+# 编译安装  
+[root@cdh1 ~]# make && make install  --> 安装完发现/usr/local/bin下多了几个可执行文件
+# 修改redis.conf  
+daemonize yes  --> 允许redis后台运行  
+将bind 127.0.0.1改成bind 192.168.19.11/0.0.0.0  --> 这样其他机器可以通过ip连接该redis,不然只能本地连接  
+将requirepass放开并设置登录密码  --> redis-cli -h 192.168.19.11 -p 6379 -a ***  
+# 进入redis目录,启动redis服务  
+[root@cdh1 ~]# redis-server ./redis.conf
+# 修改配置文件时要先redis-cli shutdown关闭redis服务再重启
+```
+
+
 #### db
 - flushdb：清空当前数据库  
 - flushall：清空所有数据库  
