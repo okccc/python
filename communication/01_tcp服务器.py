@@ -9,7 +9,7 @@ tcp如何保证传输可靠性？
 
 tcp连接四要素：local ip, local port, remote ip, remote port
 HTTP请求的local ip remote ip remote port是固定的,只有local port是可变的,可用的local port数量就限制了C/S之间的tcp连接数量
-查看可使用端口：sysctl -a | grep net.ipv4.ip_local_port_range
+查看可使用端口范围：sysctl -a | grep net.ipv4.ip_local_port_range
 
 seq序列号：tcp是面向字节流的,字节流中的每个字节都按顺序编号,接收方根据编号进行确认,保证原始数据包的位置  ISN初始化序列号
 ack确认号：期望收到对方下一个报文段的第一个字节的序列号,确认号ack=x+1表示序列号截止到seq=x的数据都已经收到

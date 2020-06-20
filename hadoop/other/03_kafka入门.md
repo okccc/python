@@ -1,11 +1,48 @@
 ### kafka
 ```bash
 # Kafka是基于发布-订阅模式的分布式消息队列,主要应用于大数据实时处理领域
-# 消息队列作用：异步(注册发短信)、消峰(秒杀系统流量消峰)、解耦
+
+# 消息队列两种模式
+1.点对点模式(一对一)：一个消息只能被一个消费者消费,消费完就从queue从移除
+2.发布-订阅模式(一对多)：生产者publish消息到topic,消费者subscribe该消息,一个消息会被多个消费者消费,消费完不会立马清除而是保存一段时间
+
+# 消息队列应用场景
+1.解耦：A系统生产数据通过接口调用发送到BCD系统,随着业务发展C不要了D挂了E又要了A要忙死...A将数据发送到MQ需要的自己去取,A不用考虑发给谁以及是否调用成功
+2.异步：页面注册 - 写数据库 - 调用发短信接口(略耗时) - 响应用户   
+       页面注册 - 写数据库 - 将发短信请求写入MQ - 响应用户(短信接口作为消费者会轮询MQ读取数据发送短信,用户不用等待这个操作消耗的时间)
+3.消峰：秒杀系统会在短时间内产生大量请求,比如5K个/秒但是系统处理能力只有2K个/秒,大概率扛不住,可以将请求写入MQ,系统会按照自己的消费能力pull数据
+       虽然在短时间内MQ会积压大量请求,但是高峰期过后请求会急剧减少,可能只有50个/秒,系统很快就会将积压的消息处理掉
+       
+# 消息队列和普通队列区别？
+java提供了各种各样的队列类,但都是程序中基于内存的单机版队列,MQ通常是分布式队列并且数据可以持久化
+java提供了HashMap存储key-value数据,但是很多时候还是会用到Redis(可以将数据持久化到磁盘,redis挂了可以从磁盘恢复)
+
+# 消息队列缺点
+为了保证消息队列的高可用就得使用分布式,为防止数据丢失还要考虑持久化,这些都会提高系统的复杂性
+
+# kafka架构
+producer：生产者,将消息发送到指定topic的partition
+consumer：消费者,从topic中pull数据
+consumer group：消费者组,由多个消费者组成,每个消费者负责消费不同分区的数据,消费者组是逻辑上的订阅者
+broker：一个kafka节点就是哟个broker,集群由多个broker组成,一个broker可以容纳多个topic
+topic：一个消息队列,生产者和消费者面向的都是topic
+partition：为了实现扩展性,一个大的topic可以有多个partition,每个partition都是有序队列,一个partition只能对应一个消费者
+          每个partition对应一个log文件,producer生产的数据会不断追加到log文件末尾,且每条数据都有自己的offset便于定位,offset保存在kafka的内置topic __consumer_offsets
+segment：为了防止log文件过大导致数据定位效率低下,kafka采用分片和索引机制,将partition分为多个segment,每个segment对应'.index'和'.log'两个文件
+         '.index'存储索引信息,'.log'存储数据,index和log文件以当前segment的第一条消息的offset命名
+replication：为了保证HA,每个partition都有副本,一个leader(生产者发送数据和消费者消费数据的对象)和多个follower(从leader同步数据,leader故障时会选取某个follower成为新的leader)
+
+# zk在kafka中的作用
+kafka集群中有一个broker会被选举为Controller,负责管理broker上下线/topic的分区副本分配/leader选举等工作,这些都依赖于zk
+```
+
+### install
+```bash
+# 修改配置文件
 [root@master1 ~]# vim server.properties
 # broker的全局唯一编号,不能重复
 broker.id=0
-# 开启删除topic功能
+# 开启删除topic功能,否则只是标记删除并没有真正删除
 delete.topic.enable=true
 # 处理网络请求的线程数
 num.network.threads=3
@@ -36,43 +73,37 @@ export PATH=$PATH:$KAFKA_HOME/bin
 scp -r kafka cdh2:/opt/module/kafka && broker.id=2
 scp -r kafka cdh3:/opt/module/kafka && broker.id=3
 
-# 先启动zookeeper  
-[root@master1 ~]# zkServer.sh start  
-# 在每个节点启动broker  
-[root@master1 ~]# kafka-server-start.sh config/server.properties &
+# 启动kafka
+[root@master1 ~]# cd /usr/bin -> vim start-kafka -> chmod +x start-kafka
+#!/bin/bash
+for i in cdh1 cdh2 cdh3
+do
+    echo ==================== ${i} ====================
+    # ssh后面的命令是未登录执行,需要先刷新系统环境变量
+    ssh ${i} "source /etc/profile && zkServer.sh start"
+    ssh ${i} "source /etc/profile && cd /opt/module/kafka && bin/kafka-server-start.sh -daemon config/server.properties &"
+    echo ${?}
+done
+
+# 查看topic列表
+[root@master1 ~]# bin/kafka-topics.sh --zookeeper cdh1:2181 --list
+# 创建topic
+[root@master1 ~]# bin/kafka-topics.sh --zookeeper cdh1:2181 --create --replication-factor 3 --partitions 1 --topic test
+# 查看topic详细信息
+[root@master1 ~]# bin/kafka-topics.sh --zookeeper cdh1:2181 --describe --topic test
+# 修改topic分区数
+[root@master1 ~]# bin/kafka-topics.sh --zookeeper cdh1:2181 --alter --topic test --partitions 2
+# 往topic发送消息
+[root@master1 ~]# bin/kafka-console-producer.sh --broker-list cdh1:9092 --topic test
+# 从topic消费消息
+[root@master1 ~]# bin/kafka-console-consumer.sh --bootstrap-server cdh1:9092 --from-beginning --topic test
+# 删除topic
+[root@master1 ~]# bin/kafka-topics.sh --zookeeper cdh1:2181 --delete --topic test
+ ```
  
-5、在kafka集群中创建topic  
-kafka-topics.sh --create --zookeeper centos01:2181 --replication-factor 3 --partitions 1 --topic girls  
-kafka-topics.sh --create --zookeeper centos01:2181 --replication-factor 3 --partitions 1 --topic boys  
-查看有几个topic：  kafka-topics.sh --list --zookeeper centos01:2181  
-查看topic分区和副本信息：kafka-topics.sh --describe --zookeeper  centos01:2181  
-删除topic：kafka-topics.sh --delete --zookeeper ubuntu:2181 --topic test01  
-（注意：要先在server.properties最后一行添加配置delete.topic.enable=true，不然删不掉）  
-![](images/kafka.png)    
-6、用一个producer向某一个topic中写入消息  
-kafka-console-producer.sh --broker-list centos01:9092 --topic replicationgirls  
-i love xiaohuli   
-she is my baby  
-i want to do everything with her  
-7、用一个comsumer从某一个topic中读取信息  
-kafka-console-consumer.sh --zookeeper centos01:2181 --from-beginning --topic replicationgirls  
-Kafka优点：  
-1、 集群模式，易于扩展  
-2、 依赖zookeeper保存meta信息和维护集群，稳定性好  
-3、 消息采用consumer直接pull的方式，集群压力小  
-4、 集群基于消息做主备，而不是服务器，稳定性高  
-kafka组件  
-消息收发原理：  
-1、Producer将消息发送到指定topic的partition（在new KeyedMessage时指定partition）默认走轮询  
-2、kafka集群接收消息后，将其持久化到硬盘，并保留消息指定时长，而不关注消息是否被消费  
-3、Consumer从kafka集群pull数据，正常消费信息时offset会"线性"向前驱动,即消息将按照顺序被消费  
-Topic ：消息根据topic进行归类，每个topic被分成多个partition(区)  
-partition：在存储层面是逻辑append log文件，包含多个segment文件  
-Segement：消息存储的真实文件，会不断追加生成新的消息，默认存储7天  
-offset：消息在文件中的位置（偏移量）  
-```
-![](images/broker.png)  
+![](images/kafka.png)  
 ![](images/kafka流程图.png)  
+
 ### kafka api
 ```java
 public class ProducerDemo {  
@@ -140,6 +171,7 @@ public class ConsumerDemo {
     }  
 }  
 ```
+
 ### zookeeper监控
 kafka启动时会在zookeeper上创建brokers节点和consumers节点。  
 ![](images/zk01.png)    
