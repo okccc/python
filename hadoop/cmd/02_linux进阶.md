@@ -212,7 +212,7 @@ BEGIN       # 初始化代码块,引用全局变量或设置FS分隔符
 {...}       # 命令代码块,多条命令用分号分隔,默认{print}={print $0} 
 END         # 结束代码块,输出最终计算结果  
 # 内置变量    
-$0/$n       # 整行记录/当前行的第n个字段  
+$0/$n/$NF   # 整行记录/第n个字段/最后一个字段  
 NR/NF       # 行号/字段数  
 OFS/ORS     # 输出字段分隔符,默认空格,制表符OFS='\t' / 输出记录分隔符,默认换行,即处理结果一行一行输出到屏幕  
 &&/||       # 逻辑与/逻辑或  
@@ -234,7 +234,8 @@ awk -F: '$1~/mail|mysql/' /etc/passwd             # 打印$1字段是mail或mysq
 awk -F: '$1!~/mail|mysql/' /etc/passwd            # 打印$1字段不是mail或mysql的行  
 awk -F: '$1~/^m/ && $3>100' /etc/passwd           # 打印$1字段是m开头且$3>100的行  
 awk '/MemFree/{print int($2/1024) "M"}' /proc/meminfo  # 计算剩余内存大小  
-ll | awk 'NR!=1 {count[$3]++} END{for(i in count) print i,count[i]}'                    # 计算当前目录下不同用户的文件数  
-netstat -an | awk '$6=="LISTEN" {printf "%-3s %-5s %-3s %-13s \n",NR,$1,$2,$3}'         # 格式化输出查询结果  
-netstat -an | awk '$6~/CONN|LIST/{count[$6]++} END{for (i in count) print i,count[i]}'  # 计算指定状态的连接数量  
+ll | awk 'NR!=1 {list[$3]++} END{for(i in list) print i,list[i]}'                        # 计算当前目录下不同用户的文件数  
+netstat -an | awk '$6=="LISTEN" {printf "%-3s %-5s %-3s %-13s \n",NR,$1,$2,$3}'          # 格式化输出查询结果  
+netstat -an | awk '$6~/CONN|LIST/ {list[$6]++} END{for(i in list) print i,list[i]}'      # 统计指定状态的连接数量  
+netstat -n | awk '/^tcp/ {list[$6]++} END{for(i in list) print i,list[i]}' | sort -k2nr  # 统计TCP连接状态
 ```

@@ -4,7 +4,7 @@ import numpy as np
 from selenium import webdriver
 import urllib.request
 from selenium.webdriver.common.action_chains import ActionChains
-
+# 京东
 
 # 设置chrome不加载图片,不然打开页面速度有点慢(可选)
 options = webdriver.ChromeOptions()

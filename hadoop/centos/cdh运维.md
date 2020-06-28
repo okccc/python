@@ -81,7 +81,7 @@ hadoop fs -chmod -R 755 /data
 
 - <font color=red>java.io.IOException: Could not locate executable null\bin\winutils.exe in the Hadoop binaries.</font>  
 原因：windows缺少hadoop环境  
-解决：安装windows版本的hadoop-2.7.2 - Idea - Run - Edit Configurations - Environment variables - 添加HADDOP_HOME 
+解决：安装windows版本的hadoop-2.7.2 - Idea - Run - Edit Configurations - Environment variables - 添加HADOOP_HOME=C:\hadoop-2.7.2
 
 - <font color=red>执行hql报错 FAILED: ParseException line 321:8 character ' ' not supported here</font>  
 原因：windows的UTF-8 BOM格式会带有一些隐藏的特殊符号,切换成以ANSI格式编码就能看到有些空格是特殊字符,导致在linux环境下乱码  

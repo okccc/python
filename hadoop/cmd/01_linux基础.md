@@ -203,7 +203,7 @@ unix  2      [ ]         DGRAM      CONNECTED     9827     /run/systemd/cgroups-
 unix  2      [ ]         DGRAM                    9864     /run/systemd/shutdownd
 unix  2      [ ]         DGRAM      CONNECTED     9427     /run/systemd/notify
 
--a, --all                     # 列出所有选项
+-a, --all                     # 列出所有选项,包括LISTEN状态
 -i, --interface               # 显示接口信息
 -l, --listen                  # 只列出监听选项
 -n, --not                     # 域名解析:不显示主机端口和用户,全部用数字代替
