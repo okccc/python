@@ -1,7 +1,3 @@
-- 构造  
-cursor.execute("INSERT INTO para5(name,age) VALUES(%s,%s);",('次牛','12'))   
-cursor.executemany("INSERT INTO para5(name,age) VALUES(%s,%s);", [('次牛444', '12'), ("次牛2", '11'), ('次牛3', '10')])   
-注意：python操作数据库时没有字符串格式化里面的%d,%f,只有%s  
 - 线程的同步和异步？  
 线程同步：多个线程同时访问同一资源,要等待资源访问结束,浪费时间,效率低  
 线程异步：在访问资源时在空闲等待时同时访问其他资源,实现多线程机制  

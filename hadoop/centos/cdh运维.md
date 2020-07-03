@@ -86,19 +86,7 @@ hadoop fs -chmod -R 755 /data
 - <font color=red>执行hql报错 FAILED: ParseException line 321:8 character ' ' not supported here</font>  
 原因：windows的UTF-8 BOM格式会带有一些隐藏的特殊符号,切换成以ANSI格式编码就能看到有些空格是特殊字符,导致在linux环境下乱码  
 解决：notepad++ - 格式 - 以UTF-8无BOM格式编码  
-保护色：设置 - 语言格式设置 - 背景色 - more colors - 80/97/205   
+保护色：设置 - 语言格式设置 - 背景色 - more colors - 80/97/205
 
-- 订单表数据抽取：
-http://blog.csdn.net/yangtongli2012/article/details/51725408
-http://blog.csdn.net/otengyue/article/details/53516028
-http://www.cnblogs.com/lcword/p/5508356.html
-
-
-- 4亿行数据找出前100万大的
-其实是topk问题,用ntile分析函数,将数据分成400份,倒序排序取第一份即可
-
-- 同比环比怎么算?
-lag(salary, 1, 0) over(partition by employeeno order by yearmonth) as prev_sal -- 环比,与上个月份进行比较 
-lag(salary, 12, 0) over(partition by employeeno order by yearmonth) as prev_12_sal -- 同比,与上年度相同月份比较
-
-- 两个数组找出相同元素个数的最优算法？二分查找？冒泡排序？
+- <font color=red>Display all 478 possibilities? (y or n)</font>  
+原因：windows系统中的tab键在linux里无法识别,要替换成空格

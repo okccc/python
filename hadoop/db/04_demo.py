@@ -27,8 +27,8 @@ def mysql01():
     # 获取游标
     cur = conn.cursor()
 
-    # 要执行的sql语句
-    sql = "replace into positions values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    # 要执行的sql语句,python操作数据库时字符串格式化只有%s没有%d%f
+    sql = 'replace into positions values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
     value = ()
     values = [(), ()]
 
