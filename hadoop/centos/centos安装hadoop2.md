@@ -572,12 +572,8 @@ scala> spark.sql("show databases").show()
 +------------+
 
 # 提交任务到yarn(日志格式：application_timestamp_0001)
-[root@cdh1 spark-2.1.1-bin-hadoop2.7]# spark-submit \
---class org.apache.spark.examples.SparkPi \
---master yarn \
---deploy-mode client \
-./examples/jars/spark-examples_2.11-2.1.1.jar
-
+[root@cdh1 spark-2.1.1-bin-hadoop2.7]# spark-submit --class org.apache.spark.examples.SparkPi --master yarn --deploy-mode client --jars ./examples/jars/spark-examples_2.11-2.1.1.jar
+[root@cdh1 spark-2.1.1-bin-hadoop2.7]# spark-submit --class org.apache.spark.examples.mllib.LinearRegression --master yarn --deploy-mode cluster --jars ./examples/jars/*  hdfs://cdh1:9000/data/sample_linear_regression_data.txt
 # 参数解析
 --class <main-class>           # application的启动类
 --master <master-url>          # master地址,local/yarn
