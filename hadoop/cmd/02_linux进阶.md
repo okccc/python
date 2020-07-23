@@ -105,18 +105,16 @@ cat access.log | grep "23/Jan/2019" | awk '{print $2}' | cut -c 1-2 | sort | uni
 ```bash
 # grep(global search re print) - print lines matching a pattern 基于行的文本搜索工具 
 # 格式: grep -option 'str/re' file  
--c        # 统计符合要求的行数  
--i        # 忽略大小写  
--n        # 输出时带上行号  
--v        # 取反
--f        # 对比文件
--x        # 完全相同的行
--w        # 部分单词相同的行
---color   # 高亮显示
--A2       # 打印符合要求的行及下面两行  
--B2       # 打印符合要求的行及上面两行  
--C2       # 打印符合要求的行及上下各两行  
-# 案例  
+-c           # 统计符合要求的行数  
+-i           # 忽略大小写  
+-n           # 输出时带上行号  
+-v           # 取反
+-f           # 对比文件
+-x           # 完全相同的行
+-w           # 部分单词相同的行
+--color      # 高亮显示
+-A2/B2/C2    # 打印符合要求的行及下面/上面/上下两行  
+# 案例
 grep -n [0-9] a.txt             # 选取包含数字的行  
 grep -nv [0-9] a.txt            # 选取不包含数字的行  
 grep '[^r]' a.txt               # 选取不包含某个字符的行  

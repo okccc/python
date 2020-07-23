@@ -5,8 +5,10 @@
 - [cdh官方下载地址](https://archive.cloudera.com/cdh6/6.2.1/parcels/)
 - [cdh6.2官方安装文档](https://docs.cloudera.com/documentation/enterprise/6/6.2/topics/installation.html)
 
-## centos7
+### CentOs7
 ```bash
+# 安装虚拟机 - 手动分区 - 挂载点/ - 期望容量20GB
+
 # yum安装 -y表示不询问安装 Is this ok [y/d/N]: y
 [root@cdh1 ~]# yum -y install vim wget lrzsz
 # 修改ip地址  
@@ -17,7 +19,7 @@ IPADDR=192.168.189.11
 GATEWAY=192.168.189.2  # 编辑 - 虚拟网络编辑器 - NAT设置
 NETMASK=255.255.255.0
 DNS1=8.8.8.8
-[root@cdh1 ~]# service network restart && ifconfig && ping www.baidu.com
+[root@cdh1 ~]# service network restart && ifconfig/ip addr && ping www.baidu.com
 # 修改主机名
 [root@cdh1 ~]# vim /etc/hostname && reboot
 # 修改hosts
@@ -25,13 +27,14 @@ DNS1=8.8.8.8
 192.168.189.11  cdh1
 192.168.189.12  cdh2
 192.168.189.13  cdh3
-192.168.189.14  cdh4
 
 # 禁用selinux  
 [root@cdh1 ~]# vim /etc/sysconfig/selinux
 SELINUX=disabled 
 # 防火墙
 [root@cdh1 ~]# firewall-cmd --state && systemctl stop firewalld && systemctl disable firewalld
+Removed symlink /etc/systemd/system/multi-user.target.wants/firewalld.service.
+Removed symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
 
 # 开启ntp服务
 [root@cdh1 ~]# yum -y install ntp
@@ -69,13 +72,21 @@ export JAVA_HOME=/usr/java/jdk1.8.0_181-cloudera
 export PATH=$PATH:$JAVA_HOME/bin
 [root@cdh1 ~]# source /etc/profile && java -version
 
-# 克隆虚拟机
-# 配置ssh免密登录
+# 克隆虚拟机,然后配置ssh免密登录
 [root@cdh1 ~]# ssh-keygen -t rsa
-[root@cdh1 ~]# ssh-copy-id cdh2/cdh3/cdh4
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): 
+Created directory '/root/.ssh'.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:/Mn1qHwR9YqRt98GwwI4Rxhyb+pjPGYjM2x7NRVViOs root@cdh1
+[root@cdh1 ~]# ssh-copy-id cdh2/cdh3
 ```
 
-## CM
+### CM
 ```bash
 # 安装Cloudera-Manager-Server
 # 方式一：构建本地仓库源使用yum安装
@@ -176,7 +187,7 @@ jdbc:mysql://cdh1:3306/hive?createDatabaseIfNotExist=true
 [root@cdh1 ~]# yum -y remove 'cloudera-manager-*' && yum clean all
 ```
 
-## db
+### db
 ```sql
 -- 通过CM安装CDH默认使用内嵌的PostgreSQL数据库
 postgres    -- 管理员cloudera-scm    /var/lib/cloudera-scm-server-db/data/generated_password.txt

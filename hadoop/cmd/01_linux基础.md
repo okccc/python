@@ -350,8 +350,6 @@ scp -r conf/ root@python:/home/conf/  # 远程拷贝(复制所有)
 rsync -av conf/ root@python:/home/conf/  # 远程拷贝(只对差异文件更新,所以比scp速度快)  
 mv a.txt ../  # 将a.txt移动到上一层目录  
 mv a.txt b.txt  # 将a.txt重命名为b.txt  
-gzip -c aaa aaa.gz  # 将文件压缩成.gz格式 
-gunzip aaa.gz aaa  # 解压.gz格式的文件
 vim -o a.txt b.txt  # 分屏显示  
 dd  # 编辑文件时删除当前行, :2,5 d 删除第2~5行的内容  
 :set nu  # 编辑文件时显示行号,PgUp/PgDn可以向上向下翻页  
@@ -382,6 +380,15 @@ yum install/remove/update/clean
 .rpm是已经编译好的二进制软件包,是RedHat公司发布的软件包管理工具,可使用rpm命令轻松安装/升级/卸载
 .tar.gz是用tar打包用gzip压缩的二进制软件包,解压后需手动编译源码且无法升级
 ./configure --prefix=指定路径(方便rm -rf卸载干净) && make(编译) && make install(安装) && make uninstall(卸载)
+
+# tar(tape archive) 将文件备份到磁带上
+-c, --create                # 创建新的压缩文件
+-z, --gzip                  # 通过gzip方式压缩或解压,最后以.tar.gz为后缀
+-x, --extract               # 从压缩文件中提取文件,也就是解压,-C解压到指定目录
+-v, --verbose               # 显示详细过程
+-f, --file                  # 要处理的文件
+gzip -c aaa aaa.gz          # 将文件压缩成.gz格式 
+gunzip aaa.gz aaa           # 解压.gz格式的文件
 
 # rpm(Red-Hat Package Manager)
 -q, --query                 # 查询  

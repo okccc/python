@@ -140,7 +140,7 @@ create table if not exists emp(
     ename varchar(20),
     email varchar(20) unique not null
 );
--- 插入数据
+-- 插入数据,自增主键给null值
 insert into emp values(null,'grubby','orc@163.com');
 -- 添加列
 alter table emp add column job varchar(20) after ename;
