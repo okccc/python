@@ -516,7 +516,7 @@ export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
 [root@cdh1 ~]# vim spark-env.sh
 # java环境
 JAVA_HOME=/usr/java/jdk1.8.0_181-cloudera
-# on yarn模式,只能从hdfs读数据
+# on yarn模式,只能从hdfs读数据,通过yarn管理资源和任务监控(8088端口)
 HADOOP_CONF_DIR=/opt/module/hadoop-2.7.2/etc/hadoop
 SPARK_DRIVER_MEMORY=512M
 SPARK_EXECUTOR_CORES=1
@@ -524,7 +524,7 @@ SPARK_EXECUTOR_INSTANCES=2
 SPARK_EXECUTOR_MEMORY=512M
 SPARK_HISTORY_OPTS="-Dspark.history.fs.logDirectory=hdfs://cdh1:9000/user/spark/history"
 
-# standalone模式,只能从本地读数据
+# standalone模式,只能从本地读数据,spark自己管理资源和任务监控(8080端口)
 SPARK_MASTER_HOST=cdh1
 SPARK_MASTER_PORT=7077
 SPARK_WORKER_CORES=1
@@ -611,6 +611,9 @@ Hue Administration - Configuration - beeswax - download_cell_limit(默认100000�
 DOWNLOAD_CELL_LIMIT = Config(
   key='download_cell_limit',
   default=100000000,
+  
+# hue查询结果字段带有表名
+CM - Hive集群 - 配置 - hiveserver2 - hive-site.xml的HiveServer2高级配置代码段(安全阀) - hive.resultset.use.unique.column.names=false
 ```
 
 ### mapreduce
