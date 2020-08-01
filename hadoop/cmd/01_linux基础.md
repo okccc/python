@@ -24,8 +24,10 @@ cat /etc/redhat-release
 getconf LONG_BIT
 # 查看某个命令功能
 whatis xxx
-# 显示可执行程序路径
-which java    
+# 显示命令行全路径
+which java
+# 显示当前环境变量
+echo $SHELL | echo $JAVA_HOME
 # 查看cpu信息
 lscpu
 # 查看物理cpu个数
@@ -36,8 +38,6 @@ cat /proc/cpuinfo | grep "cpu cores" | uniq
 cat /proc/loadavg  # 最近1,5,15分钟的系统负载, 正在运行进程数/系统总进程数, 最近运行的进程id
 # 查看系统运行时长
 uptime  # -s,--since系统启动时间  -p,--pretty友好格式输出  -V版本号
-# 显示当前shell环境变量的值 
-echo $SHELL  
 # 显示系统环境变量后10行
 set | tail -10  
 

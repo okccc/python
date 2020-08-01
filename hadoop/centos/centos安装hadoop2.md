@@ -613,7 +613,71 @@ DOWNLOAD_CELL_LIMIT = Config(
   default=100000000,
   
 # hue查询结果字段带有表名
-CM - Hive集群 - 配置 - hiveserver2 - hive-site.xml的HiveServer2高级配置代码段(安全阀) - hive.resultset.use.unique.column.names=false
+CM - Hive - 配置 - hiveserver2 - hive-site.xml的HiveServer2高级配置代码段(安全阀) - hive.resultset.use.unique.column.names=false
+
+# hue添加spark查询接口
+CM - Hue - 配置 - safe - hue_safety_valve.ini的Hue服务高级配置代码段(安全阀) - 
+[desktop]
+  app_blacklist=
+[notebook]
+ show_notebooks=true
+ enable_batch_execute=true
+ enable_query_builder=true
+[[interpreters]]
+  [[[hive]]]
+    name=Hive
+    interface=hiveserver2
+  [[[impala]]]
+    name=Impala
+    interface=hiveserver2
+  [[[sparksql]]]
+    name=SparkSql
+    interface=hiveserver2
+  [[[spark]]]
+    name=Scala
+    interface=livy
+  [[[pyspark]]]
+    name=PySpark
+    interface=livy
+  [[[r]]]
+    name=R
+    interface=livy
+  [[[jar]]]
+    name=Spark Submit Jar
+    interface=livy-batch
+  [[[py]]]
+    name=Spark Submit Python
+    interface=livy-batch
+[spark]
+  livy_server_host=master1.meihaofenqi.net
+  livy_server_port=8998
+  livy_server_session_kind=yarn
+ 
+# 安装livy
+[root@master1 ~]# unzip livy-0.5.0-incubating-bin.zip
+# 修改配置
+[root@master1 conf]# vim livy-env.sh
+export JAVA_HOME=/usr/java/jdk1.8.0_151/
+export SPARK_HOME=/opt/cloudera/parcels/CDH/lib/spark
+export SPARK_CONF_DIR=/etc/spark/conf
+export HADOOP_CONF_DIR=/etc/hadoop/conf
+[root@master1 conf]# vim livy.conf
+# What host address to start the server on. By default, Livy will bind to all network interfaces.
+livy.server.host = master1.meihaofenqi.net
+# What port to start the server on.
+livy.server.port = 8998
+# What spark master Livy sessions should use.
+livy.spark.master = yarn
+# What spark deploy mode Livy sessions should use.
+livy.spark.deploy-mode = cluster
+# 创建存放日志目录
+[root@master1 livy]# mkdir logs
+# 启动livy-server
+[root@master1 bin]# ./livy-server (start/stop/status)
+# hue打开Scala报错：The Spark session could not be created in the cluster
+# 查看livy日志发现错误：Permission denied: user=root, access=WRITE, inode="/user":hdfs:supergroup:drwxr-xr-x
+sudo -u hdfs hadoop fs -chmod 777 /user
+# UI监控 http://master1.meihaofenqi.net:8998
 ```
 
 ### mapreduce
