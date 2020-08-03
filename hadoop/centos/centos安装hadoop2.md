@@ -445,18 +445,20 @@ hadoop-daemon.sh start zkfc
 # 查看yarn程序列表
 yarn application -list
 # 杀掉yarn进程
-yarn application -kill ***
+yarn application -kill application_timestamp_xxx
 
 # hdfs常用命令(bin)
 # 查看帮助
-hadoop fs -help <cmd>  
+hadoop fs -help <cmd>
+# 修改目录权限
+hadoop fs -chmod 777 /user
 # 查看文件列表以时间倒序排序
-hadoop fs -ls -t -r /  
+hadoop fs -ls -t -r /
 # 查看文件内容
-hadoop fs -cat <hdfs文件>  
+hadoop fs -cat <hdfs文件>
 # 上传下载
-hadoop fs -put <Linux文件> <hdfs路径>  
-hadoop fs -get <hdfs路径> <Linux文件>  
+hadoop fs -put <Linux文件> <hdfs路径>
+hadoop fs -get <hdfs路径> <Linux文件>
 # 创建文件夹(级联)
 hadoop fs -mkdir -p <path>  
 # 设置/取消该文件夹上传文件数限制
@@ -653,7 +655,9 @@ CM - Hue - 配置 - safe - hue_safety_valve.ini的Hue服务高级配置代码段
   livy_server_port=8998
   livy_server_session_kind=yarn
  
-# 安装livy
+# 安装spark的REST服务livy
+# REST是一种服务架构,将web服务视为资源由url唯一标识,明确使用http方法来表示不同操作的调用,get检索/post新增/put修改/delete删除
+# REST服务是跨平台的(java/ios/android)且高度可重用,因为它们都依赖基本的http协议
 [root@master1 ~]# unzip livy-0.5.0-incubating-bin.zip
 # 修改配置
 [root@master1 conf]# vim livy-env.sh
