@@ -235,6 +235,6 @@ postgres=>
 
 -- hive库下表名都是大写,查询时要加""不然报错
 hive=# select * from "DBS";
--- 做crud操作时,字符串只能用'',""会被认为是column
+-- 做crud操作时,字符串只能用'',""会被认为是column,添加新用户后要通过admin激活
 hue=# update auth_user set password=md5('admin@123') where username='admin';
 ```

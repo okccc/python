@@ -375,7 +375,7 @@ export HIVE_CONF_DIR=/opt/module/hive-1.2.1/conf
 ```  
 
 ```bash
-# 手动启动集群(sbin)
+# 手动启动集群
 # 启动zk
 [root@cdh1 ~]# zkServer.sh start
 # 格式化namenode
@@ -426,8 +426,13 @@ do
     # ssh后面的命令是未登录执行,需要先刷新系统环境变量
     ssh ${i} "source /etc/profile && jps | grep -v Jps"
 done
+```
 
-# 测试集群状态(bin)
+```bash
+# 集群命令
+/opt/cloudera/parcels/CDH/bin目录存放了hadoop/hdfs/yarn/zookeeper等一系列集群命令
+# 查看hadoop版本
+hadoop version
 # 查看hdfs的各节点状态信息
 hdfs dfsadmin -report
 # 刷新节点
@@ -442,14 +447,16 @@ hdfs haadmin -failover nn1 nn2
 hdfs haadmin -checkHealth nn1
 # 单独启动一个zkfc进程
 hadoop-daemon.sh start zkfc
-# 查看yarn程序列表
-yarn application -list
-# 杀掉yarn进程
-yarn application -kill application_timestamp_xxx
 
-# hdfs常用命令(bin)
-# 查看帮助
-hadoop fs -help <cmd>
+# yarn
+# 查看yarn应用列表
+yarn application -list
+# 杀掉指定yarn应用
+yarn application -kill application_id
+# 查看yarn应用状态
+yarn application -status application_id
+
+# hdfs
 # 修改目录权限
 hadoop fs -chmod 777 /user
 # 查看文件列表以时间倒序排序
@@ -552,7 +559,7 @@ spark.eventLog.dir         hdfs://cdh1:9000/user/spark/history
 [root@cdh1 ~]# start-cluster
 
 # 本地测试(日志格式：local-timestamp)
-[root@cdh1 ~]# run-example SparkPi
+[root@cdh1 ~]# run-example org.apache.spark.examples.streaming.NetworkWordCount localhost 9999
 [root@cdh1 ~]# spark-shell
 Spark context Web UI available at http://192.168.152.11:4040
 Spark context available as 'sc' (master = local[*], app id = local-1594958655022).
@@ -574,7 +581,7 @@ scala> spark.sql("show databases").show()
 +------------+
 
 # 提交任务到yarn(日志格式：application_timestamp_0001)
-[root@cdh1 spark-2.1.1-bin-hadoop2.7]# spark-submit --class org.apache.spark.examples.SparkPi --master yarn --deploy-mode client --jars ./examples/jars/spark-examples_2.11-2.1.1.jar
+[root@cdh1 spark-2.1.1-bin-hadoop2.7]# spark-submit --class org.apache.spark.examples.SparkPi --master yarn --deploy-mode client ./examples/jars/spark-examples_2.11-2.1.1.jar
 [root@cdh1 spark-2.1.1-bin-hadoop2.7]# spark-submit --class org.apache.spark.examples.mllib.LinearRegression --master yarn --deploy-mode cluster --jars ./examples/jars/*  hdfs://cdh1:9000/data/sample_linear_regression_data.txt
 # 参数解析
 --class <main-class>           # application的启动类
@@ -674,6 +681,12 @@ livy.server.port = 8998
 livy.spark.master = yarn
 # What spark deploy mode Livy sessions should use.
 livy.spark.deploy-mode = cluster
+# Enabled to check whether timeout Livy sessions should be stopped.
+livy.server.session.timeout-check = true
+# Time in milliseconds on how long Livy will wait before timing out an idle session.
+livy.server.session.timeout = 1h
+# How long a finished session state should be kept in LivyServer for query.
+livy.server.session.state-retain.sec = 600s
 # 创建存放日志目录
 [root@master1 livy]# mkdir logs
 # 启动livy-server
