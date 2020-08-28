@@ -36,4 +36,11 @@ Python 的内存管理是由私有 heap 空间管理的。所有的 Python 对�
 一些访问该模块的方法供程序员使用。
 Python 有自带的垃圾回收系统，回收并释放没有被使用的内存给别的程序使用
 
+- BIO/NIO/AIO   Netty框架
+- kafka如何保证数据不丢失
+- 线程池使用场景
+- 数组去重,不使用工具类和set集合
+- 
+- [参考文档](https://www.jianshu.com/p/acc8b158daef)
+
 

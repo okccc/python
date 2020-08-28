@@ -101,7 +101,7 @@ tail -f /var/log/mysqld.log
 # 查看mysql连接数  
 mysql> show variables like '%max_connections%';  
 mysql> show status like 'Thread%';
-# 批量插入数据  
+# 批量插入数据
 mysql> source area.sql;
 ```
 
@@ -232,11 +232,11 @@ select table_name,column_name,data_type,column_comment from information_schema.c
 -- 避免在where子句的"="左边进行函数、计算表达式等等,查询时尽量将操作移到等式右边甚至去掉函数,否则无法使用索引
 SELECT * from test where substrb(CardNo,1,4) = '5378';                    -- (13秒)
 select * from test where amount/30 < 1000;                                -- (11秒)
-select * from test where to_char(ActionTime, 'yyyymmdd') = '19991201';    -- (10秒)
+select * from test where to_char(ActionTime, 'yyyymmdd') = '20191201';    -- (10秒)
 -- 由于where子句对列的任何操作都是在sql运行时逐行计算得到的,因此它不得不全表扫描,而没有使用该列的索引
 select * from test where CardNo like '5378%';                             -- (< 1秒)
 select * from test where amount < 1000*30;                                -- (< 1秒)
-select * from test where ActionTime = to_date('19991201', 'yyyymmdd');    -- (< 1秒)
+select * from test where ActionTime = to_date('20191201', 'yyyymmdd');    -- (< 1秒)
 
 -- 尽可能早地过滤数据,减少每个阶段的数据量
 select * from a join b on a.key = b.key where a.id > 10 and b.id < 10;
