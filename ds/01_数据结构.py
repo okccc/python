@@ -59,7 +59,7 @@ import time
 from timeit import Timer
 
 def test():
-    # 如果 a+b+c=N且 a^2+b^2=c^2(a,b,c 为自然数)，如何求出所有a、b、c可能的组合？
+    # 如果 a+b+c=N 且 a^2+b^2=c^2(a,b,c 为自然数), 如何求出所有a、b、c可能的组合？
     start_time = time.time()
     for a in range(0, 1001):  # 循环结构
         for b in range(0, 1001):  # 循环结构

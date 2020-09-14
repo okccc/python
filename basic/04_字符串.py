@@ -3,15 +3,13 @@
 字符串编码格式:
 ASCII: 早期计算机保存英文字符的编码方式
 GB2312: 对ASCII的中文扩展
-GBK/GB18030: 包括了GB2312的所有内容，同时又增加了近20000个新的汉字和符号
+GBK/GB18030: 包括了GB2312的所有内容,同时又增加了近20000个新的汉字和符号
 Unicode: 包括了全球的符号和编码,每个字符用3~4个字节表示,浪费空间
-UTF-8: 可变长的编码方式,在互联网上使用最广泛的一种Unicode的实现方式,可以根据语种决定字符长度
-       如一个汉字3个字节,一个字母1个字节,也是Linux环境下默认编码格式
-注意: GBK格式汉字占2个字节;UTF-8格式汉字占3个字节
+UTF-8(Unicode Transformation Format): 可变长的编码方式,互联网使用最广泛的Unicode实现方式,根据语种决定字符长度,字母1个字节,汉字3个字节
+为什么会中文乱码？
+Windows环境默认GBK编码,汉字占2个字节,Linux环境默认UTF-8编码,汉字占3个字节,所以要在文件第一行备注coding=utf-8
 
-中文默认使用ascii存储,禁用后默认unicode存储
-encode: 将unicode转换成指定编码格式
-decode: 将指定编码格式转换成unicode
+中文默认使用ascii存储,禁用后默认unicode存储,encode将unicode转换成指定编码格式,decode:将指定编码格式转换成unicode
 """
 
 def str01():

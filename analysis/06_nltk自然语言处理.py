@@ -165,3 +165,10 @@ class Chinese(object):
         wc = WordCloud(title="李克强政府工作报告")
         wc.add("词频统计", counter.keys(), counter.values())
         wc.render("D://PycharmProjects/python/analysis/xixi.html")
+
+
+if __name__ == '__main__':
+    c = Chinese()
+    c.crawl()
+
+

@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-re(regular expression)：用于匹配字符串,r""表示忽视\的转义效果("aaa\tbbb" --> "aaa bbb" | r"aaa\tbbb" --> "aaa\tbbb")
+re(regular expression)：用于匹配字符串,r""表示忽视反斜杠的转义效果("aaa\tbbb" --> "aaa bbb" | r"aaa\tbbb" --> "aaa\tbbb")
 pattern = re.compile(r"...")：预编译正则表达式生成pattern对象放到内存中,然后再与目标字符串匹配,可以提升效率
 
 * : 零次或多次,等同于{0,}
@@ -30,6 +30,7 @@ $ : 字符串结尾
 import re
 import urllib.request
 import chardet
+
 
 def regex01():
     # 1.match()：只匹配字符串的开始,返回第一个符合的字符串,不符合就返回None
@@ -89,7 +90,8 @@ def regex02():
     # 请求地址
     url = "http://www.neihanpa.com/article/list_5_1.html"
     # 请求头
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.89 Safari/537.36"}
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.89 Safari/537.36"}
     # 创建请求对象
     request = urllib.request.Request(url, headers=headers)
     # 发送请求

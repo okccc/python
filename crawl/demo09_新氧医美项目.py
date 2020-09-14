@@ -238,6 +238,7 @@ class SY(object):
 class SY2(object):
     def __init__(self):
         self.url = 'https://y.soyoung.com/hospital/s0p0l0m0i0t0a0h0o0c2/page/{}'
+        # self.url = 'https://y.soyoung.com/hospital/s10013p0l0m0i0t0a0h0o0c0/page/{}'
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36",
             "Host": "y.soyoung.com",
