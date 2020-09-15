@@ -299,27 +299,32 @@ root     pts/0    10.9.6.148       11:08    3.00s  0.03s  0.00s w
 root:x:0:0:root:/root:/bin/bash
 bin:x:1:1:bin:/bin:/sbin/nologin
 daemon:x:2:2:daemon:/sbin:/sbin/nologin
+
 # linux组
-[root@centos01 ~]# cat /etc/group | head -3
+[root@cdh1 ~]# cat /etc/group | head -3
 # 组名:密码(x表示密码保存在/etc/gshadow):组id:组成员
 root:x:0:
 bin:x:1:bin,daemon
 daemon:x:2:bin,daemon
-# user、group
-useradd hdfs -d /home   # 添加用户并指定主目录  
-passwd hdfs             # 为hdfs用户设置密码,不指定就是root用户
-userdel -r hdfs         # 删除hdfs用户及主目录  
-su hdfs                 # 切换到hdfs用户环境  
-groupadd public         # 创建一个名为public的组  
-useradd hdfs -g public  # 创建hdfs用户并指定组为public  
-groupdel public         # 删除组,如果该组有用户成员,必须先删除用户才能删除组  
-id hdsf                 # 查看hdfs用户的uid、gid、groups  
-# chmod、chown
-chmod 755 a.txt         # 更改对文件的读写执行权限  
-chmod +x roll.sh        # 给脚本赋予执行权限  
-chown root data         # 将data目录所属的人改为root,组不变  
-chown root:root data    # 将data目录所属的人和组都改为root  
-chown -R root data      # 将data及其下所有子目录所属人都改为root(级联)   
+
+# 添加新用户(组),只有root有这个权限
+[root@cdh1 ~]# groupadd g1         # 创建组  
+[root@cdh1 ~]# useradd u1 -g g1    # 创建用户并指定组,默认主目录/home/xxx
+[root@cdh1 ~]# passwd u1           # 设置密码
+[root@cdh1 ~]# su u1               # 切换用户 
+[root@cdh1 ~]# groupdel g1         # 删除组,如果组内有用户要先删用户  
+[root@cdh1 ~]# userdel -r u1       # 删除用户及主目录  
+[root@cdh1 ~]# id hdfs             # 查看hdfs用户的uid、gid、groups 
+uid=993(hdfs) gid=991(hdfs) groups=991(hdfs),993(hadoop)
+[root@cdh1 ~]# groups hdfs         # 显示用户所属的组 
+hdfs : hdfs hadoop
+
+# 修改权限
+[root@cdh1 ~]# chmod 755 a.txt         # 更改对文件的读写执行权限  
+[root@cdh1 ~]# chmod +x roll.sh        # 给脚本赋予执行权限  
+[root@cdh1 ~]# chown root data         # 将data目录所属用户改为root,组不变  
+[root@cdh1 ~]# chown root:root data    # 将data目录所属用户和组都改为root  
+[root@cdh1 ~]# chown -R root data      # 将data及其下所有子目录所属用户都改为root(-r表示级联)   
 ```
 
 ### file
