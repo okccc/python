@@ -276,12 +276,25 @@ q 退出, W 将当前设置写入/root/.toprc
 top -c -p 1956,2042  # 每隔3秒显示指定进程的资源使用情况
 
 # nohup
-nohup ./aaa.sh &  # 将该脚本放在后台执行,即使关闭当前终端也能继续运行  
-jobs -l # 查看当前终端后台任务jobnum,包括running/stopped/Terminated,+是当前任务 -是后一个任务    
-kill %jobnum/%PID  # 杀掉进程  
-fg %jobnum  # 将后台程序调至前台运行
-ctrl + z  # 暂停某个前台运行的命令并放到后台
-bg %jobnum  # 调出暂停的后台命令继续执行 
+# nohup输出结果默认重定向到当前目录下的nohup.out文件,Ctrl + C结束,关闭Shell session免疫
+# &将程序转入后台运行,输出结果到终端,Ctrl + C免疫,关闭Shell session结束
+# nohup和&组合使用,不受Ctrl + C和关闭Shell session影响
+[root@master1 ~]$ nohup /data/hive/scripts/call_sql.sh dw_debit_info &  
+# 查看当前终端后台任务jobnum,包括running/stopped/Terminated,+是当前任务 -是后一个任务
+[root@master1 ~]$ jobs -l    
+[1]+ 14423 Running    nohup /data/hive/scripts/call_sql.sh dw_debit_info &
+# 将后台程序调至前台运行
+[root@master1 ~]$ fg %jobnum
+nohup /data/hive/scripts/call_sql.sh dw_debit_info
+ctrl + z 暂停前台运行的命令并放到后台
+[1]+  Stopped    nohup /data/hive/scripts/call_sql.sh dw_debit_info
+# 调出暂停的后台命令继续执行
+[root@master1 ~]$ bg %jobnum
+[1]+ nohup /data/hive/scripts/call_sql.sh dw_debit_info &
+# 杀掉job
+[root@master1 ~]$ kill %jobnum
+[root@master1 ~]$ jobs -l
+[1]+ 14423 Terminated(很快会消失)    nohup /data/hive/scripts/call_sql.sh dw_debit_info
 
 # w
 [root@master1 ~]# w  # 查看当前活跃用户
