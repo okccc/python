@@ -1,59 +1,16 @@
 - [centos7安装mysql5.7](https://juejin.im/post/5d07cf13f265da1bd522cfb6)
-## mysql
-```sql
-e-r模型：当前物理数据库都是按照e-r模型(entry-relationship)进行设计的
-        实体-->表  关系-->描述两个表之间关系(一对一、一对多、多对多)
-数据库：按照数据结构存储和管理数据的仓库
-RDBMS：关系型数据库管理系统
-表：按列和行排列的一组数据,列表示特征行表示条目
-sql：对数据库做增删改查
-三大范式：列不可拆分、唯一标识、引用主键
-五大约束：primary key、unique、not null、default、foreign key
-逻辑删除：对于重要数据并不希望物理删除,删除后无法恢复,可以设置一个isdelete列,类型为bit,默认值0,要逻辑删除的写1,查询的时候查值为0的即可
-数据库引擎：默认myisam适用于全文检索,如果需要支持事务手动指定innodb
-修改表的引擎: alter table '表名' engine=innodb;
-
-事务：在对数据库做更新操作(insert/update/delete)时要使用事务
-开启: begin;       --其实是在一个内存级的临时表里更新数据,begin之后要么commit要么rollback
-提交：commit;      --begin后面的所有操作必须commit后才会生效
-回滚：rollback;    --begin后面的所有操作在rollback后都不会生效
-事务特性(acid)
-原子性(atomicity)：事务中的所有操作不可分割,要么全部完成要么全部取消,如果事务崩溃会回滚到之前状态
-一致性(consistency)：几个并行执行的事务其执行结果和执行顺序无关
-隔离性(isolation)：事务的执行不受其他事务的干扰
-持久性(durability)：已提交事务对数据库的改变是永久生效的
-
-join
-inner join: 返回关联表中匹配到的值
-left join: 返回左表所有行,右表没有匹配到值为null
-right join: 返回右表所有行,左表没有匹配到值为null
-full join: 会返回左表和右表的所有行,没有匹配到值为null
-union all：会列出所有的值(包括重复值)
-union：只会列出不同的值(相当于去重)
-
-主键：唯一标识一条记录,保证数据完整性,唯一非空
-外键：另一个表的主键,用于关联操作,一个表可以有多个外键
-索引：是一种有序的数据结构,b树存储,根节点保存子节点的指针从而避免全表扫描查询
-
-sql和nosql区别
-1.存储方式：sql必须先定义表和字段结构才能添加数据,nosql更加灵活和可扩展
-2.表关联：sql可以做join操作,nosql不存在
-3.事务：sql支持事务操作,nosql没有事务概念,每个数据集的操作都是原子级的
-4.性能：nosql不需要维护复杂的表关系性能更好
-```
-
 ### install
 ```bash
-# 查看现有版本  
-rpm -qa | grep -i mysql 
+# 查看现有版本
+rpm -qa | grep -i mysql
 # 删掉一切(没有就跳过)
-rpm -ev --nodeps mysql-libs-5.1.71-1.el6.x86_64  
-# 下载rpm包  
+rpm -ev --nodeps mysql-libs-5.1.71-1.el6.x86_64
+# 下载rpm包
 wget https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
 # 安装rpm包,执行成功后会在/etc/yum.repos.d/目录下生成两个repo文件mysql-community.repo及mysql-community-source.repo
 rpm -ivh mysql57-community-release-el7-11.noarch.rpm
 # 确认mysql仓库添加成功
-[root@cdh1 ~]# yum repolist enabled | grep mysql  
+[root@cdh1 ~]# yum repolist enabled | grep mysql
 mysql-connectors-community/x86_64       MySQL Connectors Community           153
 mysql-tools-community/x86_64            MySQL Tools Community                110
 mysql57-community/x86_64                MySQL 5.7 Community Server           424
@@ -93,35 +50,82 @@ mysql> show variables like 'character%';
 character-set-server = utf8
 init-connect='SET NAMES utf8'
 validate_password_policy=0
-# 开启日志监控  
+# 开启日志监控
 mysql> show variables like 'general%';
 mysql> set global general_log='on';
 mysql> set global general_log_file='/var/log/mysqld.log';
 tail -f /var/log/mysqld.log
-# 查看mysql连接数  
-mysql> show variables like '%max_connections%';  
+# 查看mysql连接数
+mysql> show variables like '%max_connections%';
 mysql> show status like 'Thread%';
 # 批量插入数据
 mysql> source area.sql;
 ```
 
-### sql
+## mysql
 ```sql
--- sql：structured结构化、query查询、language语言
--- 查看当前用户
-select user();
--- 查看数据库版本
-select version();
+/*
+e-r模型：当前物理数据库都是按照e-r模型(entry-relationship)进行设计的,关系包括一对一/一对多/多对多
+数据库：按照数据结构存储和管理数据的仓库
+RDBMS：关系型数据库管理系统
+表：按列和行排列的一组数据,列表示特征行表示条目
+sql：对数据库做增删改查
+三大范式：列不可拆分、唯一标识、引用主键
+五大约束：primary key、unique、not null、default、foreign key
+逻辑删除：对于重要数据并不希望物理删除,删除后无法恢复,可以设置isdelete列,类型为bit默认值0,要逻辑删除的写1,查询的时候查值为0的即可
+数据库引擎：默认myisam适用于全文检索,如果需要支持事务手动指定innodb
+修改表的引擎: alter table '表名' engine=innodb;
+*/
+
+-- 事务：在对数据库做更新操作(insert/delete/update)时要使用事务,有acid四大特性
+atomicity   -- 原子性：事务中的所有操作不可分割,要么全部完成要么全部取消,取决于是否提交成功,如果事务崩溃会回滚到之前状态
+consistency -- 一致性：几个并行执行的事务其执行结果和执行顺序无关
+isolation   -- 隔离性：事务的执行不受其他事务的干扰
+durability  -- 持久性：已提交的事务对数据库的改变是永久生效的
+
+-- join
+join             -- 默认内连接,不加关联条件就是笛卡尔积
+left join        -- 返回左表所有行,右表没有匹配到值为null
+right join       -- 返回右表所有行,左表没有匹配到值为null
+full join        -- 会返回左表和右表的所有行,没有匹配到值为null
+union/union all  -- 合并数据(去重/不去重)
+
+-- 约束
+PRIMARY KEY  -- 主键,唯一非空
+FOREIGN KEY  -- 外键,
+UNIQUE       -- 唯一,规定该字段在表中是唯一的
+DEFAULT      -- 默认值
+NOT NULL     -- 非空,规定该字段不能为空
+主键：唯一标识一条记录,保证数据完整性,唯一非空
+外键：另一个表的主键,用于关联操作,一个表可以有多个外键
+
+
+-- sql和nosql区别
+/*
+存储：sql必须先定义表和字段结构才能添加数据,nosql更加灵活和可扩展
+关联：sql可以做join操作,nosql不存在
+事务：sql支持事务操作,nosql没有事务概念,每个数据集的操作都是原子级的
+性能：nosql不需要维护复杂的表关系,性能更好
+*/
+
+-- sql：structured query language
+-- sql语句分类
+DDL(数据定义语言)：create/alter/drop/truncate/rename  -- 针对表
+DML(数据操作语言)：insert/delete/update/select        -- 针对数据
+DCL(数据控制语言)：commit/rollback/grant/revoke/savepoint
+
+-- 查看当前用户/当前数据库/数据库版本
+select user()/database()/version();
 -- 查看所有数据库
 show databases;
--- 查看当前数据库
-select database();
 -- 创建数据库
 create database java charset=utf8;
+-- 选择数据库
+use java;
 -- 显示默认创建的字符集
-show create database java;-- create database `java` /*!40100 default character set utf8 */
+show create database java; -- create database `java` /*!40100 default character set utf8 */
 -- 修改数据库名(不能直接修改,可以先备份再删除原先的)
-/**
+/*
 数据备份
     使用超级管理员权限: sudo -s
     进入mysql库目录: cd /var/lib/mysql
@@ -129,51 +133,63 @@ show create database java;-- create database `java` /*!40100 default character s
 数据恢复
     连接mysql,先创建一个新的数据库,然后往这个新数据库里恢复数据
     退出重新连接: mysql -uroot –p 新创建的数据库 < ~/desktop/bac.sql
-    */
+*/
 -- 删除数据库
 drop database java;
 
--- 1.表结构
-use java; -- (先选择库)
+-- 创建表
 create table if not exists emp(
     empno int primary key auto_increment,
     ename varchar(20),
     email varchar(20) unique not null
 );
--- 插入数据,自增主键给null值
-insert into emp values(null,'grubby','orc@163.com');
--- 添加列
+-- 添加字段
 alter table emp add column job varchar(20) after ename;
 -- 修改字段
---  modify：只能修改属性
+-- modify只能修改属性
 alter table emp modify column job varchar(60);
---  change：既可以修改属性也可以修改字段名称
+-- change既能修改属性也能修改名称
 alter table emp change column job job1 varchar(60);
--- 修改字段值
-update emp set job = '保洁',email = 'haha@itcast.cn' where empno = 2;
--- 删除列
+-- 删除字段
 alter table emp drop column job;
--- 删除所有数据(慎用!)
-delete from emp;  -- delete：删除数据表还在,可回滚数据
--- 清空表
-truncate table emp;  -- truncate：直接删除原表然后按表结构重新创建,不能回滚数据
--- 开启事务
-start transaction;
--- 回滚数据操作
+
+-- 插入数据,自增主键给null值
+insert into emp values(null,'grubby','orc@163.com','solo');
+-- 修改字段值
+update emp set job = '保洁',email = 'hum@123.com' where empno = 2;
+-- 关闭自动提交事务
+set autocommit = false;
+-- delete删除数据,在commit之前可以rollback
+delete from emp; -- 不加where条件会删除所有数据(慎用!)
+-- truncate清空表,相当于自动commit无法rollback
+truncate table emp;
+-- 回滚数据,只能回滚到最近一次commit后的位置
 rollback;
+-- 事务一旦提交就不可回滚
+commit;
 
--- 2.分组
--- 先分组再过滤
-select category,sum(price) as totalprice from products group by category having totalprice >100;
--- 先过滤再分组(效率高)
+-- 分组过滤
+-- where是分组前过滤效率更高,having是分组后过滤
 select category,sum(price) as totalprice from products where price >100 group by category;
--- where和having条件语句区别？
--- where是在分组前进行条件过滤,having是在分组后进行条件过滤
 -- where不可以接组函数和别名因为where在select之前解析,having可以使用别名因为having在select之后解析
--- select语句书写规则: select(distinct) --> from(join) --> where --> group by --> having --> order by --> limit
--- mysql数据库解析顺序: from(join) --> where --> group by --> select(distinct) --> having --> order by --> limit
+select category,sum(price) as totalprice from products group by category having totalprice >100;
+-- select语句书写规则
+select - from - (join) - where - group by - having - order by - limit
+-- mysql数据库解析顺序
+from - (join) - where - group by - select - having - order by - limit
 
--- 3.高级部分
+
+-- 视图：将复杂的查询sql封装成虚拟表
+-- 优点：sql语句重用,简化复杂sql(解耦),定制用户数据,安全(read-only)
+create view view_name as select id,name,age from person where sex='男';
+-- 查看视图
+select * from view_name;
+-- 更新视图
+create or replace view view_name as select id,name,age from person where sex='男';
+-- 删除视图
+drop view view_name;
+
+-- 索引：是一种有序的数据结构,b树存储,根节点保存子节点的指针从而避免全表扫描查询
 -- 创建索引(索引也是表结构的一部分所以更新操作会变慢,一般只在经常被搜索的列添加索引)
 create index pindex on person (name);         -- 普通索引
 create index pindex on person (name desc);    -- 倒叙索引
@@ -185,15 +201,6 @@ show profiles;
 show index from person;
 -- 删除索引
 alter table person drop index pindex;
--- 创建视图(将复杂的查询sql封装成虚拟表)
--- 视图优点：sql语句重用,简化复杂sql(解耦),定制用户数据,安全(只能读不能写)
-create view view_name as select id,name,age from person where sex='男';
--- 查看视图
-select * from view_name;
--- 更新视图
-create or replace view view_name as select id,name,age from person where sex='男';
--- 删除视图
-drop view view_name;
 
 -- 添加关系映射(在一对多的多方添加外键约束)
 alter table scores add constraint stu_sco foreign key(stuid) references students(id);
@@ -215,7 +222,7 @@ foreign key(subid) references subjects(id)
 -- no action：什么都不做
 alter table scores add constraint stu_sco foreign key(stuid) references students(id) on delete cascade;
 
--- 4.mysql监控
+-- mysql监控
 -- 查询数据库有多少张表
 select table_schema,count(*) as tables from information_schema.tables group by table_schema;
 -- 查询表中有多少字段
@@ -225,7 +232,7 @@ select count(column_name) from information_schema.columns where table_schema = '
 -- 查询数据库中所有表、字段、类型和注释
 select table_name,column_name,data_type,column_comment from information_schema.columns where table_schema = '数据库名';
 
--- 5.mysql优化
+-- mysql优化
 -- 添加索引：主键、外键(关联字段)、where/order by子句、选择性高的字段
 -- 尽量避免在where子句中使用null值判断,避免使用!=或<>操作符,会导致放弃索引而做全表扫描
 -- 尽量避免在where子句中使用or连接条件,如果一个字段有索引另一个没有就会全表扫描
