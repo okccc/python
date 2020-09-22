@@ -559,6 +559,7 @@ spark.eventLog.dir         hdfs://cdh1:9000/user/spark/history
 [root@cdh1 ~]# start-cluster
 
 # 本地测试(日志格式：local-timestamp)
+[root@cdh1 ~]# run-example org.apache.spark.examples.SparkPi
 [root@cdh1 ~]# run-example org.apache.spark.examples.streaming.NetworkWordCount localhost 9999
 [root@cdh1 ~]# spark-shell
 Spark context Web UI available at http://192.168.152.11:4040

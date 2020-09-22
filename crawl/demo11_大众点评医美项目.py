@@ -24,6 +24,7 @@ class DP(object):
         # 请求头
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36",
+            # "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv2.0.1) Gecko/20100101 Firefox/4.0.1",
         }
         # 数据库配置
         self.config = {
@@ -55,12 +56,13 @@ class DP(object):
             city = each.split('/')[-1]
             citys.append(city)
         citys = citys[:-3]
-        other = ['changchun', 'changsha', 'changzhou', 'dalian', 'dongguan', 'fuzhou', 'foshan', 'guiyang', 'haikou',
-                 'haerbin', 'hefei', 'huhehaote', 'jinan', 'kunming', 'lanzhou', 'ningbo', 'nanchang', 'nanning',
-                 'qingdao', 'quanzhou', 'shenyang', 'taiyuan', 'wuxi', 'xiamen', 'zhengzhou']
-        citys.extend(other)
+        # other = ['changchun', 'changsha', 'changzhou', 'dalian', 'dongguan', 'fuzhou', 'foshan', 'guiyang', 'haikou',
+        #          'haerbin', 'hefei', 'huhehaote', 'jinan', 'kunming', 'lanzhou', 'ningbo', 'nanchang', 'nanning',
+        #          'qingdao', 'quanzhou', 'shenyang', 'taiyuan', 'wuxi', 'xiamen', 'zhengzhou']
+        # citys.extend(other)
+        print(len(citys))
         # 医院分类
-        codes = ['g183']
+        codes = ['g182']
         # response = requests.get(url=self.medical_url, headers=self.headers)
         # html = etree.HTML(response.text)
         # href_list = html.xpath('//li[@class="term-list-item"][2]//a/@href')
@@ -72,6 +74,7 @@ class DP(object):
             for code in codes:
                 # 根据city和code拼接url
                 url = self.hospital_url.format(city, code)
+                print(url)
                 self.url_queue.put(url)
                 # # 解析当前页面
                 # response = requests.get(url=url, headers=self.headers)
@@ -94,7 +97,7 @@ class DP(object):
             response = requests.get(url, headers=self.headers)
             html = etree.HTML(response.text)
             # 将html放入html_queue
-            self.html_queue.put(html)
+            self.html_queue.put((html, url))
             # 判断是否有下一页
             next_page = html.xpath('//div[@class="page"]/a[@class="next"]/text()')
             if next_page:
@@ -110,23 +113,18 @@ class DP(object):
         """解析数据"""
         while True:
             # 从html_queue获取html
-            html = self.html_queue.get()
-            href_list = html.xpath('//div[contains(@class,"shop-list")]//li/div[2]/div[1]/a[@title]/@href')
+            html, url = self.html_queue.get()
+            city = url.split("/")[3]
+            shop_list = html.xpath('//div[contains(@class,"shop-list")]//li/div[2]')
             items = []
             # 遍历所有shop
-            for href in href_list:
-                print(href)
-                # 解析详情页
-                response = requests.get(url=href, headers=self.headers)
-                html = etree.HTML(response.text)
-                shop_tmp = html.xpath('//div[@class="breadcrumb"]/a[last()]/text()')
+            for each in shop_list:
+                shop_tmp = each.xpath('.//div[@class="tit"]/a/@title')
                 shop = shop_tmp[0].strip() if len(shop_tmp) > 0 else ''
-                city_tmp = html.xpath('//div[@class="breadcrumb"]/a[1]/text()')
-                city = city_tmp[0].strip()[:-2] + "市" if len(city_tmp) > 0 else ''
-                district_tmp = html.xpath('//span[@itemprop="locality region"]/text()')
+                district_tmp = each.xpath('./div[@class="tag-addr"]/a[2]/span/text()')
                 district = district_tmp[0] if len(district_tmp) > 0 else ''
-                address_tmp = html.xpath('//span[@itemprop="street-address"]/text()')
-                address = address_tmp[0].strip() if len(address_tmp) > 0 else ''
+                address_tmp = each.xpath('./div[@class="tag-addr"]/span/text()')
+                address = address_tmp[0] if len(address_tmp) > 0 else ''
                 insert_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
                 item = (shop, city, district, address, insert_time)
                 print(item)

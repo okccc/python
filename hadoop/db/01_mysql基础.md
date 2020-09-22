@@ -83,22 +83,19 @@ consistency -- 一致性：几个并行执行的事务其执行结果和执行�
 isolation   -- 隔离性：事务的执行不受其他事务的干扰
 durability  -- 持久性：已提交的事务对数据库的改变是永久生效的
 
+-- 约束
+PRIMARY KEY  -- 主键,唯一非空
+UNIQUE       -- 唯一,规定该字段在表中是唯一的
+NOT NULL     -- 非空,规定该字段不能为空
+DEFAULT      -- 默认值
+FOREIGN KEY  -- 外键,另一个表的主键,用于关联操作,一个表可以有多个外键
+
 -- join
 join             -- 默认内连接,不加关联条件就是笛卡尔积
 left join        -- 返回左表所有行,右表没有匹配到值为null
 right join       -- 返回右表所有行,左表没有匹配到值为null
 full join        -- 会返回左表和右表的所有行,没有匹配到值为null
 union/union all  -- 合并数据(去重/不去重)
-
--- 约束
-PRIMARY KEY  -- 主键,唯一非空
-FOREIGN KEY  -- 外键,
-UNIQUE       -- 唯一,规定该字段在表中是唯一的
-DEFAULT      -- 默认值
-NOT NULL     -- 非空,规定该字段不能为空
-主键：唯一标识一条记录,保证数据完整性,唯一非空
-外键：另一个表的主键,用于关联操作,一个表可以有多个外键
-
 
 -- sql和nosql区别
 /*
@@ -168,6 +165,10 @@ rollback;
 -- 事务一旦提交就不可回滚
 commit;
 
+-- 分页查询
+select * from emp limit 0,20;  -- 第一页
+select * from emp limit 40,20; -- 第三页
+
 -- 分组过滤
 -- where是分组前过滤效率更高,having是分组后过滤
 select category,sum(price) as totalprice from products where price >100 group by category;
@@ -177,7 +178,6 @@ select category,sum(price) as totalprice from products group by category having 
 select - from - (join) - where - group by - having - order by - limit
 -- mysql数据库解析顺序
 from - (join) - where - group by - select - having - order by - limit
-
 
 -- 视图：将复杂的查询sql封装成虚拟表
 -- 优点：sql语句重用,简化复杂sql(解耦),定制用户数据,安全(read-only)
@@ -202,7 +202,7 @@ show index from person;
 -- 删除索引
 alter table person drop index pindex;
 
--- 添加关系映射(在一对多的多方添加外键约束)
+-- 添加外键约束(在一对多的多方添加)
 alter table scores add constraint stu_sco foreign key(stuid) references students(id);
 -- 也可以在创建表时直接外键约束
 create table scores(
@@ -214,12 +214,14 @@ foreign key(stuid) references students(id),
 foreign key(subid) references subjects(id)
 );
 -- 此时插入或者修改数据时,如果stuid的值在students表中不存在则会报错
--- 外键的级联操作: 在删除students表的数据时,如果这个id值在scores中已经存在,默认会抛异常
+-- 外键的级联操作：在删除students表的数据时,如果这个id值在scores中已经存在会抛异常
 -- 级联操作类型包括：
 -- restrict(限制)：默认值,抛异常
 -- cascade(级联)：如果主表的记录删掉,则从表中相关联的记录都将被删除
 -- set null：将外键设置为空
 -- no action：什么都不做
+-- 删除外键约束
+alter table scores drop foreign key stuid;
 alter table scores add constraint stu_sco foreign key(stuid) references students(id) on delete cascade;
 
 -- mysql监控

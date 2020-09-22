@@ -52,7 +52,7 @@ scrapy项目四步骤：
     |---scrapy.cfg                  # 项目的配置文件
 2.明确目标(编写items.py)：设置需要保存的数据字段
 3.制作爬虫(spiders/xxx.py)：爬取数据
-  生成Spider模板：cd myspider --> scrapy genspider itcast(爬虫名) itcast.cn(网站域名)
+  生成Spider模板：cd myspider --> scrapy genspider baidu(爬虫名) baidu.com(网站域名)
   生成CrawlSpider模板：cd myspider --> scrapy genspider -t crawl tencent tencent.com
 4.存储数据(pipelines.py)：设计管道存储爬取内容,存入文件或数据库
   当Item在Spider中被收集之后,它将会被传递到Item Pipeline,这些Item Pipeline组件按定义的顺序处理Item

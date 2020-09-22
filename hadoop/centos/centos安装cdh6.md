@@ -239,6 +239,40 @@ hive=# select * from "DBS";
 hue=# update auth_user set password=md5('admin@123') where username='admin';
 ```
 
+### hive authorization(?)
+```bash
+# hive的权限管理是通过用户(User)、组(Group)、角色(Role)来定义,用户归属于组,角色定义了权限然后赋予给用户或组
+# hive和hadoop一样只能做权限控制,用户和用户组都是linux创建的
+# 在CM中配置hive-site.xml的Hive客户端高级配置代码段(安全阀)和HiveServer2高级配置代码段(安全阀)
+<property>
+    <name>hive.security.authorization.enabled</name>
+    <value>true</value>
+    <description>开启hive权限认证机制,开启之后需要给用户授予all/create/select/alter/drop等权限才能操作hive</description>
+</property>
+<property>
+    <name>hive.security.authorization.createtable.owner.grants</name>
+    <value>ALL</value>
+    <description>设置表的创建者对表拥有所有权限</description>
+</property>
+<property>
+    <name>hive.security.authorization.task.factory</name>
+    <value>org.apache.hadoop.hive.ql.parse.authorization.HiveAuthorizationTaskFactoryImpl</value>
+</property>
+# 开启权限控制后无法直接操作hive
+hive> select * from ods.area_info;
+Authorization failed:No privilege 'Select' found for inputs {database:ods}.Use show grant to get more details. 
+# 直接给用户赋权,如果用户很多时可以分组然后创建角色并赋权给组
+[root@cdh1 ~]# useradd aaa -g common
+hive> show roles;
+hive> show grant role/user/group xxx;
+hive> create role guest;
+hive> grant role guest to group common;
+hive> grant all/select on database ods to role guest; 
+hive> revoke all/select on database ods from role guest;
+# mysql/postgresql可以查看权限相关元数据
+mysql> select * from ROLES/ROLE_MAP/DB_PRIVS/TBL_PRIVS/TBL_COL_PRIVS;
+```
+
 ### cdh运维
 ```bash
 # CDH安装成功后,hadoop/hdfs/hive/impala/java/mapred/spark/sqoop/yarn/zookeeper等组件的命令在/etc/alternatives目录
@@ -336,3 +370,8 @@ hadoop fs -chmod -R 755 /data
 
 - <font color=red>Display all 478 possibilities? (y or n)</font>  
 原因：windows系统中的tab键在linux里无法识别,要替换成空格
+
+- <font color=red>FAILED: SemanticException The current builtin authorization in Hive is incomplete and disabled.</font>  
+原因：cdh默认没有开启hive的权限控制  
+解决：手动添加配置参数,详见hive authorization
+
