@@ -20,38 +20,43 @@ git config --global --unset alias.lg
 
 # 初始化仓库
 cd anoob & git init
-# 查看 工作区(untracked)/暂存区(tracked)/版本库 文件状态
+# 查看文件状态
 git status
-# 将工作区文件(夹)添加到暂存区进行跟踪
+# 将工作区文件(夹)添加到暂存区
 git add aaa.txt | git add .
-# 将暂存区文件提交到版本库形成版本记录
-git commit -m '...'  # 只提交暂存区修改,工作区修改必须先添加到暂存区
-# 已经tracked的文件可以直接提交
-git commit -am '...'  # 所有tracked的文件一旦修改都会被提交
+# 将暂存区文件提交到版本库形成版本记录,工作区修改必须先添加到暂存区
+git commit -m '...'
+# 工作区已经tracked的文件可以直接提交到版本库
+git commit -am '...'
 # 查看版本提交记录(commit)
-git log (--author "") (filename)
-# 查看本地操作记录(commit/reset/pull/merge...)
+git log <--author ""> <filename>
+# 查看最近一次(指定)提交记录的详情
+git show <commits> <filename>
+# 查看最近一次(指定)提交记录的简介
+git show <commits> <-s/--stat>
+# 查看本地操作记录(commit/reset/pull/merge),可以查看HEAD指向的版本,常用于恢复误操作
 git reflog
-# 查看最近一次提交记录详情/简介
-git show (-s/--stat)
-# 查看指定提交(指定文件)的更新
-git show commitid (filename)
 
-# 删除工作区未track文件  
-git clean -n/-f/-df  # 提醒你哪些文件会被删除/删除当前目录下所有未track文件,也可以指定path删除/删除当前目录下所有未track文件(夹)
-# 撤销工作区已track文件的修改/删除
-# a.只修改/删除了工作区文件,直接丢弃改动
-git checkout aaa.txt/.  # git checkout本质上是用版本库的版本替换工作区的版本
-# b.修改/删除了工作区文件并添加到了暂存区,先取消暂存再丢弃改动
-git reset HEAD aaa.txt & git checkout aaa.txt
-# c.不仅添加到暂存区还提交到了版本库,先回退版本再丢弃改动
-git reset HEAD^ & git checkout aaa.txt
-# 版本回退(慎用!)
-git reset 38fd442 | git reset HEAD^/HEAD~1/HEAD~10(HEAD是指向当前版本的指针默认指向master分支)
+# reset操作(默认--soft)
+git reset --soft HEAD^/HEAD~2/... # 只改变HEAD指向的版本,代码不变
+git reset --hard HEAD^/HEAD~2/... # 不仅改变HEAD指向的版本,代码也会回退到那个版本(慎用！)
+git reset 38fd442 | git reset HEAD^/HEAD~1/HEAD~10  # HEAD是指向当前版本的指针默认指向master分支
 # 对比工作区和HEAD版本
-git diff HEAD -- aaa.txt
-# 对比不同HEAD版本
-git diff HEAD HEAD^ -- aaa.txt
+git diff HEAD aaa.txt
+# 删除工作区未track文件(git status显示Untracked)  
+git clean -n/-f <path>/-df  # 提醒哪些文件会被删除/删除当前目录下所有未track文件,也可以指定path/删除当前目录下所有未track文件(夹)
+# 让工作区完全回退到最近一次commit的状态,不管文件是否track
+git clean -df & git reset --hard
+# 回退工作区已track文件
+# a.只修改或删除工作区文件(git status显示红色),直接丢弃改动,checkout本质上是用版本库的版本替换工作区的版本
+git checkout aaa.txt/.
+# b.修改或删除工作区文件并添加到了暂存区(git status显示绿色),先取消暂存再丢弃改动
+git reset HEAD aaa.txt & git checkout aaa.txt
+# c.不仅添加到暂存区还提交到了版本库(git status显示ahead),先回退版本再丢弃改动
+git reset HEAD^ & git checkout aaa.txt
+# d.不仅提交到了版本库还推送到了远程github,先回退本地版本然后再次推送到远程,由于本地版本behind远程版本,直接推送失败需要强制推送
+git reset HEAD^ & git push origin master --force
+
 # 删除文件(夹),本地和远程都删除
 git rm -r .idea & git commit -am 'delete...' & git push
 # 删除已经托管到github的文件(夹),本地保留
@@ -102,8 +107,8 @@ git tag -d v0.1 & git push origin :refs/tags/v0.1
 - 在本地生成ssh秘钥: ssh-keygen -t rsa -C "company/personal"  
 ![](images/01_ssh生成秘钥.png)
 - 私钥保留,将公钥复制到gitlab账号  
-![](images/02_复制公钥到github.png) 
-- 测试是否成功连接：ssh -T git@github.com 
+![](images/02_复制公钥到github.png)
+- 测试是否成功连接：ssh -T git@github.com
 
 ![](images/03_git操作流程.png)
 ### fetch/pull/push/remote
@@ -159,7 +164,7 @@ git checkout -b dev origin/dev & ... & git commit -am '...' & git push origin de
 # 如果此时乙修改相同文件直接push就会冲突,要先git pull把最新的提交从origin/dev上抓下来在本地合并解决冲突后再推送  
 # git pull居然也失败了？提示no tracking information,是因为本地的dev分支没有和远程的origin/dev分支建立连接  
 git branch --set-upstream-to=origin/dev dev -> git pull & git status & ... & git commit -am 'fix conflict' & git push origin dev  
-# 将分叉的提交历史整理成一条直线
+# 将分叉的提交历史合并成一条直线
 git rebase
 ```
 
