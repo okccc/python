@@ -49,22 +49,22 @@ else
      exit 1
 fi
 
-# 参数说明：
+# 参数说明
 sqoop import
 --connect jdbc:mysql://${ip}:${port}/${mysql_db}?tinyInt1isBit=false
 --username ${username}
 --password ${password}
 --table ${table}
 --fields-terminated-by '\001'                               			    # 设置分隔符
---where "create_time=${YESTERDAY} or update_time=${YESTERDAY}"              # 筛选数据
+--where "create_time=${YESTERDAY} or update_time=${YESTERDAY}"        # 筛选数据
 --hive-drop-import-delims                                   			    # 过滤掉分隔符\n, \r, \01
---hive-import                                               	            # 导入hive,不设置就使用hive默认分隔符
---hive-table base.${table} -m 4                                             # -m表示maptask数量
---delete-target-dir                                                         # 删除已存在的目录
---hive-overwrite                                                            # 覆盖数据
---hive-partition-key dt                                                     # 分区字段dt
---hive-partition-value ${YESTERDAY}                                         # 分区值
---null-string '\\N'                                        			        # 将字符串空值写成\\N
---null-non-string '\\N' &>> ${log_path}/${table}.log                        # 将非字符串空值写成\\N
+--hive-import                                               	        # 导入hive,不设置就使用hive默认分隔符
+--hive-table base.${table} -m 4                                       # -m表示maptask数量
+--delete-target-dir                                                   # 删除已存在的目录
+--hive-overwrite                                                      # 覆盖数据
+--hive-partition-key dt                                               # 分区字段dt
+--hive-partition-value ${YESTERDAY}                                   # 分区值
+--null-string '\\N'                                        			      # 将字符串空值写成\\N
+--null-non-string '\\N' &>> ${log_path}/${table}.log                  # 将非字符串空值写成\\N
 
 

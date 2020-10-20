@@ -14,7 +14,7 @@ run(){
 
 	for table in ${TABLE[*]}
 	do
-	   # hadoop fs -rm -r $LOG_PATH/log_record_$table/dt=$THREE_DAY_AGO & >> $ERRORLOG（分区还在，数据为空）
+	   # hadoop fs -rm -r $LOG_PATH/log_record_$table/dt=$THREE_DAY_AGO & >> $ERRORLOG（分区还在,数据为空）
 	   hive -e "use logs;alter table log_record_$table drop partition(dt=$THREE_DAY_AGO);" & >> $ERRORLOG
 	done
 

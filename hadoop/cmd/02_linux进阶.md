@@ -31,7 +31,7 @@ iconv -f utf-8 -c -t gbk aaa.csv > bbb.csv
 ```bash
 # linux命令可以从两个地方读取内容：标准输入和命令行参数
 # 管道：将|左侧命令的标准输出转换为标准输入,提供给右侧命令作为参数
-cat a.txt | grep 'mysql' == grep 'mysql' a.txt  
+cat a.txt | grep 'mysql' 等价于 grep 'mysql' a.txt  
 # 但是很多命令不能接收标准输入而只能接收命令行参数,导致管道无法使用
 # xargs：可以将管道传递的标准输入转换为命令行参数传给后面的命令  
 -d        # 指定分隔符,默认空格  
