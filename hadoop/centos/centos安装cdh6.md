@@ -368,10 +368,9 @@ hadoop fs -chmod -R 755 /data
 解决：notepad++ - 格式 - 以UTF-8无BOM格式编码  
 保护色：设置 - 语言格式设置 - 背景色 - more colors - 80/97/205
 
-- <font color=red>Display all 478 possibilities? (y or n)</font>  
+- <font color=red>Display all 478 possibilities？(y or n)</font>  
 原因：windows系统中的tab键在linux里无法识别,要替换成空格
 
 - <font color=red>FAILED: SemanticException The current builtin authorization in Hive is incomplete and disabled.</font>  
 原因：cdh默认没有开启hive的权限控制  
 解决：手动添加配置参数,详见hive authorization
-

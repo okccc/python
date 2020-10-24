@@ -63,31 +63,27 @@ mysql> source area.sql;
 ```
 
 ## mysql
+- basic
 ```sql
 /*
 e-r模型：当前物理数据库都是按照e-r模型(entry-relationship)进行设计的,关系包括一对一/一对多/多对多
 数据库：按照数据结构存储和管理数据的仓库
 RDBMS：关系型数据库管理系统
 表：按列和行排列的一组数据,列表示特征行表示条目
-sql：对数据库做增删改查
-三大范式：列不可拆分、唯一标识、引用主键
+三大范式：列不可拆分、不能有部分函数依赖、不能有传递函数依赖
 五大约束：primary key、unique、not null、default、foreign key
 逻辑删除：对于重要数据并不希望物理删除,删除后无法恢复,可以设置isdelete列,类型为bit默认值0,要逻辑删除的写1,查询的时候查值为0的即可
-*/
+sql：structured query language
+DDL(数据定义语言)：create/alter/drop/truncate/rename  -- 针对表
+DML(数据操作语言)：insert/delete/update/select        -- 针对数据
+DCL(数据控制语言)：commit/rollback/grant/revoke/savepoint
 
--- sql和nosql区别
-/*
+sql和nosql区别？
 存储：sql必须先定义表和字段结构才能添加数据,nosql更加灵活和可扩展
 关联：sql可以做join操作,nosql不存在
 事务：sql支持事务操作,nosql没有事务概念,每个数据集的操作都是原子级的
 性能：nosql不需要维护复杂的表关系,性能更好
 */
-
--- sql：structured query language
--- sql语句分类
-DDL(数据定义语言)：create/alter/drop/truncate/rename  -- 针对表
-DML(数据操作语言)：insert/delete/update/select        -- 针对数据
-DCL(数据控制语言)：commit/rollback/grant/revoke/savepoint
 
 -- 查看当前用户/当前数据库/数据库版本
 select user()/database()/version();
@@ -138,7 +134,20 @@ alter table scores add constraint stu_sco foreign key(stuid) references students
 - engine
 ```sql
 -- 查看所有存储引擎
-show engines;
+mysql> show engines;
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+| Engine             | Support | Comment                                                        | Transactions | XA   | Savepoints |
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+| InnoDB             | DEFAULT | Supports transactions, row-level locking, and foreign keys     | YES          | YES  | YES        |
+| MRG_MYISAM         | YES     | Collection of identical MyISAM tables                          | NO           | NO   | NO         |
+| MEMORY             | YES     | Hash based, stored in memory, useful for temporary tables      | NO           | NO   | NO         |
+| BLACKHOLE          | YES     | /dev/null storage engine (anything you write to it disappears) | NO           | NO   | NO         |
+| MyISAM             | YES     | MyISAM storage engine                                          | NO           | NO   | NO         |
+| CSV                | YES     | CSV storage engine                                             | NO           | NO   | NO         |
+| ARCHIVE            | YES     | Archive storage engine                                         | NO           | NO   | NO         |
+| PERFORMANCE_SCHEMA | YES     | Performance Schema                                             | NO           | NO   | NO         |
+| FEDERATED          | NO      | Federated MySQL storage engine                                 | NULL         | NULL | NULL       |
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
 -- 查看当前默认存储引擎
 mysql> show variables like '%storage_engine%';
 +----------------------------------+--------+
@@ -150,10 +159,13 @@ mysql> show variables like '%storage_engine%';
 | internal_tmp_disk_storage_engine | InnoDB |
 +----------------------------------+--------+
 -- 修改表的引擎
-alter table test engine=innodb;
+mysql> alter table test engine=innodb;
 -- 存储引擎对比
--- MyISAM：1.不支持事务和外键 2.表级锁,即使操作一条记录也会锁住整个表 3.只缓存索引不缓存数据
--- Innodb(默认)：1.支持事务和外键 2.行级锁,只锁定操作的行,适合高并发操作 3.既缓存索引也缓存数据,对内存要求较高
+Myisam：1.不支持事务和外键 2.表级锁,即使操作一条记录也会锁住整个表 3.只缓存索引不缓存数据
+Innodb：1.支持事务和外键 2.行级锁,只锁定操作的行,适合高并发操作 3.既缓存索引也缓存数据,对内存要求较高
+-- 行级锁
+共享锁(读锁)：事务A加共享锁后,其它事务也只能加共享锁,可以并发读取数据但不能做任何修改
+排它锁(写锁)：事务A加排它锁后,其它事务不能加任何锁,只能等排它锁释放,innodb会在insert/update/delete数据时加排它锁,select不会加任何锁
 ```
 
 - 事务
@@ -167,14 +179,13 @@ durability  -- 持久性：已提交的事务对数据库的改变是永久生�
 a.执行DML操作,默认情况下一旦执行完就会自动提交数据 -> set autocommit = false
 b.一旦断开数据库连接,也会提交数据 -> 将获取conn步骤从update方法中剥离出来单独关闭
     
--- 事务隔离：解决脏读、不可重复读、幻读
+-- 事务并发问题
 脏读：读到了别的事务还未提交的数据,这些数据可能会回滚也就是最终不一定存在的数据
-可重复读：在一个事务内,最开始读到的数据和事务结束前任意时刻读到的同一批数据是一致的,针对update操作
-不可重复读：在一个事务内,不同时刻读到的同一批数据可能不一致,可能会受到别的事务影响,针对update操作
-幻读：事务A更新了数据但还未提交,此时事务B插入了与事务A修改之前相同的行数据且提交了,然后在事务A中查询发现刚才的修改好像没起作用,其实是事务B刚插入的,针对insert操作
+不可重复读：在一个事务内,最开始读到的数据和事务结束前任意时刻读到的同一批数据不一致,针对update操作
+幻读：事务A更新了数据但还未提交,此时事务B插入了与事务A修改之前相同的行数据且提交了,然后在事务A中查询发现刚才的修改好像没起作用,针对insert操作
 -- 事务隔离级别：由于事务隔离是通过加锁实现的,所以隔离强度递增性能递减
 读未提交：不加锁,性能最好,但是相当于裸奔,连脏读都无法解决(不考虑)
-读提交：事务A只能读到事务B已提交的的数据,解决脏读,但是做不到可重复读,也无法解决幻读
+读已提交：事务A只能读到事务B已提交的的数据,解决脏读,但是做不到可重复读,也无法解决幻读
 可重复读：事务A读不到事务B已提交的数据,事务A开始时数据啥样在事务A提交前都不会变(mysql默认)
 串行化：加共享锁,将事务变成顺序执行,相当于单线程,性能最差(不考虑)
 -- 查看事务隔离级别
@@ -188,12 +199,13 @@ mysql> show variables like 'tx_isolation' | select @@tx_isolation
 mysql> set global transaction isolation level read committed;
 -- 查看当前正在运行的事务
 mysql> select * from information_schema.innodb_trx;
-           脏读    不可重复读    幻读
-读未提交    可能    可能         可能
-读提交      不可能  可能         可能
-可重复读    不可能  不可能        可能
-串行化      不可能  不可能       不可能
 ```
+隔离级别 | 脏读 | 不可重复读 | 幻读
+:---: | :---: | :---: | :---:
+读未提交 | Y | Y | Y
+读提交 | N | Y | Y
+可重复读 | N | N | Y
+序列化 | N | N | N
 
 - crud
 ```sql
@@ -232,7 +244,7 @@ update emp set name='sky',email='hum@123.com' where id = 2;
 set autocommit = false;
 -- delete删除数据,在commit之前可以rollback
 delete from emp; -- 不加where条件会删除所有数据(慎用!)
--- truncate清空表,相当于自动commit无法rollback
+-- truncate清空表,相当于自动commit无法rollback,如果表有外键约束就不能使用
 truncate table emp;
 -- 回滚数据,只能回滚到最近一次commit后的位置
 rollback;
@@ -251,6 +263,8 @@ from - (join) - where - group by - having - select - order by - limit
 -- 分页查询
 select * from emp limit 0,20;  -- 第一页
 select * from emp limit 40,20; -- 第三页
+-- 显示最近几次查询
+show profiles;
 ```
 
 - join
@@ -317,9 +331,7 @@ mysql> explain select * from emp;
 |  1 | SIMPLE      | emp   | NULL       | index | NULL          | idx_a_b_c | 71      | NULL |    1 |   100.00 | Using index |
 +----+-------------+-------+------------+-------+---------------+-----------+---------+------+------+----------+-------------+
 -- id
-id表示查询中执行select子句或操作表的顺序
-id相同时执行顺序从上往下,id不同时子查询id序号会递增,id越大执行优先级越高
-每个id表示一次独立查询,一个sql的独立查询次数越少越好
+id表示select执行顺序,id相同时从上往下,id不同时子查询id序号会递增且id越大执行优先级越高,每个id都是一次独立查询
 -- select_type
 select_type表示查询类型,主要用于区别普通查询、关联查询、子查询等
 SIMPLE 简单查询, select * from t1 where id=3;
@@ -331,15 +343,15 @@ DEPENDENT SUBQUERY where列表中包含的第一个依赖外部查询的子查�
 table表示查询的表
 -- type(重点)
 type表示查询类型,system > const > eq_ref > ref > range > index > ALL,一般至少要达到range级别
-system 表只有一行记录,不常见
+system 表中只有一行数据,是const特例
 const 通过索引一次就找到了,常见于primary key和unique, select * from t1 where id=1;
 eq_ref 唯一性索引扫描,返回匹配的唯一记录,常见于primary key和unique, select * from t1 left join t2 on t1.id=t2.id;
 ref 非唯一性索引扫描,返回匹配的所有记录, select * from t1 left join t2 on t1.job=t2.job;
 ref_or_null 某个字段既需要指定值也要null值, select * from t1 where t1.name='okc' or t1.name is null;
-index_merge 需要多个索引组合使用,常见于or语句, select * from t1 where t1.id=10 or t1.name='okc';
+index_merge 需要多个索引组合使用,常见于and和or语句, select * from t1 where t1.id=10 or t1.name='okc';
 index/unique_subquery 子查询中使用了(唯一)索引, select * from t1 where t1.id in (select t2.id from t2);
 range 只检索给定范围的行,key列会显示使用了哪个索引,常见于where语句, select * from t1 where t1.id>10;
-index 使用了索引但是没有通过索引进行过滤, select * from t1;
+index 使用了索引但是没有通过索引进行过滤,会扫描索引树效率比ALL高,因为索引树比数据文件小很多, select * from t1;
 ALL 全表扫描,必须优化
 -- possible_keys
 possible_keys表示可能用到的索引,某个字段存在索引就会被列出来,但不一定被查询实际使用
@@ -364,10 +376,18 @@ Using temporary 表示对查询结果排序或分组时使用了临时表
 - index
 ```sql
 -- 除了数据以外,数据库还维护着满足特定查找算法的数据结构,以某种方式指向物理数据,从而实现高级查找算法,这种数据结构就是索引
--- 优点：索引是一种排好序的快速查找数据结构,B+树(多路平衡查找树)存储,类似字典目录,可以提高数据检索效率降低IO成本和数据排序成本
--- 缺点：索引本身在insert/update/delete数据时也需要维护,会降低表的更新速度
+优点：索引是一种排好序的快速查找数据结构,B+树(多路平衡查找树)存储,类似字典目录,可以提高数据检索效率降低IO成本和数据排序成本
+缺点：索引本身在insert/update/delete数据时也需要维护,会降低表的更新速度
 -- 为什么索引使用B+树？
--- 查询时访问磁盘的次数由树的层数决定,二叉树只能有左右两个子节点而B+树可以有多个子节点,减少树的高度
+查询时访问磁盘的次数由树的层数决定,二叉树只能有左右两个子节点而B+树可以有多个子节点,减少树的高度
+
+-- 适合建立索引场景
+主键 | 频繁查询字段 | 外键(join) | 过滤字段(where) | 分组字段(group) | 排序字段(order),通过索引访问将大大提高排序速度
+-- 不适合建立索引场景
+表记录数很少(mysql优化器会忽略索引直接全表扫描) | 频繁更新字段
+-- 索引失效场景
+在索引列上做计算/函数/类型转换等任何操作 price/100 = 3 -> price = 100 * 3 | substr(name,1,3) = 'orc' -> name like 'orc%'
+or两边列必须都有索引 | 使用!=或<> | like '..%'可以,like '%..'不行 | is null 可以,is not null 不行
 -- 创建索引
 alter table emp add primary key emp (id);      -- 主键索引,设定为主键后数据库会自动创建索引且索引列的值唯一非空
 create unique index idx_name on emp (name);    -- 唯一索引,索引列的值必须唯一但允许有空值
@@ -378,19 +398,10 @@ create index idx_name on emp (name desc);      -- 倒叙索引
 show index from emp;
 -- 删除索引
 drop index idx_name on emp;
--- 查看执行时间
-show profiles;
--- 适合建立索引场景
-主键 | 频繁查询字段 | 外键(join) | 过滤字段(where) | 分组字段(group) | 排序字段(order),通过索引访问将大大提高排序速度
--- 不适合建立索引场景
-表记录数很少(mysql优化器会忽略索引直接全表扫描) | 频繁更新字段
--- 索引失效场景
-在索引列上做计算/函数/类型转换等任何操作 price/100 = 3 -> price = 100 * 3 | substr(name,1,3) = 'orc' -> name like 'orc%'
-or两边列必须都有索引 | 使用!=或<> | like '..%'可以,like '%..'不行 | is null 可以,is not null 不行
 
--- 主键索引(聚簇索引)
+-- 聚簇索引(主键索引)
 叶子结点存放整行数据,mysql有且只有一个聚簇索引,通常是主键,没有就唯一键,都没有mysql会创建rowid字段来组织这棵B+树,从而将数据有规律的存储起来,这也是数据库区别于文件系统的地方
--- 非主键索引(二级索引、普通索引)
+-- 非聚簇索引(二级索引)
 叶子结点存放主键值,查询时先搜索二级索引树找到主键值,再回到主键索引树搜索整行数据的其它列,该过程叫做回表
 -- 覆盖索引
 从二级索引就能找到所有查询列,避免回表,减少索引树的搜索次数,explain输出结果Extra=Using index表示使用了覆盖索引
@@ -427,10 +438,11 @@ select a,b,c from emp order by a,c;       -- Y 排序字段有索引但跳过了
 select a,b,c from emp order by a,b desc;  -- Y 排序字段中同时存在升序(默认)和降序,而索引都是升序的
 select a,b,c from emp order by b,a;       -- Y 排序字段顺序和索引顺序不一致,此处mysql优化器也不能调换b和a的位置,会改变排序逻辑
 select a,b,c from emp where a<100 order by b;  -- Y 过滤条件是范围查询,但这样是值得的,过滤掉大量数据提升的性能要远远超过使用索引
--- in和exists区别？
-主查询和子查询执行顺序不一样
-select * from 
-
+-- in/exists/not in/not exists
+主查询和子查询的执行顺序不一样,in先执行子查询适合内表小外表大的情况,exists先执行主查询适合外表小内表大的情况
+select * from t1 where id in (select id from t2);
+select * from t1 where exists (select 1 from t2 where t1.id=t2.id);
+not in无法使用索引且子查询结果集不能有null否则直接返回null,而not exists会使用索引性能更高,所以应尽量避免使用not in
 -- mysql优化器会改变sql语句中select和where字段的顺序,但是group和order字段的顺序是不能变的,否则业务逻辑就变了
 ```
 
@@ -473,7 +485,7 @@ mysql> show processlist;
 mysql> kill 11;
 ERROR 1317 (70100): Query execution was interrupted
 
-# 二进制日志(binlog)
+# binlog
 以事件形式记录除select和show以外的所有DDL和DML语句,常用于mysql的主从复制和数据恢复
 ```
 
