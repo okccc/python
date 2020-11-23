@@ -86,7 +86,7 @@ def test02():
     # 拼接视频
     res = concatenate_videoclips(videos)
     # 生成目标视频文件
-    res.to_videofile(target_dir + "join.mp4", fps=24, remove_temp=False)
+    res.to_videofile(target_dir + "join.mp4", fps=24, remove_temp=True)
 
 
 def test03():
@@ -110,7 +110,7 @@ def test04():
 
 if __name__ == "__main__":
     # recursive("D://PycharmProjects/spark/src/main/java/com/okccc/")
-    test01()
-    # test02()
+    # test01()
+    test02()
     # test03()
     # test04()
