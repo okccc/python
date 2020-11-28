@@ -102,7 +102,7 @@ def main():
             frame_name = res.group(1)
             app_name = res.group(2)
             # 动态加载mini_frame模块,而不是import写死
-            with open("./web_server.conf") as f:
+            with open("mini_web/web_server.conf") as f:
                 conf_info = eval(f.read())
             # 将存放mini_frame模块的路径dynamic加载到sys.path
             sys.path.append(conf_info['dynamic_path'])
