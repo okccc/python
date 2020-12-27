@@ -115,9 +115,9 @@ def json02():
     headers = {"User-Agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"}
     # 发送请求获取响应
     response = requests.get(url, headers=headers)
-    # 通过在response中搜索文章标题发现数据在第69行的<script></script>标签里面,正则匹配取出数据
-    # res = re.findall("<script>var props=(.*?)</script>", response.text)[0]
-    res = re.findall("<script>var props=(.*?),locationnal=", response.text)[0]
+    # 通过在response中搜索文章标题发现数据在第69行的<js></js>标签里面,正则匹配取出数据
+    # res = re.findall("<js>var props=(.*?)</js>", response.text)[0]
+    res = re.findall("<js>var props=(.*?),locationnal=", response.text)[0]
     # 将json字符串转换成dict
     data = json.loads(res)  # json.decoder.JSONDecodeError: Extra data: line 1 column 144652 (char 144651)
     print(data)

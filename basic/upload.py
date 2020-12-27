@@ -23,7 +23,7 @@ def upload_ftp():
 
 
 def upload_hdfs():
-    cli = hdfs.InsecureClient('sftp://resourcemanager@10.18.3.24', user='deploy')
+    cli = hdfs.InsecureClient('http://dev-bigdata-cdh1:50070', user='deploy')
     print(cli.list('/crm/upload'))
     cli._mkdirs('/crm/upload')
     cli.delete('/crm/aaa')

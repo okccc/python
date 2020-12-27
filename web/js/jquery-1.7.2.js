@@ -40,15 +40,15 @@ var jQuery = function( selector, context ) {
 	// Prioritize #id over <tag> to avoid XSS via location.hash (#9521)
 	quickExpr = /^(?:[^#<]*(<[\w\W]+>)[^>]*$|#([\w\-]*)$)/,
 
-	// Check if a string has a non-whitespace character in it
 	rnotwhite = /\S/,
 
-	// Used for trimming whitespace
 	trimLeft = /^\s+/,
 	trimRight = /\s+$/,
 
-	// Match a standalone tag
 	rsingleTag = /^<(\w+)\s*\/?>(?:<\/\1>)?$/,
+	// Check if a string has a non-whitespace character in it
+	// Used for trimming whitespace
+	// Match a standalone tag
 
 	// JSON RegExp
 	rvalidchars = /^[\],:{}\s]*$/,
@@ -602,7 +602,7 @@ jQuery.extend({
 
 	noop: function() {},
 
-	// Evaluates a script in a global context
+	// Evaluates a js in a global context
 	// Workarounds based on findings by Jim Driscoll
 	// http://weblogs.java.net/blog/driscoll/archive/2009/09/08/eval-javascript-global-context
 	globalEval: function( data ) {
@@ -5762,7 +5762,7 @@ wrapMap.optgroup = wrapMap.option;
 wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
 wrapMap.th = wrapMap.td;
 
-// IE can't serialize <link> and <script> tags normally
+// IE can't serialize <link> and <js> tags normally
 if ( !jQuery.support.htmlSerialize ) {
 	wrapMap._default = [ 1, "div<div>", "</div>" ];
 }
@@ -8027,7 +8027,7 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 			}
 		});
 
-		// Use data converter to retrieve json after script execution
+		// Use data converter to retrieve json after js execution
 		s.converters["script json"] = function() {
 			if ( !responseContainer ) {
 				jQuery.error( jsonpCallback + " was not called" );
@@ -8038,7 +8038,7 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 		// force json dataType
 		s.dataTypes[ 0 ] = "json";
 
-		// Delegate to script
+		// Delegate to js
 		return "script";
 	}
 });
@@ -8046,7 +8046,7 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 
 
 
-// Install script dataType
+// Install js dataType
 jQuery.ajaxSetup({
 	accepts: {
 		script: "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript"
@@ -8073,7 +8073,7 @@ jQuery.ajaxPrefilter( "script", function( s ) {
 	}
 });
 
-// Bind script tag hack transport
+// Bind js tag hack transport
 jQuery.ajaxTransport( "script", function(s) {
 
 	// This transport only deals with cross domain requests
@@ -8104,12 +8104,12 @@ jQuery.ajaxTransport( "script", function(s) {
 						// Handle memory leak in IE
 						script.onload = script.onreadystatechange = null;
 
-						// Remove the script
+						// Remove the js
 						if ( head && script.parentNode ) {
 							head.removeChild( script );
 						}
 
-						// Dereference the script
+						// Dereference the js
 						script = undefined;
 
 						// Callback if not abort
@@ -9389,7 +9389,7 @@ window.jQuery = window.$ = jQuery;
 // they have special allowances for multiple jQuery versions by
 // specifying define.amd.jQuery = true. Register as a named module,
 // since jQuery can be concatenated with other files that may use define,
-// but not use a proper concatenation script that understands anonymous
+// but not use a proper concatenation js that understands anonymous
 // AMD modules. A named AMD is safest and most robust way to register.
 // Lowercase jquery is used because AMD module names are derived from
 // file names, and jQuery is normally delivered in a lowercase file name.
