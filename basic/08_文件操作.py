@@ -31,7 +31,6 @@ import re
 
 def recursive(path):
     """递归操作"""
-
     files = os.listdir(path)
     for file in files:
         if os.path.isfile(path + file):
@@ -68,7 +67,6 @@ def test01():
 
 def test02():
     """合并视频小文件"""
-
     target_dir = "D://test/"
     videos = []
     # for top, dirs, files in os.walk(target_dir):
@@ -91,7 +89,6 @@ def test02():
 
 def test03():
     """去除换行符,将多行内容放到同一行"""
-
     with open("D://PycharmProjects/python/analysis/csv/city.txt", encoding="utf8") as f1:
         with open("D://PycharmProjects/python/analysis/csv/city1.txt", "w", encoding="utf8") as f2:
             for line in f1.readlines():
@@ -99,7 +96,6 @@ def test03():
 
 def test04():
     """删除符合条件的行"""
-
     with open("D://PycharmProjects/python/analysis/05_pyecharts可视化.py", encoding="utf8") as f1:
         with open("D://PycharmProjects/python/analysis/05_pyecharts可视化1.py", "w", encoding="utf8") as f2:
             for line in f1.readlines():
