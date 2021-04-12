@@ -34,6 +34,8 @@ Ctrl + Alt + L
 F2
 # 取消sql语句高亮背景
 File - Settings - Editor - Language Injections - 去掉勾选python: "SQL select/delete/insert/update/create"
+# 运行代码时关闭ipython模式
+Edit Configurations - Templates - python - 去掉勾选Run With Python Console
 ```
 
 ### plugins
