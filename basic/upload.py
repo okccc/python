@@ -23,6 +23,7 @@ def upload_ftp():
 
 
 def upload_hdfs():
+    # 读取本地文件上传到hdfs
     cli = hdfs.InsecureClient('http://dev-bigdata-cdh1:50070', user='deploy')
     print(cli.list('/crm/upload'))
     cli._mkdirs('/crm/upload')

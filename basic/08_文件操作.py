@@ -34,8 +34,8 @@ def recursive(path):
     files = os.listdir(path)
     for file in files:
         if os.path.isfile(path + file):
-            if file.endswith(".jpeg"):
-                file_new = file.replace(".jpeg", ".png")
+            if file.endswith(".mp4"):
+                file_new = file.replace("-", "")
                 os.rename(path + file, path + file_new)
             # if file.endswith(".java"):
             #     with open(path + file, encoding="utf8") as f1:
@@ -105,8 +105,8 @@ def test04():
 
 
 if __name__ == "__main__":
-    # recursive("D://PycharmProjects/spark/src/main/java/com/okccc/")
+    recursive("/Users/okc/Downloads/资料/")
     # test01()
-    test02()
+    # test02()
     # test03()
     # test04()
