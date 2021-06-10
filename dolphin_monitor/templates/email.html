@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>叽里呱啦大数据-调度任务监控</title>
+    <style>
+      table {
+        width: 100%;
+        border-spacing: 0;
+        border-collapse: separate;
+        font-size: 14px;
+        line-height: 1.5;
+        list-style: none;
+        border-left: 1px solid #e8e8e8;
+      }
+      th,
+      td {
+        padding: 8px 16px;
+        border-bottom: 1px solid #e8e8e8;
+        border-right: 1px solid #e8e8e8;
+        text-align: left;
+      }
+      .block-title {
+        background-color: #f7f9fc;
+        border: 1px solid #e8e8e8;
+        padding: 8px;
+      }
+      h4 {
+        margin: 0;
+      }
+      .block {
+        padding-bottom: 24px;
+      }
+      .fail{
+        color: rgb(238, 75, 74);
+        font-weight: 600;
+      }
+      .success{
+        color: rgb(41, 192, 123);
+        font-weight: 600;
+      }
+      .circle{
+        width: 10px;
+        height: 10px;
+        border-radius: 5px;
+        margin-right: 12px;
+      }
+      .green{
+        background: rgb(41, 192, 123);
+      }
+      .red{
+        background: rgb(238, 75, 74);
+      }
+      .blue{
+        background: rgb(24, 144, 255);
+      }
+
+      .flex-xCenter-yCenter{
+        display: flex;
+        align-items: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="block">
+      <div class="block-title flex-xCenter-yCenter">
+        <div class="circle green"></div>
+        <h4>调度监控整体作业情况:</h4>
+      </div>
+      <table>
+        <!-- 表头可以写死,也可以由后台自动生成,方便加减列 -->
+        <thead>
+          <tr>
+            <th>成功率</th>
+            <th>已执行作业数</th>
+            <th>成功作业数</th>
+            <th>运行中作业数</th>
+            <th>失败作业数</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{monitorAll.successRate}}</td>
+            <td>{{monitorAll.allJobs}}</td>
+            <td class="success">{{monitorAll.successJobs}}</td>
+            <td class="success">{{monitorAll.runningJobs}}</td>
+            <td class="fail">{{monitorAll.failJobs}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="block">
+      <div class="block-title flex-xCenter-yCenter">
+        <div class="circle red"></div>
+        <h4>未完成作业详情：</h4>
+      </div>
+      {{unsuccessJobs}}
+    </div>
+  </body>
+</html>
