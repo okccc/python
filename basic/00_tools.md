@@ -41,13 +41,7 @@ Edit Configurations - Templates - python - 去掉勾选Run With Python Console
 ### plugins
 ```shell script
 # pycharm
-Translation  # 翻译
-Markdown Navigator  # 
-Rainbow Brackets  # 彩虹括号
-Material Theme UI  # 主题
-Statistic  # 当前项目的统计信息
-Mongo Plugin  # mongodb的可视化数据库工具  View --> Tool Windows --> Mongo Explorer
-embedded web browser  # 内嵌浏览器
+
 
 # chrome
 谷歌访问助手
@@ -65,7 +59,6 @@ Octotree                 # 在github左侧显式当前工程目录结构
 OneTab                   # 打开网页列表节约内存
 Postman                  # 调试requests请求
 Proxy SwitchyOmega       # fiddler代理
-Smallpdf                 # pdf各种转换
 Tab Activate             # 打开新标签页后自动跳转,chrome默认是不跳转的
 Translate Man            # 翻译侠
 uBlock Origin            # 网络请求过滤工具占用极低的内存和CPU

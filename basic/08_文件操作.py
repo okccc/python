@@ -29,13 +29,14 @@ from moviepy.editor import *  # 合成视频的模块
 import os
 import re
 
+
 def recursive(path):
     """递归操作"""
     files = os.listdir(path)
     for file in files:
         if os.path.isfile(path + file):
-            if file.endswith(".mp4"):
-                file_new = file.replace("-", "")
+            if file.endswith(".avi"):
+                file_new = file.replace("尚硅谷_", "")
                 os.rename(path + file, path + file_new)
             # if file.endswith(".java"):
             #     with open(path + file, encoding="utf8") as f1:
@@ -54,6 +55,7 @@ def recursive(path):
         else:
             recursive(path + file + "/")
 
+
 def test01():
     """往文件的每一行末尾添加两个空格"""
     with open("C://Users/admin/Desktop/projects/hive/hqls/stats.sql", encoding="utf8") as f1:
@@ -64,6 +66,7 @@ def test01():
                     # 由于读完每一行会自动换行,所以索引取到-1
                     line_new = line[:-1] + ";" + "\n"
                     f2.write(line_new)
+
 
 def test02():
     """合并视频小文件"""
@@ -78,7 +81,7 @@ def test02():
         # 载入待合并的视频文件
         video = VideoFileClip(file_path)
         # 可以剪辑指定时长的视频文件
-        video.subclip(t_start=0, t_end=video.duration-1)
+        video.subclip(t_start=0, t_end=video.duration - 1)
         # 添加到列表
         videos.append(video)
     # 拼接视频
@@ -94,6 +97,7 @@ def test03():
             for line in f1.readlines():
                 f2.write(line[:-1])
 
+
 def test04():
     """删除符合条件的行"""
     with open("D://PycharmProjects/python/analysis/05_pyecharts可视化.py", encoding="utf8") as f1:
@@ -106,7 +110,3 @@ def test04():
 
 if __name__ == "__main__":
     recursive("/Users/okc/Downloads/资料/")
-    # test01()
-    # test02()
-    # test03()
-    # test04()
