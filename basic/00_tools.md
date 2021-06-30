@@ -22,8 +22,6 @@
 
 ### shortcut
 ```shell script
-# Pycharm快捷键设置
-File - Settings - Keymap
 # 代码提示部分
 m/f/v/c/p  # 方法/字段/变量/类/p参数
 # 设置
