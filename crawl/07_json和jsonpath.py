@@ -33,6 +33,7 @@ import chardet
 from pprint import pprint
 import re
 
+
 def dumps():
     """
     序列化：把变量从内存中变成可存储或传输的过程,延长生命周期
@@ -58,6 +59,7 @@ def dumps():
     print(chardet.detect(res1))  # {'encoding': 'ascii', 'confidence': 1.0, 'language': ''}
     print(chardet.detect(res2))  # {'encoding': 'utf-8', 'language': '', 'confidence': 0.7525}
 
+
 def dump():
     """
     json.dump()：将Python对象序列化成json字符串后写入文件(Serialize obj as a JSON formatted stream to fp (a .write()-supporting file-like object).)
@@ -67,6 +69,7 @@ def dump():
     json.dump(L, open("C://Users/Public/list.json", "w", encoding="utf-8"), ensure_ascii=False)
     json.dump(D, open("C://Users/Public/dict.json", "w", encoding="utf-8"), ensure_ascii=False)
 
+
 def loads():
     """
     json.loads()：将包含Json文档的字符串实例反序列化成Python对象(Deserialize s (a str instance containing a JSON document) to a python object)
@@ -75,19 +78,25 @@ def loads():
     dict_str = '{"city": "上海", "name": "grubby"}'
     print(json.loads(list_str))  # [1, 2, 3, 4]
     print(type(json.loads(list_str)))  # <class 'list'>
-    print(json.loads(dict_str))  # {'name': 'grubby', 'city': '上海'}
+    # json默认严格模式,设置strict=False,解决报错JSONDecodeError: Invalid control character at: line 2 column 18 (char 19)
+    print(json.loads(dict_str, strict=False))  # {'name': 'grubby', 'city': '上海'}
     print(type(json.loads(dict_str)))  # <class 'dict'>
+
 
 def load():
     """
     json.load()：将文件中json字符串反序列化成python对象(Deserialize fp (a .read()-supporting file-like object containing a JSON document) to a python object)
     """
-    list_str = json.load(open("C://Users/Public/list.json", encoding="utf-8"))
-    dict_str = json.load(open("C://Users/Public/dict.json", encoding="utf-8"))
-    print(list_str)  # [{'city': '上海'}, {'name': 'grubby'}]
-    print(type(list_str))  # <class 'list'>
-    print(dict_str)  # {'city': '上海', 'name': 'grubby'}
-    print(type(dict_str))  # <class 'dict'>
+    # list_str = json.load(open("C://Users/Public/list.json", encoding="utf-8"))
+    # dict_str = json.load(open("C://Users/Public/dict.json", encoding="utf-8"))
+    # print(list_str)  # [{'city': '上海'}, {'name': 'grubby'}]
+    # print(type(list_str))  # <class 'list'>
+    # print(dict_str)  # {'city': '上海', 'name': 'grubby'}
+    # print(type(dict_str))  # <class 'dict'>
+
+    d = json.load(open("/Users/okc/projects/python/dolphin_monitor/b.txt", encoding="utf-8"))
+    print(d.get("a"))
+
 
 def json01():
     # 获取拉勾城市信息
@@ -107,6 +116,7 @@ def json01():
     with open("./city.json", "w", encoding="utf8") as f:
         # dumps()可以设置换行时的缩进,这样json字符串就不是一整行而是json格式
         f.write(json.dumps(data, ensure_ascii=False, indent=4))
+
 
 def json02():
     # 抓取36kr上的文章
@@ -130,6 +140,6 @@ if __name__ == "__main__":
     # dumps()
     # loads()
     # dump()
-    # load()
+    load()
     # json01()
-    json02()
+    # json02()

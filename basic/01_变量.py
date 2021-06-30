@@ -4,7 +4,7 @@
 可变类型: 列表、集合、字典,修改变量只改内容不改内存地址,重新赋值才会改变内存地址
 注意：字典的key必须是不可变类型value任意,因为python要对key做hash处理,而hash函数只能接受不可变类型
 字典和json区别：
-字典是一种数据结结构,json是一种数据表现形式;字典的key只要能hash就行,json的key必须是字符串
+字典是一种数据结构,json是一种数据表现形式;字典的key只要能hash就行,json的key必须是字符串
 
 LEGB规则: python使用LEGB的顺序来查找符号对应的对象
 local: 局部变量
