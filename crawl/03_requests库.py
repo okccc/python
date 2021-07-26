@@ -44,6 +44,7 @@ fiddler：是一个位于客户端和服务器之间的代理服务器,客户端
 import requests
 import json
 
+
 def get():
     # 请求地址
     url = "https://www.baidu.com/s?"
@@ -77,6 +78,7 @@ def get():
     # 注意：如果response.text乱码可以改成response.content.decode('charset')  # charset是该网站编码
     # print(response.content.decode("gb2312"))
 
+
 def post():
     # 请求地址
     url = "http://fanyi.youdao.com/translate?smartresult=dict&smartresult=rule"
@@ -99,6 +101,7 @@ def post():
     # 对比数据类型发现：response.json() 其实就是 json.loads(response.text)
     print(type(response.json()))  # dict
     print(type(json.loads(response.text)))  # dict
+
 
 def ajax():
     # 需求：抓取拉勾网java工程师职位信息(详见demo06)
@@ -126,6 +129,7 @@ def ajax():
         response = requests.post(url, data=form_data, headers=headers)
         print(response.json())
 
+
 def proxy01():
     """
     注意：代理类型要和目标站点的url协议保持一致,比如用https代理访问http站点虽然也能请求成功但实际上并没有走代理而是用的本地ip直接访问
@@ -152,6 +156,7 @@ def proxy01():
     print(response1.text)  # {"origin":"106.75.64.149"} -- 真实ip
     print(response2.text)  # {"origin":"119.10.67.144"} -- 代理ip
 
+
 def proxy02():
     # 请求地址
     url = "https://nba.hupu.com/"
@@ -162,6 +167,7 @@ def proxy02():
     # 查看响应数据
     print(response.text)
 
+
 def web():
     # 请求地址
     url = "http://192.168.199.107"
@@ -171,6 +177,7 @@ def web():
     response = requests.get(url, auth=auth)
     # 查看响应数据
     print(response.text)
+
 
 def cookie():
     # 请求地址
@@ -186,6 +193,7 @@ def cookie():
     print(type(cookiedict))  # <class 'dict'>
     print(cookiedict)  # {'BDORZ': '27315'}
 
+
 def session():
     """
     requests模拟登录：
@@ -198,7 +206,7 @@ def session():
     s = requests.session()
     # 请求头
     headers = {"User-Agent": "Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11"}
-    # 登录页面(通常带有login/sign字眼)：可通过fiddler抓包获取登录时的webform表单数据
+    # 登录页面(通常带有login/sign字眼)：可通过F12检查元素或者fiddler抓包获取登录时的webform表单数据
     url_login = "https://signin.aliyun.com/1065151969971491/login.htm"
     # 需要登录的用户名和密码
     data = {"user_principal_name": "chenqian@1065151969971491", "password_ims": "Cq111111"}

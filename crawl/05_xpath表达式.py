@@ -60,6 +60,7 @@ import requests
 from lxml import etree
 from w3lib.html import remove_tags
 
+
 def xpath01():
     # 1、etree读取字符串 ---> python的3引号可用于表示多行字符串或者函数下方的注释
     text = """

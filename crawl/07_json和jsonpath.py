@@ -94,7 +94,7 @@ def load():
     # print(dict_str)  # {'city': '上海', 'name': 'grubby'}
     # print(type(dict_str))  # <class 'dict'>
 
-    d = json.load(open("/Users/okc/projects/python/dolphin_monitor/b.txt", encoding="utf-8"))
+    d = json.load(open("/dolphin_monitor/temp02.txt", encoding="utf-8"))
     print(d.get("a"))
 
 

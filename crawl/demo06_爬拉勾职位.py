@@ -14,6 +14,7 @@ logging.basicConfig(
     datefmt="%m/%d/%Y %H:%M:%S %p"
 )
 
+
 class LaGou01(object):
     # 1.抓接口：使用requests模块请求,需要伪造请求头(拉勾反爬虫有点东西,能轻松识别伪造的headers,指不定少了哪个参数就不行)
     def __init__(self):
@@ -41,8 +42,10 @@ class LaGou01(object):
         # 获取当前所有职位信息
         position_list = data["content"]["positionResult"]["result"]
         positions = []
-        keys = ["positionId","companyId","positionName","salary","companyShortName","companySize","district","linestaion",
-                "workYear","education","positionLables","industryField","hitags","companyLabelList","positionAdvantage"]
+        keys = ["positionId", "companyId", "positionName", "salary", "companyShortName", "companySize", "district",
+                "linestaion",
+                "workYear", "education", "positionLables", "industryField", "hitags", "companyLabelList",
+                "positionAdvantage"]
         for position in position_list:
             # 字典生成式取部分字段
             position = {key: position[key] for key in keys}
@@ -129,10 +132,13 @@ class LaGou02(object):
             "salary": self.driver.find_element_by_xpath('//dd[@class="job_request"]//span[@class="salary"]').text,
             "experience": self.driver.find_element_by_xpath('//dd[@class="job_request"]//span[3]').text[:-2],
             "education": self.driver.find_element_by_xpath('//dd[@class="job_request"]//span[4]').text[:-2],
-            "label": "".join([tag.text+"," for tag in self.driver.find_elements_by_xpath('//li[@class="labels"]')])[:-1],
+            "label": "".join([tag.text + "," for tag in self.driver.find_elements_by_xpath('//li[@class="labels"]')])[
+                     :-1],
             "company": self.driver.find_element_by_xpath('//div[@class="company"]').text,
             "temptation": self.driver.find_element_by_xpath('//dd[@class="job-advantage"]/p').text,
-            "description": "".join([tag.text for tag in self.driver.find_elements_by_xpath('//div[@class="job-detail"]//*')]).replace("\n", ""),
+            "description": "".join(
+                [tag.text for tag in self.driver.find_elements_by_xpath('//div[@class="job-detail"]//*')]).replace("\n",
+                                                                                                                   ""),
         }
         # 关窗口前等3秒
         time.sleep(3)
@@ -206,7 +212,8 @@ class LaGou03(object):
         # 创建Chrome对象
         self.driver = webdriver.Chrome(executable_path="D://chromedriver/chromedriver.exe")
         # csv文件的表头
-        self.fieldnames = ['id', 'link', 'name', 'address', 'salary', 'experience', 'company', 'mark', 'category', 'attract']
+        self.fieldnames = ['id', 'link', 'name', 'address', 'salary', 'experience', 'company', 'mark', 'category',
+                           'attract']
 
     def get_data(self):
         # 存放当前列表页数据的list
@@ -230,7 +237,8 @@ class LaGou03(object):
                 "experience": li.find_element_by_xpath('.//div[@class="p_bot"]/div[@class="li_b_l"]').text[7:],
                 "company": li.find_element_by_xpath('.//div[@class="company_name"]/a').text,
                 "mark": li.find_element_by_xpath('.//div[@class="industry"]').text,
-                "category": " ".join([tag.text for tag in li.find_elements_by_xpath('.//div[@class="list_item_bot"]/div[@class="li_b_l"]/span')]),
+                "category": " ".join([tag.text for tag in li.find_elements_by_xpath(
+                    './/div[@class="list_item_bot"]/div[@class="li_b_l"]/span')]),
                 "attract": li.find_element_by_xpath('.//div[@class="li_b_r"]').text,
             }
             items.append(item)
