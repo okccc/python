@@ -17,7 +17,7 @@ def upload_ftp():
     # 上传
     sftp.put("", "/upload")
     # 下载
-    sftp.get("/upload/19735.txt", "./a.txt")
+    sftp.get("/upload/19735.txt", "./temp01.txt")
     # 关闭连接
     client.close()
 
@@ -29,7 +29,7 @@ def upload_hdfs():
     cli._mkdirs('/crm/upload')
     cli.delete('/crm/aaa')
     cli.makedirs('/crm/upload')
-    cli.upload('/crm/upload', '/Users/okc/modules/a.txt')
+    cli.upload('/crm/upload', '/Users/okc/modules/temp01.txt')
 
 
 if __name__ == '__main__':

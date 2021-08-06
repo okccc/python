@@ -50,7 +50,7 @@ def sendMsg():
 # 电话告警
 def sendPhone():
     # 请求地址
-    url = "https://alarm.jiliguala.com/api/Alarm/sendByPhone?templateName=tt_call&type=txdh&phone={}"
+    url = "https://alarm.xxx.com/api/Alarm/sendByPhone?templateName=tt_call&type=txdh&phone={}"
     # 请求头
     headers = {
         "User-Agent": "Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11",

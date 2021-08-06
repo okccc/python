@@ -1,0 +1,39 @@
+{
+    "job": {
+        "content": [{
+            "reader": {
+                "name": "hdfsreader",
+                "parameter": {
+                    "column": [],
+                    "defaultFS": "hdfs://cdh01:8020",
+                    "encoding": "UTF-8",
+                    "fieldDelimiter": "\u0001",
+                    "fileType": "",
+                    "nullFormat": "NA",
+                    "path": ""
+                }
+            },
+            "writer": {
+                "name": "mysqlwriter",
+                "parameter": {
+                    "column": [],
+                    "connection": [{
+                            "jdbcUrl": "",
+                            "table": [""]
+                    }],
+                    "username": "",
+                    "password": "",
+                    "preSql": [],
+                    "session": [],
+                    "writeMode": "update",
+                    "encoding": "UTF-8"
+                }
+            }
+        }],
+        "setting": {
+            "speed": {
+                "channel": "2"
+            }
+        }
+    }
+}

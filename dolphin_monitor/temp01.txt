@@ -1,0 +1,40 @@
+{
+    "job":{
+        "content":[
+            {
+                "reader":{
+                    "name":"mysqlreader",
+                    "parameter":{
+                        "username":"",
+                        "password":"",
+                        "encoding": "utf8mb4",
+                        "connection":[
+                            {
+                                "querySql":[""],
+                                "jdbcUrl":[""]
+                            }
+                        ]
+                    }
+                },
+                "writer":{
+                    "name":"hdfswriter",
+                    "parameter":{
+                        "column":[""],
+                        "defaultFS":"hdfs://cdh01:8020",
+                        "encoding": "UTF-8",
+                        "fieldDelimiter":"\u0001",
+                        "fileName":"",
+                        "fileType":"",
+                        "path":"",
+                        "writeMode":"append"
+                    }
+                }
+            }
+        ],
+        "setting":{
+            "speed":{
+                "channel":"2"
+            }
+        }
+    }
+}

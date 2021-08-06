@@ -1,0 +1,44 @@
+{
+    "dsn": "mysql_jaina_fat",
+    "column1": [
+        {
+            "index": 0,
+            "type": "string"
+        },
+        {
+            "index": 1,
+            "type": "string"
+        },
+        {
+            "index": 2,
+            "type": "string"
+        },
+        {
+            "index": 3,
+            "type": "string"
+        },
+        {
+            "index": 4,
+            "type": "string"
+        },
+        {
+            "index": 5,
+            "type": "string"
+        },
+        {
+            "index": 6,
+            "type": "string"
+        },
+        {
+            "index": 7,
+            "type": "string"
+        },
+        {
+            "index": 8,
+            "type": "string"
+        }
+    ],
+    "path": "/data/hive/warehouse/ads.db/ads_crm_quiz_unmatched_record_export/dt=${param}",
+    "column2": ["record_uuid","record_type","record_ended_at","record_score","record_time_consuming","record_ans_right_count","subject_type","tel_number","wechat_nick"],
+    "table": "unmatched_record"
+}

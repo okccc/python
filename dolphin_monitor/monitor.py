@@ -5,7 +5,7 @@ from prettytable import PrettyTable
 from jinja2 import Environment, FileSystemLoader
 
 from dolphin_monitor import config
-from dolphin_monitor import sendmail
+from dolphin_monitor import alarm
 
 # 获取数据库连接
 conn = pymysql.connect(**config.mysql)
@@ -47,8 +47,11 @@ try:
     # 执行查询获取结果
     cur.execute(sql02 % current_date)
     # 往表格添加行数据
-    for (pid, name1, name2, state, owner, times) in cur.fetchall():
-        table.add_row([pid, name1, name2, state, owner, times])
+    res = cur.fetchall()
+    # print(res)  # ((5, 't1', 'ODS', '成功', 'andy', '1'), (6, 't2', 'DWD', '失败', 'lucy', '1'))
+    for (pid, name1, name2, state, owner, times) in res:
+        if state == "失败" or state == "停止":
+            table.add_row([pid, name1, name2, state, owner, times])
 except Exception as e:
     print(e)
 
@@ -73,7 +76,7 @@ content = template.render(
 
 # 白天有任务失败才发送告警邮件,每天早上6:30也会发邮件看看凌晨调度跑咋样了
 if cnt3 > 0 or current_hour == '06:30':
-    if sendmail.mail(subject, content):
+    if alarm.sendMail(subject, content):
         print("send mail success!")
     else:
         print("send email fail!")

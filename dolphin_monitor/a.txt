@@ -1,0 +1,57 @@
+{
+    "dsn": "mysql_mergo_prod",
+    "querySql": ["select id,
+                 time_modified,
+                 time_created,
+                 time_removed,
+                 template_id,
+                 REPLACE(REPLACE(title, CHAR(10),''), CHAR(13),'')  as title,
+                 REPLACE(REPLACE(`desc`, CHAR(10),''), CHAR(13),'')  as `desc`,
+                 REPLACE(REPLACE(config, CHAR(10),''), CHAR(13),'')  as config,
+                 creator_id,
+                 editor_id
+         from issue_template;"],
+    "column": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "time_modified",
+          "type": "string"
+        },
+        {
+          "name": "time_created",
+          "type": "string"
+        },
+        {
+          "name": "time_removed",
+          "type": "string"
+        },
+        {
+          "name": "template_id",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "desc",
+          "type": "string"
+        },
+        {
+          "name": "config",
+          "type": "string"
+        },
+        {
+          "name": "creator_id",
+          "type": "string"
+        },
+        {
+          "name": "editor_id",
+          "type": "string"
+        }
+    ],
+    "fileName": "ods_mysql_datax_crm_mergo_issuetemplate_all_d"
+}

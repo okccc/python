@@ -35,8 +35,8 @@ def recursive(path):
     files = os.listdir(path)
     for file in files:
         if os.path.isfile(path + file):
-            if file.endswith(".avi"):
-                file_new = file.replace("尚硅谷_", "")
+            if file.endswith(".mp4"):
+                file_new = file.replace("内核解析_", "")
                 os.rename(path + file, path + file_new)
             # if file.endswith(".java"):
             #     with open(path + file, encoding="utf8") as f1:
@@ -103,7 +103,7 @@ def test04():
     with open("D://PycharmProjects/python/analysis/05_pyecharts可视化.py", encoding="utf8") as f1:
         with open("D://PycharmProjects/python/analysis/05_pyecharts可视化1.py", "w", encoding="utf8") as f2:
             for line in f1.readlines():
-                if line.startswith("In") or line.startswith("Out") or re.match("\d+", line):
+                if line.startswith("In") or line.startswith("Out") or re.match("\\d+", line):
                     continue
                 f2.write(line)
 

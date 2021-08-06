@@ -9,11 +9,11 @@ mysql = {
 # 发件人信息
 smtpserver = {
     'host': 'smtp.feishu.cn',  # 邮箱服务器,比如'smtp.qq.com', 'smtp.163.com'
-    'user': 'datacenter@jiliguala.com',  # 发件人账号
+    'user': 'datacenter@xxx.com',  # 发件人账号
     'password': 'aOKLpBTSj6wzgNkKpv'  # 发件人密码
 }
 
 # 收件人信息
 receivers = {
-    'dw': ['tim_chen@jiliguala.com', 'andy_zhang@jiliguala.com']
+    'dw': ['aaa@xxx.com', 'bbb@xxx.com']
 }
