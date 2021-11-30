@@ -1,5 +1,5 @@
 ### tools
-- [chrome无法添加应用、扩展程序和脚本](https://jingyan.baidu.com/article/f3ad7d0f09436709c3345b0b.html)
+- [chrome无法添加应用、扩展程序和脚本](https://zhuanlan.zhihu.com/p/111740660)
 - [chrome安装谷歌访问助手](https://jingyan.baidu.com/article/7e440953191a2b2fc0e2ef0c.html)
 - [chrome无法自动同步](https://post.smzdm.com/p/az59oog0/)
 - [chrome安装谷歌访问助手程序包无效](https://blog.csdn.net/wst0717/article/details/88867047)
