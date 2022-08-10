@@ -68,7 +68,7 @@ mistune==0.8.4
 mock==2.0.0
 more-itertools==7.2.0
 moviepy==1.0.0
-nbconvert==5.4.1
+nbconvert==6.3.0
 nbformat==4.4.0
 nltk==3.4
 notebook==5.7.7
