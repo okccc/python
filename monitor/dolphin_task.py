@@ -4,8 +4,8 @@ import pymysql
 from prettytable import PrettyTable
 from jinja2 import Environment, FileSystemLoader
 
-from dolphin_monitor import config
-from dolphin_monitor import alarm
+import config
+import alarm
 
 # 获取数据库连接
 conn = pymysql.connect(**config.mysql)
@@ -76,7 +76,7 @@ content = template.render(
 
 # 白天有任务失败才发送告警邮件,每天早上6:30也会发邮件看看凌晨调度跑咋样了
 if cnt3 > 0 or current_hour == '06:30':
-    if alarm.sendMail(subject, content):
+    if alarm.send_mail(subject, content):
         print("send mail success!")
     else:
         print("send email fail!")

@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 # 发邮件
 def send_mail(table_name):
     # 连接邮箱服务器
-    yag = yagmail.SMTP(host="smtp.exmail.qq.com", user="chenqian@meihaofenqi.com", password="Cq224500821")
+    yag = yagmail.SMTP(host="smtp.exmail.qq.com", user="chenqian@meihaofenqi.com", password="123456")
     # 收件人(多个收件人可用list表示)
     to = "chenqian@meihaofenqi.com"
     # 抄送人
@@ -28,7 +28,7 @@ def send_mail(table_name):
     # 正文
     contents = "%s表新增字段!" % table_name
     # 附件
-    files = "C://Users/chenqian/Desktop/高铁线路图.pdf"
+    files = "./高铁线路图.pdf"
     # 发送
     yag.send(to=to, subject=subject, contents=contents, attachments=files, cc=cc)
 
@@ -38,8 +38,8 @@ def monitor_mysql():
     config = {
         "host": "10.9.169.3",
         "port": 3306,
-        "user": "meihaodb",
-        "password": "Eakgydskaezfl68Eefg:",
+        "user": "xxx",
+        "password": "xxx",
         "db": "duckchatdb",
         "charset": "utf8",
         "cursorclass": pymysql.cursors.DictCursor  # 以dict格式返回数据
@@ -50,7 +50,7 @@ def monitor_mysql():
     cur = conn.cursor()
     try:
         # 监控指定库下的表
-        sql = "select count(*) as num from information_schema.columns where table_schema = 'duckchatdb' and table_name = %s"
+        sql = "select count(*) as num from information_schema.columns where table_schema='duckchatdb' and table_name=%s"
         # 判断字段数
         cur.execute(sql, "debit_order")
         if cur.fetchall()[0]['num'] != 129:
@@ -82,7 +82,7 @@ def monitor_process():
                 # 杀掉卡死进程
                 os.system(command='kill -9 %d' % int(line[:-1]))
         # 重启进程
-        os.system(command='/data/anaconda/bin/python /data/com.okccc.app/reports/mhfq_sentiment.py')
+        os.system(command='/data/anaconda/bin/python /data/app/reports/mhfq_sentiment.py')
 
 
 def monitor_log():

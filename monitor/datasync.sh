@@ -36,16 +36,12 @@ fi
 
 #文件名称
 file_name=${table_name}
-
 #环境dev/fat/prod
 env_type=fat
-
 #文件类型
 file_type=txt
-
 #存储类型
 table_type=${store_type}
-
 
 #####以下为抽取脚本，请勿修改
 exist_file=${file_name}.${file_type}

@@ -38,39 +38,26 @@ def recursive(path):
             if file.endswith(".mp4"):
                 file_new = file.replace("内核解析_", "")
                 os.rename(path + file, path + file_new)
-            # if file.endswith(".java"):
-            #     with open(path + file, encoding="utf8") as f1:
-            #         with open(path + file + ".bac", "w", encoding="utf8") as f2:
-            #             for line in f1.readlines():
-            #                 if "，" in line and "//" in line:
-            #                     f2.write(line.replace("，", ",").replace("//", "// "))
-            #                 elif "，" in line and "//" not in line:
-            #                     f2.write(line.replace("，", ","))
-            #                 elif "，" not in line and "//" in line:
-            #                     f2.write(line.replace("//", "// "))
-            #                 else:
-            #                     f2.write(line)
-            #     os.remove(path + file)
-            #     os.rename(path + file + ".bac", path + file)
         else:
             recursive(path + file + "/")
 
 
-def test01():
-    """往文件的每一行末尾添加两个空格"""
-    with open("C://Users/admin/Desktop/projects/hive/hqls/stats.sql", encoding="utf8") as f1:
-        with open("C://Users/admin/Desktop/projects/hive/hqls/stats1.sql", "w", encoding="utf8")as f2:
-            for line in f1.readlines():
-                # split()可去除空白行
-                if line.split():
-                    # 由于读完每一行会自动换行,所以索引取到-1
-                    line_new = line[:-1] + ";" + "\n"
-                    f2.write(line_new)
+def video_editor():
+    """视频剪辑常用功能"""
+    target_dir = "/Users/okc/Documents/tmp/"
+    filename = target_dir + "d4a6c458673a58e5ba203dbbd452c1f0.mov"
+    # 载入视频文件
+    video = VideoFileClip(filename)
+    # 获取视频信息
+    print("分辨率：%s, 时长：%s 秒, 大小：%.2f M" % (video.size, video.duration, os.path.getsize(filename)/1024/1024))
+    # 1.截取指定时长片段
+    video.subclip(t_start='00:09:23', t_end=video.duration).write_videofile(target_dir + "01.mp4")
+    # 2.设置视频倍速播放
+    video.speedx(2).write_videofile(target_dir + "02.mp4")
+    # 3.截取视频封面
+    video.save_frame(target_dir + '01.jpg', t=0)  # t可以指定开头第几秒
 
-
-def test02():
-    """合并视频小文件"""
-    target_dir = "D://test/"
+    # 4.合并视频小文件
     videos = []
     # for top, dirs, files in os.walk(target_dir):
     files = os.listdir(target_dir)
@@ -87,10 +74,22 @@ def test02():
     # 拼接视频
     res = concatenate_videoclips(videos)
     # 生成目标视频文件
-    res.to_videofile(target_dir + "join.mp4", fps=24, remove_temp=True)
+    res.to_videofile(target_dir + "a.mp4", fps=24, remove_temp=True)
 
 
-def test03():
+def test01():
+    """往文件的每一行末尾添加两个空格"""
+    with open("C://Users/admin/Desktop/projects/hive/hqls/stats.sql", encoding="utf8") as f1:
+        with open("C://Users/admin/Desktop/projects/hive/hqls/stats1.sql", "w", encoding="utf8")as f2:
+            for line in f1.readlines():
+                # split()可去除空白行
+                if line.split():
+                    # 由于读完每一行会自动换行,所以索引取到-1
+                    line_new = line[:-1] + ";" + "\n"
+                    f2.write(line_new)
+
+
+def test02():
     """去除换行符,将多行内容放到同一行"""
     with open("D://PycharmProjects/python/analysis/csv/city.txt", encoding="utf8") as f1:
         with open("D://PycharmProjects/python/analysis/csv/city1.txt", "w", encoding="utf8") as f2:
@@ -98,7 +97,7 @@ def test03():
                 f2.write(line[:-1])
 
 
-def test04():
+def test03():
     """删除符合条件的行"""
     with open("D://PycharmProjects/python/analysis/05_pyecharts可视化.py", encoding="utf8") as f1:
         with open("D://PycharmProjects/python/analysis/05_pyecharts可视化1.py", "w", encoding="utf8") as f2:
@@ -109,4 +108,5 @@ def test04():
 
 
 if __name__ == "__main__":
-    recursive("/Users/okc/Downloads/资料/")
+    # recursive("/Users/okc/Downloads/资料/")
+    video_editor()

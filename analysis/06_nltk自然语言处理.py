@@ -142,7 +142,7 @@ class Chinese(object):
         seg_list = jieba.cut(data, cut_all=True)
         print(type(seg_list))  # <class 'generator'>
         # 读取中文停用词库
-        file = "D://PycharmProjects/python/analysis/csv/中文停用词库.txt"
+        file = "csv/中文停用词库.txt"
         # 将停用词库处理为列表
         stop_words = [line.strip() for line in open(file, encoding="utf-8")]
         print(stop_words)
@@ -164,7 +164,7 @@ class Chinese(object):
         # 绘制词云图
         wc = WordCloud(title="李克强政府工作报告")
         wc.add("词频统计", counter.keys(), counter.values())
-        wc.render("D://PycharmProjects/python/analysis/xixi.html")
+        wc.render("report.html")
 
 
 if __name__ == '__main__':
