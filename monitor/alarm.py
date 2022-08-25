@@ -1,29 +1,31 @@
 # coding=utf-8
+import json
 import smtplib
 from email.mime.text import MIMEText
 from jinja2 import Environment, FileSystemLoader
 from prettytable import PrettyTable
 import requests
 import datetime
+import sys
 
-from dolphin_monitor import config
+import config
 
 
 # 邮件告警
-def sendMail(subject, content):
+def send_mail(subject, content):
     # 获取发件人信息
     host = config.smtpserver['host']
     sender = config.smtpserver['user']
     password = config.smtpserver['password']
-    # 获取收件人信息
-    receiver = ", ".join(config.receivers['dw'])
+    # 获取收件人列表,必须是list类型
+    receiver = config.receivers['dw']
 
     # 创建MIMEText,传入文本内容、文本格式、字符编码
     msg = MIMEText(content, 'html', 'utf-8')
     # 设置邮件的主题、发件人、收件人
     msg['Subject'] = subject
     msg['From'] = sender
-    msg['To'] = receiver
+    msg['To'] = ",".join(receiver)
 
     try:
         # 连接邮箱服务器
@@ -43,21 +45,42 @@ def sendMail(subject, content):
 
 
 # 短信告警
-def sendMsg():
-    pass
-
-
-# 电话告警
-def sendPhone():
-    # 请求地址
-    url = "https://alarm.xxx.com/api/Alarm/sendByPhone?templateName=tt_call&type=txdh&phone={}"
+def send_msg(arg):
+    # 请求地址(企业微信群聊)
+    url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx"
     # 请求头
     headers = {
         "User-Agent": "Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11",
         "Content-Type": "application/json;charset=UTF-8"
     }
-    # 请求数据,具体数字是某个sql查询结果
-    data = {"": ""}
+    # 请求数据
+    data = {
+        "msgtype": "text",
+        "text": {
+            "content": "there is something wrong with the flink job: %s" % arg,
+            "mentioned_mobile_list": ["13818427154"]
+        }
+    }
+    # 发送post请求
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    print(response.text)
+    sys.exit(0)
+
+
+# 电话告警
+def send_phone(arg):
+    # 请求地址(腾讯云接口)
+    # url = "https://alarm.xxx.com/api/Alarm/sendByPhone?templateName=tt_call&type=txdh&phone={}"
+    url = "https://alarm.xxx.com/api/Alarm/sendByPhone?templateName=bigdata-db&type=txdh&phone={}"
+    # 请求头
+    headers = {
+        "User-Agent": "Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11",
+        "Content-Type": "application/json;charset=UTF-8"
+    }
+    # 请求数据(在PrometheusAlert页面配置语音模板{{.${body}}})
+    # data = """{"task_fail_num": "10"}"""
+    data = """{"db_conn_error": "%s"}""" % arg
+    print(data)
     # 判断今天是星期几(0表示星期一)
     weekday = datetime.datetime.now().weekday() + 1
     # 值班人员名单
@@ -73,7 +96,7 @@ def sendPhone():
     # 获取今天值班人员电话
     phone = phones.get(weekday)
     # 发送post请求
-    response = requests.post(url.format(phone), headers=headers, data=data)
+    response = requests.post(url.format("13818427154"), headers=headers, data=data)
     print(response.text)
 
 
@@ -97,6 +120,6 @@ if __name__ == '__main__':
         },
         unsuccessJobs=table2.get_html_string(),
     )
-    # sendMail(aaa, bbb)
-
-    sendPhone()
+    # send_mail(aaa, bbb)
+    # send_phone("GGR")
+    send_msg("lesson")

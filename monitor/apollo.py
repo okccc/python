@@ -1,7 +1,6 @@
 # coding=utf-8
 import json
 import requests
-import sys
 
 
 def generate(filename, sync_type, table_type, param):
@@ -40,7 +39,7 @@ def generate(filename, sync_type, table_type, param):
         # print(query_sql)
         column = d["column"]
         file_name = d["fileName"]
-        d1 = json.load(open("temp01.txt"), strict=False)
+        d1 = json.load(open("templates/temp01.txt"), strict=False)
         # d1 = json.load(open("/data1/projects-app/ChartSync/datax/job/mysqltohive/prod/template.txt"), strict=False)
         p1 = d1["job"]["content"][0]["reader"]["parameter"]
         p1["username"] = username
@@ -62,7 +61,7 @@ def generate(filename, sync_type, table_type, param):
         column2 = d["column2"]
         path = d["path"]
         table = d["table"]
-        d2 = json.load(open("temp02.txt"), strict=False)
+        d2 = json.load(open("templates/temp02.txt"), strict=False)
         # d2 = json.load(open("/data1/projects-app/ChartSync/datax/job/hivetomysql/prod/template.txt"), strict=False)
         p1 = d2["job"]["content"][0]["reader"]["parameter"]
         p1["column"] = column1
@@ -80,5 +79,5 @@ def generate(filename, sync_type, table_type, param):
 if __name__ == '__main__':
     # 参数解析
     # generate("a.txt", "mysqltohive", "text", "20210101")
-    generate("b.txt", "hivetomysql", "text", "20210101")
+    generate("templates/b.txt", "hivetomysql", "text", "20210101")
     # generate(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
