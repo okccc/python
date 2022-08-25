@@ -47,7 +47,7 @@ def send_mail(subject, content):
 # 短信告警
 def send_msg(arg):
     # 请求地址(企业微信群聊)
-    url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx"
+    url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx-xxx-xxx"
     # 请求头
     headers = {
         "User-Agent": "Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11",
@@ -121,5 +121,5 @@ if __name__ == '__main__':
         unsuccessJobs=table2.get_html_string(),
     )
     # send_mail(aaa, bbb)
-    # send_phone("GGR")
     send_msg("lesson")
+    # send_phone("GGR")
