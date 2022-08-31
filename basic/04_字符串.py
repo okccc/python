@@ -8,7 +8,6 @@ Unicode: 包括了全球的符号和编码,每个字符用3~4个字节表示,浪
 UTF-8(Unicode Transformation Format): 可变长的编码方式,互联网使用最广泛的Unicode实现方式,根据语种决定字符长度,字母1个字节,汉字3个字节
 为什么会中文乱码？
 Windows环境默认GBK编码,汉字占2个字节,Linux环境默认UTF-8编码,汉字占3个字节,所以要在文件第一行备注coding=utf-8
-
 中文默认使用ascii存储,禁用后默认unicode存储,encode将unicode转换成指定编码格式,decode:将指定编码格式转换成unicode
 """
 
